@@ -5,17 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints as Assert;
-
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\ClubRepository")
- * @ApiResource
+ * @ORM\Entity(repositoryClass="App\Repository\CompetitionRepository")
  */
-class Club
+class Competition
 {
     /**
      * @ORM\Id()
@@ -26,23 +20,21 @@ class Club
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=3, minMessage="Entre 3 et 255", max=255, maxMessage="Entre 3 et 255")
-     * @Assert\NotBlank(message="Le prénom du customer est obligatoire")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $address;
+    private $season;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $Logo;
+    private $Format;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="idClub", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="idCompetition", orphanRemoval=true)
      */
     private $teams;
 
@@ -68,26 +60,26 @@ class Club
         return $this;
     }
 
-    public function getAddress(): ?string
+    public function getSeason(): ?string
     {
-        return $this->address;
+        return $this->season;
     }
 
-    public function setAddress(string $address): self
+    public function setSeason(string $season): self
     {
-        $this->address = $address;
+        $this->season = $season;
 
         return $this;
     }
 
-    public function getLogo(): ?string
+    public function getFormat(): ?string
     {
-        return $this->Logo;
+        return $this->Format;
     }
 
-    public function setLogo(?string $Logo): self
+    public function setFormat(string $Format): self
     {
-        $this->Logo = $Logo;
+        $this->Format = $Format;
 
         return $this;
     }
@@ -104,7 +96,7 @@ class Club
     {
         if (!$this->teams->contains($team)) {
             $this->teams[] = $team;
-            $team->setIdClub($this);
+            $team->setIdCompetition($this);
         }
 
         return $this;
@@ -115,8 +107,8 @@ class Club
         if ($this->teams->contains($team)) {
             $this->teams->removeElement($team);
             // set the owning side to null (unless already changed)
-            if ($team->getIdClub() === $this) {
-                $team->setIdClub(null);
+            if ($team->getIdCompetition() === $this) {
+                $team->setIdCompetition(null);
             }
         }
 
