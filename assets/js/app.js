@@ -1,30 +1,47 @@
-import React from "react";
+import React, {useState, useContext} from "react";
 import ReactDOM from "react-dom";
 import "../css/app.css";
 import NavBar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import { HashRouter, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route, withRouter, Redirect } from "react-router-dom";
 import CustomersPage from "./pages/CustomerPage";
 import LoginPage from "./pages/LoginPage";
+import authAPI from "./services/authAPI";
+import AuthContext from "./contexts/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+import CompetitionPage from "./pages/CompetitionPage";
 
-// Need jQuery? Install it with "yarn add jquery", then uncomment to import it.
-// import $ from 'jquery';
+require("../css/app.css");
 
-console.log("Hello salut Webpack Encore! Edit me in assets/js/app.js");
+authAPI.setup();
+
 
 const App = () => {
-    return (
-        <HashRouter>
-            <NavBar />
+    const [isAuthenticated, setIsAuthenticated] = useState(
+        authAPI.isAuthenticated()
+    );
 
-            <main className="container mt-5">
-                <Switch>
-                    <Route path="/login" component={LoginPage} />
-                    <Route path="/customers" component={CustomersPage} />
-                    <Route path="/" component={HomePage} />
-                </Switch>
-            </main>
-        </HashRouter>
+    const NavBarWIthRouter = withRouter(NavBar);
+
+
+    return (
+        <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
+            <HashRouter>
+                <NavBarWIthRouter/>
+                <main className="container mt-5">
+                    <Switch>
+                        <Route
+                            path="/login"
+                            render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
+                        />
+                        <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
+                        <PrivateRoute path={"/competition"} component={CustomersPage}/>
+
+                        <Route path="/" component={HomePage} />
+                    </Switch>
+                </main>
+            </HashRouter>
+        </AuthContext.Provider>
     );
 };
 

@@ -1,61 +1,53 @@
-import React,{ useState} from 'react';
-import axios from 'axios';
-import usersAPI from "../services/usersAPI";
+import React,{ useState, useContext} from 'react';
+import authAPI from "../services/authAPI";
+import AuthContext from "../contexts/AuthContext";
+import Field from "../components/forms/Fields";
 
-const LoginPage = props => {
+const LoginPage = ({ history}) => {
+    const {setIsAuthenticated} = useContext(AuthContext);
+
     const [credentials, setCredentials] = useState({
-        username: "test",
-        password: "aaa",
+        username: "test@hotmail.com",
+        password: "password",
     });
 
-    const handleChange = (event) => {
-        const value = event.currentTarget.value;
-        const name = event.currentTarget.name;
-
-        setCredentials({ ...credentials, [name]: value });
+    // Gestion des champs
+    const handleChange = ({currentTarget}) => {
+        const {value, name} = currentTarget;
+        setCredentials({...credentials, [name]: value});
     };
 
     const [error, setError] = useState("");
 
+    // Gestion du submit
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         try {
-            const token = await axios
-                .post("http://localhost:8000/api/login_check", credentials)
-                .then(response => response.data.token);
+            await authAPI.authenticate(credentials);
             setError("");
-
-            window.localStorage.setItem("token", token);
-            axios.defaults.headers["Authorization"] = "Bearer " + token;
-
-        } catch (e) {
+            setIsAuthenticated(true);
+            history.replace("/customers");
+        } catch (error) {
             setError("Le nom d'utilisateur et le mot de passe ne correspondent pas");
         }
-        console.log(credentials);
-    }
+    };
 
     return (
         <>
             <h1>Connexion à l'app</h1>
 
             <form action="" onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="username">Adresse Email</label>
-                    <input type="email" className={"form-control" + (error && " is-invalid")} placeholder={"Adresse email de Connexion"} name={"username"} id={"username"}
-                           value={credentials.username} onChange={handleChange}/>
-                    { error && <p className={"invalid-feedback"}>{error}</p>}
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Mot de passe</label>
-                    <input type="password" placeholder={"Mot de passe"} name={"password"} id={"password"} className={"form-control"}
-                           value={credentials.password} onChange={handleChange}/>
-                </div>
+                <Field label={"Adresse email"} name={"username"} value={credentials.username}
+                       placeholder={'Adresse email de Connexion'} onChange={handleChange} type={"email"} error={error}/>
+                <Field label={"Mot de passe"} name={"password"} value={credentials.password} onChange={handleChange}
+                       type={"password"} error={""}/>
                 <div className="form-group">
                     <button type={"submit"} className={"btn btn-success"}>Se connecter</button>
                 </div>
             </form>
         </>
-    ) ;
+    );
 };
-        export default LoginPage;
+
+export default LoginPage;
