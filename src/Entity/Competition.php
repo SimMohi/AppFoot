@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
+
 
 
 /**
@@ -23,18 +25,21 @@ class Competition
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom de la compéttion est obligatoire")
+     * @Assert\Length(min=2, minMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
      */
     private $season;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Format;
+    private $format;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="idCompetition", orphanRemoval=true)
@@ -77,12 +82,12 @@ class Competition
 
     public function getFormat(): ?string
     {
-        return $this->Format;
+        return $this->format;
     }
 
-    public function setFormat(string $Format): self
+    public function setFormat(string $format): self
     {
-        $this->Format = $Format;
+        $this->format = $format;
 
         return $this;
     }
