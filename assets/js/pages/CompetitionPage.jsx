@@ -2,16 +2,28 @@ import React, { useState, useEffect } from 'react';
 import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
+import ClubsAPI from "../services/ClubsAPI";
 
 const CompetitionPage = props => {
 
     const {id} = props.match.params;
 
     const [competition, setCompetition] = useState({
-        name: "comppet",
-        format: "champ",
-        season: "2019-2020",
+        name: "",
+        format: "",
+        season: "",
     });
+
+    const [clubs, setClubs] = useState([]);
+
+    const getClubs = async () => {
+        try{
+            const allClubs = await ClubsAPI.findAll();
+            setClubs(allClubs);
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
 
     const [errors, setErrors] = useState({
         name: "",
@@ -34,6 +46,7 @@ const CompetitionPage = props => {
         if (id !== "new") {
             setEditing(true);
             fetchCompetition(id);
+            getClubs();
         }
     }, [id]);
 
@@ -66,16 +79,19 @@ const CompetitionPage = props => {
         }
     };
 
-
     return  (
         <>
             {!editing && <h1>Création d'une nouvelle Compétition</h1> || <h1>Modification d'une Compétition</h1>}
-
 
             <form onSubmit={handleSubmit}>
                 <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChange} error={errors.name}/>
                 <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChange} error={errors.format}/>
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChange} error={errors.season}/>
+                <div className="form-check">
+                    {clubs.map(club =>
+                        <p key={club.id}>{club.name}</p>
+                    )}
+                </div>
                 <div className="from-group">
                     <button type={"submit"} className="btn btn-success">Enregistrer</button>
                     <Link to={"/competition"} className={"btn btn-link"}>Retour à la liste</Link>
@@ -86,3 +102,4 @@ const CompetitionPage = props => {
 };
 
 export default CompetitionPage;
+
