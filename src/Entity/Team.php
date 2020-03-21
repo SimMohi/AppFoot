@@ -5,9 +5,25 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
+Use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
+ * @ApiResource(
+ *     normalizationContext={"groups"={"teams_read"}},
+ *     itemOperations={"teamNoClub"={
+ *       "method"="get",
+ *       "path"="/competitions/{id}/noTeams",
+ *       "controller"="App\Controller\CompetitionController",
+ *       "swagger_context"={
+ *          "summary"="Return teams not in this competition",
+ *       }
+ *     }
+ *  },
+ * )
  */
 class Team
 {
@@ -15,33 +31,40 @@ class Team
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"teams_read",})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Club", inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"teams_read",})
      */
     private $idClub;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Competition", inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"teams_read",})
+     *
      */
     private $idCompetition;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
+     * @Groups({"teams_read",})
      */
     private $played;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
+     * @Groups({"teams_read",})
      */
     private $drawn;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true, options={"default" : 0})
+     * @Groups({"teams_read",})
      */
     private $lost;
 

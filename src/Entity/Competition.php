@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 
 
@@ -20,6 +22,7 @@ class Competition
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"teams_read",})
      */
     private $id;
 
@@ -27,17 +30,19 @@ class Competition
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le nom de la compéttion est obligatoire")
      * @Assert\Length(min=2, minMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères")
+     * @Groups({"teams_read",})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
+     * @Groups({"teams_read",})
      */
     private $season;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"teams_read",})
      */
     private $format;
 

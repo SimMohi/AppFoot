@@ -3,6 +3,7 @@ import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import ClubsAPI from "../services/ClubsAPI";
+import TeamsAPI from "../services/TeamsAPI";
 
 const CompetitionPage = props => {
 
@@ -12,6 +13,20 @@ const CompetitionPage = props => {
         name: "",
         format: "",
         season: "",
+    });
+
+    // const [idClubs, setIdClubs] = useState({});
+
+    const idClubs = {};
+
+    const postTeam = {
+        idClub: "",
+        idCompetition: "",
+    }
+
+    const [team, setTeam] = useState({
+        idClub: "",
+        idCompetition: "",
     });
 
     const [clubs, setClubs] = useState([]);
@@ -47,13 +62,24 @@ const CompetitionPage = props => {
             setEditing(true);
             fetchCompetition(id);
             getClubs();
+            setTeam({...team, ["idCompetition"] : "/api/competitions/"+id});
+            // test["idCompetition"] = "/api/competitions/"+id;
         }
     }, [id]);
 
 
-    const handleChange = ({ currentTarget }) => {
+    const handleChangeCompet = ({ currentTarget }) => {
         const { name, value } = currentTarget;
         setCompetition({...competition, [name]: value});
+    };
+
+    const handleChangeClub = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        if(idClubs[value] === 1){
+            idClubs[value] = 0;
+        } else if(idClubs[value] === 0 || typeof idClubs[value] == 'undefined') {
+            idClubs[value] = 1;
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -63,8 +89,14 @@ const CompetitionPage = props => {
                 const response = await CompetitionsAPI.update(id, competition)
             } else {
                 const response = await CompetitionsAPI.create(competition);
-
                 props.history.replace("/competition");
+            }
+            for (const index in idClubs) {
+                if(idClubs[index] === 1){
+                    postTeam["idCompetition"] = team["idCompetition"];
+                    postTeam["idClub"] = "/api/clubs/"+index;
+                    const responseTeam = await TeamsAPI.create(postTeam);
+                }
             }
             setErrors({});
         } catch (error) {
@@ -84,12 +116,18 @@ const CompetitionPage = props => {
             {!editing && <h1>Création d'une nouvelle Compétition</h1> || <h1>Modification d'une Compétition</h1>}
 
             <form onSubmit={handleSubmit}>
-                <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChange} error={errors.name}/>
-                <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChange} error={errors.format}/>
-                <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChange} error={errors.season}/>
+                <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet} error={errors.name}/>
+                <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChangeCompet} error={errors.format}/>
+                <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
                 <div className="form-check">
                     {clubs.map(club =>
-                        <p key={club.id}>{club.name}</p>
+                        <div className="form-check" key={club.id}>
+                            <input className="form-check-input" name={"idClub"} type="checkbox" value={club.id}
+                                   id={"check" + club.id} onChange={handleChangeClub}/>
+                            <label className="form-check-label" htmlFor={"check" + club.id}>
+                                {club.name}
+                            </label>
+                        </div>
                     )}
                 </div>
                 <div className="from-group">
