@@ -63,7 +63,6 @@ const CompetitionPage = props => {
             fetchCompetition(id);
             getClubs();
             setTeam({...team, ["idCompetition"] : "/api/competitions/"+id});
-            // test["idCompetition"] = "/api/competitions/"+id;
         }
     }, [id]);
 

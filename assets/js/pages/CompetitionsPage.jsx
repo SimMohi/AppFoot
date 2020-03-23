@@ -33,6 +33,7 @@ const CompetitionsPage = props => {
         }
     };
 
+    console.log(competitions);
     return ( <>
         <h1>Liste des compétitions</h1>
         <Link to={"/competition/new/"} className={"btn btn-info float-right"}>Nouvelle compétition</Link>
@@ -53,7 +54,8 @@ const CompetitionsPage = props => {
                     <td>{competition.format}</td>
                     <td>{competition.season}</td>
                     <td>
-                        <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>
+                        <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>
+                        <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-primary mr-3"}>Editer</Link>
                         <button onClick={() => handleDelete(competition.id)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>

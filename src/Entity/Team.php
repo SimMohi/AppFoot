@@ -6,24 +6,28 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 Use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ *
  * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
  * @ApiResource(
  *     normalizationContext={"groups"={"teams_read"}},
  *     itemOperations={"teamNoClub"={
  *       "method"="get",
  *       "path"="/competitions/{id}/noTeams",
- *       "controller"="App\Controller\CompetitionController",
+ *       "controller"="App\Controller\GetTeamNotInCompetitionController",
  *       "swagger_context"={
  *          "summary"="Return teams not in this competition",
  *       }
  *     }
  *  },
  * )
+ *  @ApiFilter(OrderFilter::class)
  */
 class Team
 {
@@ -54,7 +58,7 @@ class Team
      * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
      * @Groups({"teams_read",})
      */
-    private $played;
+    private $won;
 
     /**
      * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
@@ -107,14 +111,14 @@ class Team
         return $this;
     }
 
-    public function getPlayed(): ?int
+    public function getWon(): ?int
     {
-        return $this->played;
+        return $this->won;
     }
 
-    public function setPlayed(int $played): self
+    public function setWon(int $won): self
     {
-        $this->played = $played;
+        $this->won = $won;
 
         return $this;
     }
@@ -172,5 +176,20 @@ class Team
         }
 
         return $this;
+    }
+    /**
+    * @Groups({"teams_read",})
+    * @return integer
+    */
+     public function getNbrMatchs(){
+        return $this->won + $this->drawn + $this->lost;
+    }
+
+    /**
+     * @Groups({"teams_read",})
+     * @return integer
+     */
+    public function getNbrPoints(){
+        return $this->won * 3 + $this->drawn;
     }
 }

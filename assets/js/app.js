@@ -13,6 +13,7 @@ import TeamsPage from "./pages/TeamsPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
 import ClubsPage from "./pages/ClubsPage";
 import ClubPage from "./pages/ClubPage";
+import CompetitionViewPage from "./pages/CompetitionViewPage";
 
 require("../css/app.css");
 
@@ -36,6 +37,7 @@ const App = () => {
                             path="/login"
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
+                        <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
                         <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>

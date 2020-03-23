@@ -12,6 +12,12 @@ function find(id){
         .then(response => response.data);
 }
 
+function findTeam(id){
+    return axios
+        .get("http://localhost:8000/api/competitions/" + id+"/teams?order[nbrPoints]=desc")
+        .then(response => response.data["hydra:member"]);
+}
+
 function create(competition){
     return axios.post("http://localhost:8000/api/competitions", competition);
 }
@@ -25,5 +31,5 @@ function deleteCompet(id){
 }
 
 export default {
-    findAll, find, create, update, deleteCompet
+    findAll, find, findTeam, create, update, deleteCompet
 }
