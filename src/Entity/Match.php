@@ -45,10 +45,6 @@ class Match
      */
     private $visitorTeamGoal;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $matchDay;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -59,6 +55,17 @@ class Match
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerMatch", mappedBy="idMatch")
      */
     private $playerMatches;
+
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $Date;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $MatchDay;
 
 
     public function __construct()
@@ -150,18 +157,7 @@ class Match
 
         return $this;
     }
-
-    public function getMatchDay(): ?int
-    {
-        return $this->matchDay;
-    }
-
-    public function setMatchDay(int $matchDay): self
-    {
-        $this->matchDay = $matchDay;
-
-        return $this;
-    }
+    
 
     public function getRound(): ?string
     {
@@ -202,6 +198,30 @@ class Match
                 $playerMatch->setIdMatch(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->Date;
+    }
+
+    public function setDate(?\DateTimeInterface $Date): self
+    {
+        $this->Date = $Date;
+
+        return $this;
+    }
+
+    public function getMatchDay(): ?int
+    {
+        return $this->MatchDay;
+    }
+
+    public function setMatchDay(int $MatchDay): self
+    {
+        $this->MatchDay = $MatchDay;
 
         return $this;
     }

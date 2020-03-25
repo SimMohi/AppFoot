@@ -15,8 +15,11 @@ Use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CompetitionRepository")
- * @ApiResource
+ * @ApiResource(
+ *  denormalizationContext={"disable_type_enforcement"=true}
+ *)
  */
+
 class Competition
 {
     /**
@@ -52,6 +55,11 @@ class Competition
      * @ApiSubresource
      */
     private $teams;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $matchDayNumber;
 
     public function __construct()
     {
@@ -126,6 +134,18 @@ class Competition
                 $team->setIdCompetition(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMatchDayNumber(): ?int
+    {
+        return $this->matchDayNumber;
+    }
+
+    public function setMatchDayNumber(int $matchDayNumber): self
+    {
+        $this->matchDayNumber = $matchDayNumber;
 
         return $this;
     }

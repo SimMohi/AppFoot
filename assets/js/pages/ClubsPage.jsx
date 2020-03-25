@@ -31,7 +31,7 @@ const ClubsPage = props => {
 
     return ( <>
         <h1>Liste des clubs</h1>
-        <Link to={"/club/new/"} className={"btn btn-info float-right"}>Nouvelle compétition</Link>
+        <Link to={"/club/new/"} className={"btn btn-info float-right"}>Nouvelle équipe</Link>
         <table className="table table-hover">
             <thead>
             <tr>

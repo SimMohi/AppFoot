@@ -11,7 +11,6 @@ const CompetitionsPage = props => {
         try {
             const data = await CompetitionsAPI.findAll();
             setCompetitions(data);
-            console.log(competitions);
         } catch (error) {
             console.log(error.response);
         }

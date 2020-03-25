@@ -61,14 +61,16 @@ const  CompetitionViewPage = props => {
                       <td>{team.id}</td>
                       <td>{team.idClub.name}</td>
                       <td>{team.nbrMatchs}</td>
-                      <td>{team.won}</td>
-                      <td>{team.drawn}</td>
-                      <td>{team.lost}</td>
-                      <td>{team.nbrPoints}</td>
+                      <td>{team.won || 0} </td>
+                      <td>{team.drawn || 0}</td>
+                      <td>{team.lost || 0}</td>
+                      <td>{team.nbrPoints || 0}</td>
                   </tr>
               )}
               </tbody>
           </table>
+
+          <Link to={"/competition/"+id+"/matchs"} className={"btn btn-info float-right"}>Ajouter des matchs</Link>
       </>
     );
 }

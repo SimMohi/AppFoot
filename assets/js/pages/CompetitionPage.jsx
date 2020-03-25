@@ -13,6 +13,7 @@ const CompetitionPage = props => {
         name: "",
         format: "",
         season: "",
+        matchDayNumber: ""
     });
 
     // const [idClubs, setIdClubs] = useState({});
@@ -44,14 +45,15 @@ const CompetitionPage = props => {
         name: "",
         format: "",
         season: "",
+        matchDayNumber: ""
     });
 
     const [editing, setEditing] = useState(false);
 
     const fetchCompetition = async id => {
         try {
-            const { name, format, season} = await CompetitionsAPI.find(id);
-            setCompetition({ name, format, season});
+            const { name, format, season, matchDayNumber} = await CompetitionsAPI.find(id);
+            setCompetition({ name, format, season, matchDayNumber});
         } catch (error) {
             console.log(error.response);
         }
@@ -118,6 +120,7 @@ const CompetitionPage = props => {
                 <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet} error={errors.name}/>
                 <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChangeCompet} error={errors.format}/>
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
+                <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet} error={errors.matchDayNumber}></Field>
                 <div className="form-check">
                     {clubs.map(club =>
                         <div className="form-check" key={club.id}>
