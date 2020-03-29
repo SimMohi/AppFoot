@@ -32,7 +32,6 @@ const CompetitionsPage = props => {
         }
     };
 
-    console.log(competitions);
     return ( <>
         <h1>Liste des compétitions</h1>
         <Link to={"/competition/new/"} className={"btn btn-info float-right"}>Nouvelle compétition</Link>

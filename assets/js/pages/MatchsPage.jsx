@@ -7,7 +7,7 @@ const MatchPages = props => {
     const [teams, setTeams] = useState([]);
     const [matchDayNumber, setMatchDayNumber] = useState(0);
     const [numberTeam, setNumberTeam] = useState(0);
-    const [search, setSearch] = useState([]);
+    const [selectedTeams, setSelectedTeams] = useState({});
 
     const FindMatchDayNumber = async () => {
         const compet = await CompetitionsAPI.find(id);
@@ -32,49 +32,45 @@ const MatchPages = props => {
         return options
     }
 
+    const handleChange = ({ currentTarget }) => {
+        let { id, value } = currentTarget;
+        setSelectedTeams({...selectedTeams, [id] : value});
+    }
+
     const createOptionsTeam = (teams) => {
         let options = [];
+        options.push(<option key={"default"} value={"default"} disabled>Choissisez une équipe</option>)
         for (let i = 0; i < teams.length; i++) {
-            options.push(<option key={i} value={teams[i].idClub.name}>{teams[i].idClub.name}</option>)
+            options.push(<option key={i} value={teams[i].idClub.name} >{teams[i].idClub.name}</option>)
         }
         return options
     }
 
-
-    const handleSearch = ({ currentTarget }) => {
-        setSearch({...search, [currentTarget.id] : currentTarget.value});
-    };
-
     const createMatchFields = (numberTeam) => {
         let options = [];
         for (let i = 0; i < numberTeam; i = i+2) {
+            var j = i+1;
             options.push(
                 <tr key={i}>
                     <td>
-                        <input
-                        type="text"
-                        id={i}
-                        onChange={handleSearch}
-                        value={search[i] || ""}
-                        className="form-control"
-                        placeholder="Rechercher"
-                        />
+                        <select className="form-control selectMatch" id={"matchDay"+i} name={"matchDay"+i} value={selectedTeams["matchDay"+i] ||"default"} onChange={handleChange}>
+                            {createOptionsTeam(teams)}
+                        </select>
                     </td>
                     <td>-</td>
                     <td>
-                        <input
-                            type="text"
-                            id={i+1}
-                            onChange={handleSearch}
-                            value={search[i+1] || ""}
-                            className="form-control"
-                            placeholder="Rechercher"
-                        />
+                        <select className="form-control selectMatch" id={"matchDay"+j} name={"matchDay"+j} value={selectedTeams["matchDay"+j] ||"default"} onChange={handleChange}>
+                            {createOptionsTeam(teams)}
+                        </select>
                     </td>
                 </tr>
             )
         }
         return options
+    }
+
+    const handleSubmit = () => {
+        console.log(selectedTeams);
     }
 
 
@@ -88,9 +84,6 @@ const MatchPages = props => {
             <div className="form-group w-25">
                 <select className="form-control" id="matchDay" name={"matchDay"}>
                     {createOptions(matchDayNumber)}
-                </select>
-                <select className="form-control" id="matchDay" name={"matchDay"}>
-                    {createOptionsTeam(teams)}
                 </select>
             </div>
 
@@ -106,6 +99,7 @@ const MatchPages = props => {
                     {createMatchFields(numberTeam)}
                 </tbody>
             </table>
+            <button onClick={handleSubmit} className="btn btn-success float-right">Enregistrer</button>
         </>
     );
 }
