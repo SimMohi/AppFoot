@@ -15,6 +15,8 @@ import ClubsPage from "./pages/ClubsPage";
 import ClubPage from "./pages/ClubPage";
 import CompetitionViewPage from "./pages/CompetitionViewPage";
 import MatchPages from "./pages/MatchsPage";
+import CovoitsPage from "./pages/CovoitsPage";
+import CovoitPage from "./pages/CovoitPage";
 
 require("../css/app.css");
 
@@ -42,6 +44,8 @@ const App = () => {
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
                         <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
+                        <PrivateRoute path={"/covoit/:id"} component={CovoitPage}/>
+                        <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>
                         <PrivateRoute path={"/club"} component={ClubsPage}/>

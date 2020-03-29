@@ -41,9 +41,9 @@ const Navbar = ({ history }) => {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            About
-                        </a>
+                        <NavLink className="nav-link" to={"/covoit"}>
+                            Covoiturage
+                        </NavLink>
                     </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
