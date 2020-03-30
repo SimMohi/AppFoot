@@ -51,7 +51,7 @@ class Competition
     private $format;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="idCompetition", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="competition", orphanRemoval=true)
      * @ApiSubresource
      */
     private $teams;
@@ -119,7 +119,7 @@ class Competition
     {
         if (!$this->teams->contains($team)) {
             $this->teams[] = $team;
-            $team->setIdCompetition($this);
+            $team->setCompetition($this);
         }
 
         return $this;
@@ -130,8 +130,8 @@ class Competition
         if ($this->teams->contains($team)) {
             $this->teams->removeElement($team);
             // set the owning side to null (unless already changed)
-            if ($team->getIdCompetition() === $this) {
-                $team->setIdCompetition(null);
+            if ($team->getCompetition() === $this) {
+                $team->setCompetition(null);
             }
         }
 

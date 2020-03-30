@@ -45,7 +45,7 @@ class Club
     private $Logo;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="idClub", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="club", orphanRemoval=true)
      */
     private $teams;
 
@@ -107,7 +107,7 @@ class Club
     {
         if (!$this->teams->contains($team)) {
             $this->teams[] = $team;
-            $team->setIdClub($this);
+            $team->setClub($this);
         }
 
         return $this;
@@ -118,8 +118,8 @@ class Club
         if ($this->teams->contains($team)) {
             $this->teams->removeElement($team);
             // set the owning side to null (unless already changed)
-            if ($team->getIdClub() === $this) {
-                $team->setIdClub(null);
+            if ($team->getClub() === $this) {
+                $team->setClub(null);
             }
         }
 

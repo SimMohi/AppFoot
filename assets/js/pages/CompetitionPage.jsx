@@ -21,13 +21,13 @@ const CompetitionPage = props => {
     const idClubs = {};
 
     const postTeam = {
-        idClub: "",
-        idCompetition: "",
+        club: "",
+        competition: "",
     }
 
     const [team, setTeam] = useState({
-        idClub: "",
-        idCompetition: "",
+        club: "",
+        competition: "",
     });
 
     const [clubs, setClubs] = useState([]);
@@ -64,7 +64,7 @@ const CompetitionPage = props => {
             setEditing(true);
             fetchCompetition(id);
             getClubs();
-            setTeam({...team, ["idCompetition"] : "/api/competitions/"+id});
+            setTeam({...team, ["competition"] : "/api/competitions/"+id});
         }
     }, [id]);
 
@@ -94,8 +94,8 @@ const CompetitionPage = props => {
             }
             for (const index in idClubs) {
                 if(idClubs[index] === 1){
-                    postTeam["idCompetition"] = team["idCompetition"];
-                    postTeam["idClub"] = "/api/clubs/"+index;
+                    postTeam["competition"] = team["competition"];
+                    postTeam["club"] = "/api/clubs/"+index;
                     const responseTeam = await TeamsAPI.create(postTeam);
                 }
             }

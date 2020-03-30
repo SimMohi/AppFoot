@@ -17,17 +17,7 @@ Use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
  * @ApiResource(
  *     normalizationContext={"groups"={"teams_read"}},
- *     itemOperations={"teamNoClub"={
- *       "method"="get",
- *       "path"="/competitions/{id}/noTeams",
- *       "controller"="App\Controller\GetTeamNotInCompetitionController",
- *       "swagger_context"={
- *          "summary"="Return teams not in this competition",
- *       }
- *     }
- *  },
  * )
- *  @ApiFilter(OrderFilter::class)
  */
 class Team
 {
@@ -44,7 +34,7 @@ class Team
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"teams_read",})
      */
-    private $idClub;
+    private $club;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Competition", inversedBy="teams")
@@ -52,7 +42,7 @@ class Team
      * @Groups({"teams_read",})
      *
      */
-    private $idCompetition;
+    private $competition;
 
     /**
      * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
@@ -73,13 +63,20 @@ class Team
     private $lost;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Match", mappedBy="homeTeam", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="homeTeam")
      */
-    private $matches;
+    private $matchA;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="visitorTeam")
+     */
+    private $matchB;
+
 
     public function __construct()
     {
-        $this->matches = new ArrayCollection();
+        $this->matchA = new ArrayCollection();
+        $this->matchB = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,26 +84,26 @@ class Team
         return $this->id;
     }
 
-    public function getIdClub(): ?Club
+    public function getClub(): ?Club
     {
-        return $this->idClub;
+        return $this->club;
     }
 
-    public function setIdClub(?Club $idClub): self
+    public function setClub(?Club $club): self
     {
-        $this->idClub = $idClub;
+        $this->club = $club;
 
         return $this;
     }
 
-    public function getIdCompetition(): ?Competition
+    public function getCompetition(): ?Competition
     {
-        return $this->idCompetition;
+        return $this->competition;
     }
 
-    public function setIdCompetition(?Competition $idCompetition): self
+    public function setCompetition(?Competition $competition): self
     {
-        $this->idCompetition = $idCompetition;
+        $this->competition = $competition;
 
         return $this;
     }
@@ -147,36 +144,7 @@ class Team
         return $this;
     }
 
-    /**
-     * @return Collection|Match[]
-     */
-    public function getMatches(): Collection
-    {
-        return $this->matches;
-    }
 
-    public function addMatch(Match $match): self
-    {
-        if (!$this->matches->contains($match)) {
-            $this->matches[] = $match;
-            $match->setHomeTeam($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatch(Match $match): self
-    {
-        if ($this->matches->contains($match)) {
-            $this->matches->removeElement($match);
-            // set the owning side to null (unless already changed)
-            if ($match->getHomeTeam() === $this) {
-                $match->setHomeTeam(null);
-            }
-        }
-
-        return $this;
-    }
     /**
     * @Groups({"teams_read",})
     * @return integer
@@ -192,4 +160,66 @@ class Team
     public function getNbrPoints(){
         return $this->won * 3 + $this->drawn;
     }
+
+    /**
+     * @return Collection|Matc[]
+     */
+    public function getMatchA(): Collection
+    {
+        return $this->matchA;
+    }
+
+    public function addMatchA(Matche $matchA): self
+    {
+        if (!$this->matchA->contains($matchA)) {
+            $this->matchA[] = $matchA;
+            $matchA->setHomeTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatchA(Matche $matchA): self
+    {
+        if ($this->matchA->contains($matchA)) {
+            $this->matchA->removeElement($matchA);
+            // set the owning side to null (unless already changed)
+            if ($matchA->getHomeTeam() === $this) {
+                $matchA->setHomeTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Matc[]
+     */
+    public function getMatchB(): Collection
+    {
+        return $this->matchB;
+    }
+
+    public function addMatchB(Matche $matchB): self
+    {
+        if (!$this->matchB->contains($matchB)) {
+            $this->matchB[] = $matchB;
+            $matchB->setVisitorTeam($this);
+        }
+        return $this;
+    }
+
+    public function removeMatchB(Matche $matchB): self
+    {
+        if ($this->matchB->contains($matchB)) {
+            $this->matchB->removeElement($matchB);
+            // set the owning side to null (unless already changed)
+            if ($matchB->getVisitorTeam() === $this) {
+                $matchB->setVisitorTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

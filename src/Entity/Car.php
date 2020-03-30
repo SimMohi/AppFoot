@@ -44,7 +44,7 @@ class Car
     private $departurePlace;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="carId", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="car", orphanRemoval=true)
      */
     private $carPassengers;
 
@@ -118,7 +118,7 @@ class Car
     {
         if (!$this->carPassengers->contains($carPassenger)) {
             $this->carPassengers[] = $carPassenger;
-            $carPassenger->setCarId($this);
+            $carPassenger->setCar($this);
         }
 
         return $this;
@@ -129,8 +129,8 @@ class Car
         if ($this->carPassengers->contains($carPassenger)) {
             $this->carPassengers->removeElement($carPassenger);
             // set the owning side to null (unless already changed)
-            if ($carPassenger->getCarId() === $this) {
-                $carPassenger->setCarId(null);
+            if ($carPassenger->getCar() === $this) {
+                $carPassenger->setCar(null);
             }
         }
 

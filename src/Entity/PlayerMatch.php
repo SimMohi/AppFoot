@@ -19,7 +19,7 @@ class PlayerMatch
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Match", inversedBy="playerMatches")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Matche", inversedBy="playerMatches")
      */
     private $idMatch;
 
@@ -69,12 +69,12 @@ class PlayerMatch
         return $this->id;
     }
 
-    public function getIdMatch(): ?Match
+    public function getIdMatch(): ?Matche
     {
         return $this->idMatch;
     }
 
-    public function setIdMatch(?Match $idMatch): self
+    public function setIdMatch(?Matche $idMatch): self
     {
         $this->idMatch = $idMatch;
 

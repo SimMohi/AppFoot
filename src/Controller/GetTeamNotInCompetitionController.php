@@ -14,16 +14,16 @@ class GetTeamNotInCompetitionController extends AbstractController
     /**
      * @param Competition $competition
      */
-    public function __invoke(Competition $competition)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $teams = $em->getRepository(Team::class)->findAll();
-        $data = array();
-        foreach ($teams as $team){
-            $data[] = $team->getId();
-        }
-        $competTeams = $competition->getTeams();
-    }
+//    public function __invoke(Competition $competition)
+//    {
+//        $em = $this->getDoctrine()->getManager();
+//        $teams = $em->getRepository(Team::class)->findAll();
+//        $data = array();
+//        foreach ($teams as $team){
+//            $data[] = $team->getId();
+//        }
+//        $competTeams = $competition->getTeams();
+//    }
 
 
 

@@ -41,6 +41,7 @@ const  CompetitionViewPage = props => {
     const orderTeams = [...teams];
     orderTeams.sort(orderByPoints);
 
+    console.log(teams);
     return (
       <>
           <table className="table table-hover text-">
@@ -59,7 +60,7 @@ const  CompetitionViewPage = props => {
               {orderTeams.map(team =>
                   <tr key={team.id}>
                       <td>{team.id}</td>
-                      <td>{team.idClub.name}</td>
+                      <td>{team.club.name}</td>
                       <td>{team.nbrMatchs}</td>
                       <td>{team.won || 0} </td>
                       <td>{team.drawn || 0}</td>

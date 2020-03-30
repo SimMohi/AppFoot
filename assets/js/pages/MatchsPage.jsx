@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import TeamsAPI from "../services/TeamsAPI";
+import MatcheAPI from "../services/MatcheAPI";
 
 const MatchPages = props => {
     const {id} = props.match.params;
@@ -20,6 +21,9 @@ const MatchPages = props => {
         setSelectedMatchDay(currentTarget.value);
     }
 
+    const findMatches = async () => {
+
+    }
 
     const FindTeams = async () => {
         try {
@@ -53,7 +57,7 @@ const MatchPages = props => {
         let options = [];
         options.push(<option key={"default"} value={"default"} disabled>Choissisez une équipe</option>)
         for (let i = 0; i < teams.length; i++) {
-            options.push(<option key={i} value={teams[i].id} >{teams[i].idClub.name}</option>)
+            options.push(<option key={i} value={teams[i].id} >{teams[i].club.name}</option>)
         }
         return options
     }
@@ -85,11 +89,17 @@ const MatchPages = props => {
         for (const key in selectedTeamsA) {
             if (key in selectedTeamsB) {
                 console.log("Key :" + key + " value: " + selectedTeamsA[key] + "/" + selectedTeamsB[key]);
+                let matche = {
+                    homeTeam: "/api/teams/"+selectedTeamsA[key],
+                    visitorTeam: "/api/teams/"+selectedTeamsB[key],
+                    isOver: false,
+                }
+                MatcheAPI.create(matche);
             } else {
                 let sub = key.substr(8);
                 let num = parseInt(sub);
                 num = num + 1;
-                console.log("Match numéro " + num + " non complet");
+                console.log("Matche numéro " + num + " non complet");
             }
         }
         for (const key in selectedTeamsB) {
@@ -97,16 +107,16 @@ const MatchPages = props => {
                 let sub = key.substr(8);
                 let num = parseInt(sub);
                 num = num + 1;
-                console.log("Match numéro " + num + " non complet");
+                console.log("Matche numéro " + num + " non complet");
             }
         }
     }
 
-
     useEffect( () => {
         FindTeams();
         FindMatchDayNumber();
-    }, []);
+        console.log("ok");
+    }, [selectedMatchDay]);
 
     return(
         <>

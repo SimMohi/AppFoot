@@ -38,6 +38,13 @@ class AppFixtures extends Fixture
                 ->setPassword($hash);
             $manager->persist($user);
         }
+        $user = New User();
+        $hash = $this->encoder->encodePassword($user, 'password');
+        $user->setFirstName("Simon")
+            ->setLastName("Mohimont")
+            ->setEmail("simon.mohimont@hotmail.com")
+            ->setPassword($hash);
+        $manager->persist($user);
 
         $manager->flush();
     }

@@ -83,7 +83,7 @@ class User implements UserInterface
     private $cars;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="userId")
+     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="user")
      */
     private $carPassengers;
 
@@ -326,7 +326,7 @@ class User implements UserInterface
     {
         if (!$this->carPassengers->contains($carPassenger)) {
             $this->carPassengers[] = $carPassenger;
-            $carPassenger->setUserId($this);
+            $carPassenger->setUser($this);
         }
 
         return $this;
@@ -337,8 +337,8 @@ class User implements UserInterface
         if ($this->carPassengers->contains($carPassenger)) {
             $this->carPassengers->removeElement($carPassenger);
             // set the owning side to null (unless already changed)
-            if ($carPassenger->getUserId() === $this) {
-                $carPassenger->setUserId(null);
+            if ($carPassenger->getUser() === $this) {
+                $carPassenger->setUser(null);
             }
         }
 

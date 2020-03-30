@@ -20,39 +20,39 @@ class CarPassenger
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="carPassengers")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $userId;
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Car", inversedBy="carPassengers")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $carId;
+    private $car;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->userId;
+        return $this->user;
     }
 
-    public function setUserId(?User $userId): self
+    public function setUser(?User $user): self
     {
-        $this->userId = $userId;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getCarId(): ?Car
+    public function getCar(): ?Car
     {
-        return $this->carId;
+        return $this->car;
     }
 
-    public function setCarId(?Car $carId): self
+    public function setCar(?Car $car): self
     {
-        $this->carId = $carId;
+        $this->car = $car;
 
         return $this;
     }

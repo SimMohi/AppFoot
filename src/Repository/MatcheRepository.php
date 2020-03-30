@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\MatchDay;
+use App\Entity\Matche;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method MatchDay|null find($id, $lockMode = null, $lockVersion = null)
- * @method MatchDay|null findOneBy(array $criteria, array $orderBy = null)
- * @method MatchDay[]    findAll()
- * @method MatchDay[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Matche|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Matche|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Matche[]    findAll()
+ * @method Matche[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class MatchDayRepository extends ServiceEntityRepository
+class MatcheRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MatchDay::class);
+        parent::__construct($registry, Matche::class);
     }
 
     // /**
-    //  * @return MatchDay[] Returns an array of MatchDay objects
+    //  * @return Matc[] Returns an array of Matc objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class MatchDayRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?MatchDay
+    public function findOneBySomeField($value): ?Matc
     {
         return $this->createQueryBuilder('m')
             ->andWhere('m.exampleField = :val')
