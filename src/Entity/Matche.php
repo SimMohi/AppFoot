@@ -8,11 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MatcheRepository")
- * @ApiResource
+ * @ApiResource(
+ *     normalizationContext={"groups"={"matchs_read"}},
+ *     denormalizationContext={"disable_type_enforcement"=true}
+ * )
  * @ApiFilter(SearchFilter::class , properties={"matchDay": "exact"})
  */
 
@@ -22,38 +27,45 @@ class Matche
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"matchs_read",})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="matchA")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"matchs_read",})
      */
     private $homeTeam;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="matchB")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"matchs_read",})
      */
     private $visitorTeam;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read",})
      */
     private $homeTeamGoal;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read",})
      */
     private $visitorTeamGoal;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"matchs_read",})
      */
     private $date;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read",})
      */
     private $matchDay;
 

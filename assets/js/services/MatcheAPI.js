@@ -12,6 +12,12 @@ function find(id){
         .then(response => response.data);
 }
 
+function findMatchDay(matchDay){
+    return axios
+        .get("http://localhost:8000/api/matches?matchDay="+matchDay)
+        .then(response => response.data["hydra:member"]);
+}
+
 function create(matche){
     return axios.post("http://localhost:8000/api/matches", matche);
 }
@@ -25,5 +31,5 @@ function deleteMatche(id){
 }
 
 export default {
-    findAll, find, create, update, deleteMatche
+    findAll, find, findMatchDay, create, update, deleteMatche
 }

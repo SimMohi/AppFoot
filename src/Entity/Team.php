@@ -32,7 +32,7 @@ class Team
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Club", inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "matchs_read"})
      */
     private $club;
 
