@@ -12,6 +12,12 @@ function find(id){
         .then(response => response.data);
 }
 
+function findCompet(idCompet){
+    return axios
+        .get("http://localhost:8000/api/teams/?competition="+idCompet)
+        .then(response => response.data["hydra:member"]);
+}
+
 function create(team){
     return axios.post("http://localhost:8000/api/teams", team);
 }
@@ -25,5 +31,5 @@ function deleteTeam(id){
 }
 
 export default {
-    findAll, find, create, update, deleteTeam
+    findAll, find, findCompet, create, update, deleteTeam
 }

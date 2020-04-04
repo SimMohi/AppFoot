@@ -11,6 +11,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 Use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
 
 /**
  *
@@ -18,6 +20,7 @@ Use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     normalizationContext={"groups"={"teams_read"}},
  * )
+ * @ApiFilter(SearchFilter::class , properties={"competition": "exact"})
  */
 class Team
 {
@@ -25,7 +28,7 @@ class Team
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "matchs_read"})
      */
     private $id;
 
@@ -46,19 +49,19 @@ class Team
 
     /**
      * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read","matchs_read"})
      */
     private $won;
 
     /**
      * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "matchs_read"})
      */
     private $drawn;
 
     /**
      * @ORM\Column(type="integer", nullable=true, options={"default" : 0})
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "matchs_read"})
      */
     private $lost;
 

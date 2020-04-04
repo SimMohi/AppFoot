@@ -76,6 +76,7 @@ class Matche
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"matchs_read",})
      */
     private $isOver;
 

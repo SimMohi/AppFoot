@@ -3,10 +3,14 @@ import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import CovoitsPage from "./CovoitsPage";
 
 const CovoitPage = props => {
 
-    const {id} = props.match.params;
+    console.log(props);
+    const {id} = props.id;
     const [editing, setEditing] = useState(false);
     const [car, setCar] = useState({
         departurePlace: "",
@@ -55,7 +59,6 @@ const CovoitPage = props => {
         }
     }, [id]);
 
-    console.log(car);
     return(
         <>
             <h3>Choissisez une heure</h3>
@@ -68,7 +71,6 @@ const CovoitPage = props => {
                 <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining}/>
                 <div className="from-group">
                     <button type={"submit"} className="btn btn-success">Enregistrer</button>
-                    <Link to={"/covoit"} className={"btn btn-link"}>Retour à la page des covoiturages</Link>
                 </div>
             </form>
         </>

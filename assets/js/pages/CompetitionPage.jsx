@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import ClubsAPI from "../services/ClubsAPI";
 import TeamsAPI from "../services/TeamsAPI";
+import {toast} from "react-toastify";
 
 const CompetitionPage = props => {
 
@@ -87,9 +88,11 @@ const CompetitionPage = props => {
         event.preventDefault();
         try {
             if (editing){
-                const response = await CompetitionsAPI.update(id, competition)
+                const response = await CompetitionsAPI.update(id, competition);
+                toast.success("La compétition a bien été modifiée");
             } else {
                 const response = await CompetitionsAPI.create(competition);
+                toast.success("La compétition a bien été créée");
                 props.history.replace("/competition");
             }
             for (const index in idClubs) {
@@ -115,12 +118,12 @@ const CompetitionPage = props => {
     return  (
         <>
             {!editing && <h1>Création d'une nouvelle Compétition</h1> || <h1>Modification d'une Compétition</h1>}
-
             <form onSubmit={handleSubmit}>
                 <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet} error={errors.name}/>
                 <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChangeCompet} error={errors.format}/>
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
-                <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet} error={errors.matchDayNumber}></Field>
+                <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet}
+                       error={errors.matchDayNumber}></Field>
                 <div className="form-check">
                     {clubs.map(club =>
                         <div className="form-check" key={club.id}>

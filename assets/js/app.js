@@ -17,6 +17,10 @@ import CompetitionViewPage from "./pages/CompetitionViewPage";
 import MatchPages from "./pages/MatchsPage";
 import CovoitsPage from "./pages/CovoitsPage";
 import CovoitPage from "./pages/CovoitPage";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 require("../css/app.css");
 
@@ -53,6 +57,7 @@ const App = () => {
                     </Switch>
                 </main>
             </HashRouter>
+            <ToastContainer/>
         </AuthContext.Provider>
     );
 };

@@ -2,6 +2,7 @@ import React,{ useState, useContext} from 'react';
 import authAPI from "../services/authAPI";
 import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Fields";
+import {toast} from "react-toastify";
 
 const LoginPage = ({ history}) => {
     const {setIsAuthenticated} = useContext(AuthContext);
@@ -28,6 +29,7 @@ const LoginPage = ({ history}) => {
             setError("");
             setIsAuthenticated(true);
             history.replace("/customers");
+            toast.success("Vous vous êtes connecté avec succès");
         } catch (error) {
             setError("Le nom d'utilisateur et le mot de passe ne correspondent pas");
         }
