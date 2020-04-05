@@ -3,9 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+Use Symfony\Component\Serializer\Annotation\Groups;
+
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CarPassengerRepository")
+ * @ApiResource
  */
 class CarPassenger
 {
@@ -19,6 +24,7 @@ class CarPassenger
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="carPassengers")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"cars_read"})
      */
     private $user;
 

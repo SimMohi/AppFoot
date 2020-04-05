@@ -17,8 +17,6 @@ const CompetitionPage = props => {
         matchDayNumber: ""
     });
 
-    // const [idClubs, setIdClubs] = useState({});
-
     const idClubs = {};
 
     const postTeam = {

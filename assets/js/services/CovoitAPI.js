@@ -16,6 +16,10 @@ function create(car){
     return axios.post("http://localhost:8000/api/cars", car);
 }
 
+function addPassenger(car){
+    return axios.post("http://localhost:8000/api/car_passengers", car);
+}
+
 function update(id, car){
     return axios.put("http://localhost:8000/api/cars/" + id, car);
 }
@@ -25,5 +29,5 @@ function deleteCar(id){
 }
 
 export default {
-    findAll, find, create, update, deleteCar
+    findAll, find, create, addPassenger, update, deleteCar
 }

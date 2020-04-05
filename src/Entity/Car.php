@@ -6,11 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CarRepository")
  * @ApiResource(
- *  denormalizationContext={"disable_type_enforcement"=true}
+ *  denormalizationContext={"disable_type_enforcement"=true},
+ *  normalizationContext={"groups"={"cars_read"}},
+ *
  *)
  */
 class Car
@@ -19,32 +23,38 @@ class Car
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"cars_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="cars")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"cars_read"})
      */
     private $userId;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"cars_read"})
      */
     private $placeRemaining;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"cars_read"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"cars_read"})
      */
     private $departurePlace;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="car", orphanRemoval=true)
+     * @Groups({"cars_read"})
      */
     private $carPassengers;
 

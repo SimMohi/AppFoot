@@ -1,22 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import Field from "../components/forms/Fields";
-import {Link} from "react-router-dom";
 import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import CovoitsPage from "./CovoitsPage";
+import {toast} from "react-toastify";
+
 
 const CovoitPage = props => {
 
-    console.log(props);
-    const {id} = props.id;
+    const id = props.id;
+    console.log(id);
     const [editing, setEditing] = useState(false);
+
     const [car, setCar] = useState({
         departurePlace: "",
         date: new Date(),
         placeRemaining: "",
-        userId: "/api/users/1"
+        userId: "/api/users/6"
     });
 
     const [errors, setErrors] = useState({
@@ -34,11 +33,14 @@ const CovoitPage = props => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log(editing);
         try {
             if(editing){
                 const response = await CovoitAPI.update(id, car);
+                toast.success("Le covoiturage a bien été modifié");
             } else {
                 const response = await CovoitAPI.create(car);
+                toast.success("Le covoiturage a bien été créé");
             }
             setErrors({});
         } catch (error) {
@@ -54,10 +56,13 @@ const CovoitPage = props => {
     }
 
     useEffect(() => {
+        console.log(id);
         if (id !== "new") {
             setEditing(true);
         }
     }, [id]);
+
+    console.log(car.date);
 
     return(
         <>
@@ -70,11 +75,13 @@ const CovoitPage = props => {
                 <Field name={"departurePlace"} label={"Lieu de départ"} type={"text"} onChange={handleChangeCar} error={errors.departurePlace} value={car.departurePlace}/>
                 <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining}/>
                 <div className="from-group">
-                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
+                    <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
                 </div>
             </form>
         </>
     )
 }
+
+
 
 export default CovoitPage;

@@ -8,6 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -16,6 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *      "groups"={"users_read"}
  *  }
  * )
+ * @ApiFilter(SearchFilter::class , properties={"email": "exact"})
  */
 class User implements UserInterface
 {
@@ -47,13 +52,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "cars_read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "cars_read"})
      */
     private $lastName;
 

@@ -32,6 +32,17 @@ function setup(){
     }
 }
 
+function getUserInfo(){
+    const token = window.localStorage.getItem(("authToken"));
+
+    if (token) {
+        const {username: user} = jwtDecode(token);
+        return axios
+            .get("http://localhost:8000/api/users?email="+user)
+            .then(response => response.data["hydra:member"]);
+    }
+}
+
 function isAuthenticated(){
     const token = window.localStorage.getItem(("authToken"));
 
@@ -46,5 +57,5 @@ function isAuthenticated(){
 }
 
 export default {
-    authenticate, logout, setup, isAuthenticated
+    authenticate, getUserInfo, logout, setup, isAuthenticated
 };
