@@ -29,10 +29,14 @@ function update(id, car){
     return axios.put("http://localhost:8000/api/cars/" + id, car);
 }
 
+function patch(id, car){
+    return axios.patch("http://localhost:8000/api/cars/" + id, car);
+}
+
 function deleteCar(id){
     return axios.delete("http://localhost:8000/api/cars/" + id);
 }
 
 export default {
-    findAll, find, create, addPassenger, update, deleteCar, delPassenger
+    findAll, find, create, addPassenger, update, patch, deleteCar, delPassenger
 }

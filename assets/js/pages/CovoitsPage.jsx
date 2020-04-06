@@ -45,11 +45,11 @@ const CovoitsPage = props => {
     const chooseButton = covoit => {
         const passengers = covoit["carPassengers"];
         if (passengers.length == 0){
-            return <button onClick={() => subscribe(covoit.id)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+            return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
         for(var i = 0; i < passengers.length; i++){
             if (passengers[i]["user"]["@id"] == userConnected["@id"]){
-                return <button onClick={() => unSubscribe(passengers[i]["id"])} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
+                return <button onClick={() => unSubscribe(passengers[i]["id"], covoit)} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
             }
         }
     }
@@ -63,16 +63,24 @@ const CovoitsPage = props => {
         }
     }
 
-    const subscribe = id => {
+    const subscribe = (covoit) => {
         const user = userConnected["@id"];
-        const car = "/api/cars/"+id;
-        setCarPassenger({ user, car });
-        setReload("sub");
+        const car = "/api/cars/"+covoit.id;
+        //setCarPassenger({ user, car });
+        //setReload("sub");
+        console.log(covoit.placeRemaining);
     }
 
-    const unSubscribe = async id => {
+    const unSubscribe = async (id, covoit) => {
+        console.log(covoit);
+        const idCovoit = covoit["id"];
+        covoit["placeRemaining"] -= 1;
+        // covoit["userId"] = covoit["userId"]["@id"];
+        console.log(covoit);
+        console.log(idCovoit)
         try {
-            await CovoitAPI.delPassenger(id);
+            //await CovoitAPI.delPassenger(id);
+            await CovoitAPI.patch(idCovoit, covoit);
             toast.success("Vous vous êtes bien désinscris");
             setReload("unsub");
         } catch (e) {
