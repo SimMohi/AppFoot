@@ -15,6 +15,7 @@ const CovoitsPage = props => {
     const handleShow = () => setShow(true);
     const [covoits, setCovoits] = useState([]);
     const [userConnected, setUserConnected] = useState({});
+    const [reload, setReload] = useState("");
     const [carPassenger, setCarPassenger] = useState({
         user: "",
         car: ""
@@ -41,6 +42,18 @@ const CovoitsPage = props => {
         }
     };
 
+    const chooseButton = covoit => {
+        const passengers = covoit["carPassengers"];
+        if (passengers.length == 0){
+            return <button onClick={() => subscribe(covoit.id)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        }
+        for(var i = 0; i < passengers.length; i++){
+            if (passengers[i]["user"]["@id"] == userConnected["@id"]){
+                return <button onClick={() => unSubscribe(passengers[i]["id"])} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
+            }
+        }
+    }
+
     const getUserConnected = async () => {
         try{
             const userInfo = await authAPI.getUserInfo();
@@ -53,7 +66,18 @@ const CovoitsPage = props => {
     const subscribe = id => {
         const user = userConnected["@id"];
         const car = "/api/cars/"+id;
-        setCarPassenger({ user, car});
+        setCarPassenger({ user, car });
+        setReload("sub");
+    }
+
+    const unSubscribe = async id => {
+        try {
+            await CovoitAPI.delPassenger(id);
+            toast.success("Vous vous êtes bien désinscris");
+            setReload("unsub");
+        } catch (e) {
+            toast.error("La désinscription a échoué");
+        }
     }
 
     const addPassenger = async () =>{
@@ -65,10 +89,11 @@ const CovoitsPage = props => {
         }
     }
 
+
     useEffect( () => {
         findCovoits();
         getUserConnected();
-    }, [show]);
+    }, [show, reload]);
 
     useEffect( () => {
         if (carPassenger["user"] != '' && carPassenger["car"] != ""){
@@ -77,7 +102,6 @@ const CovoitsPage = props => {
     }, [carPassenger]);
 
     console.log(covoits);
-    console.log(carPassenger);
 
     return(
         <>
@@ -95,8 +119,8 @@ const CovoitsPage = props => {
                 </tr>
                 </thead>
                 <tbody>
-                {covoits.map(covoit =>
-                    <tr key={covoit.id}>
+                {covoits.map((covoit, index) =>
+                    <tr key={index}>
                         <td>{covoit.userId["firstName"]+" "+covoit.userId["lastName"]}</td>
                         <td>{covoit.departurePlace}</td>
                         <td>
@@ -105,12 +129,8 @@ const CovoitsPage = props => {
                             </Moment>
                         </td>
                         <td>{covoit.placeRemaining}</td>
-                        {covoit["carPassengers"].map(passenger =>
-                            passenger.user["@id"] == userConnected["@id"] && <td>coucou</td> || <td>salut</td>
-
-                        )}
                         <td>
-                            <td><button onClick={() => subscribe(covoit.id)} className="btn btn-sm btn-success mr-3">S'inscire</button></td>
+                            {chooseButton(covoit)}
                             <button onClick={() => handleDelete(covoit.id)} className="btn btn-sm btn-danger">Supprimer</button>
                         </td>
                     </tr>

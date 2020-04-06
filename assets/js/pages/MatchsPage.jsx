@@ -254,7 +254,6 @@ const MatchPages = props => {
                     toast.error("Erreur lors de l'encodage du score du match")
                 }
             }
-
         } else {
             toast.warn("Pas de changements détecté");
         }
