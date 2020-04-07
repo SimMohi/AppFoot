@@ -3,19 +3,21 @@ import Field from "../components/forms/Fields";
 import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
+import CompetitionsAPI from "../services/CompetitionsAPI";
 
 
 const CovoitPage = props => {
 
     const id = props.id;
-    console.log(id);
+    const userId = props.user["@id"];
+
     const [editing, setEditing] = useState(false);
 
     const [car, setCar] = useState({
         departurePlace: "",
         date: new Date(),
         placeRemaining: "",
-        userId: "/api/users/6"
+        userId: userId
     });
 
     const [errors, setErrors] = useState({
@@ -23,6 +25,17 @@ const CovoitPage = props => {
         date: "",
         placeRemaining: "",
     });
+
+    const fetchCar = async id => {
+        try {
+            const { departurePlace, date, placeRemaining, userId} = await CovoitAPI.find(id);
+            let userIdIris = userId["@id"];
+            setCar({ departurePlace, date, placeRemaining, userIdIris});
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
+
 
     const onChangeHour = date => setCar({...car, ["date"]: date });
 
@@ -33,7 +46,6 @@ const CovoitPage = props => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(editing);
         try {
             if(editing){
                 const response = await CovoitAPI.update(id, car);
@@ -56,13 +68,11 @@ const CovoitPage = props => {
     }
 
     useEffect(() => {
-        console.log(id);
         if (id !== "new") {
+            fetchCar(id);
             setEditing(true);
         }
     }, [id]);
-
-    console.log(car.date);
 
     return(
         <>

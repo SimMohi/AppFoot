@@ -7,19 +7,34 @@ import CovoitAPI from "../services/CovoitAPI";
 import Moment from "react-moment";
 import {toast} from "react-toastify";
 import authAPI from "../services/authAPI";
+import axios from 'axios';
+import Field from "../components/forms/Fields";
 
 const CovoitsPage = props => {
 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [show, setShow] = useState([
+        false, false
+    ]);
+    const [idModal, setIdeaModal] = useState("");
     const [covoits, setCovoits] = useState([]);
     const [userConnected, setUserConnected] = useState({});
-    const [reload, setReload] = useState("");
-    const [carPassenger, setCarPassenger] = useState({
-        user: "",
-        car: ""
-    });
+    const [reload, setReload] = useState(0);
+
+    const handleShow = (id, index) => {
+        setIdeaModal(id);
+        let showCopy = [...show];
+        showCopy[index] = true;
+        setShow(showCopy);
+    }
+
+    const handleClose = (index) => {
+        let showCopy = [...show];
+        showCopy[index] = false;
+        setShow(showCopy);
+    }
+
+    console.log(show);
+
 
     const findCovoits = async () => {
         try {
@@ -43,15 +58,24 @@ const CovoitsPage = props => {
     };
 
     const chooseButton = covoit => {
+        const placeRemaining = covoit["placeRemaining"];
         const passengers = covoit["carPassengers"];
-        if (passengers.length == 0){
-            return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
-        }
+
         for(var i = 0; i < passengers.length; i++){
             if (passengers[i]["user"]["@id"] == userConnected["@id"]){
                 return <button onClick={() => unSubscribe(passengers[i]["id"], covoit)} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
             }
         }
+        if (placeRemaining == 0){
+            return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        }
+        if (covoit.userId["@id"] == userConnected["@id"]){
+            return <Button className="btn btn-primary btn-sm mr-3" onClick={() => handleShow(covoit.id, 0)}>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
+            </Button>
+        }
+        // return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        return <button onClick={() => handleShow(covoit.id, 1)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
 
     const getUserConnected = async () => {
@@ -63,38 +87,46 @@ const CovoitsPage = props => {
         }
     }
 
-    const subscribe = (covoit) => {
+    const subscribe =  (covoit) => {
+        let copyCovoit = JSON.parse(JSON.stringify(covoit));
+        copyCovoit["placeRemaining"] -= 1;
+        copyCovoit["userId"] = copyCovoit["userId"]["@id"];
+        for(var i = 0; i < copyCovoit["carPassengers"].length; i++){
+            copyCovoit["carPassengers"][i] = copyCovoit["carPassengers"][i]["@id"];
+        }
         const user = userConnected["@id"];
         const car = "/api/cars/"+covoit.id;
-        //setCarPassenger({ user, car });
-        //setReload("sub");
-        console.log(covoit.placeRemaining);
-    }
+        const newPassenger = {user, car};
 
-    const unSubscribe = async (id, covoit) => {
-        console.log(covoit);
-        const idCovoit = covoit["id"];
-        covoit["placeRemaining"] -= 1;
-        // covoit["userId"] = covoit["userId"]["@id"];
-        console.log(covoit);
-        console.log(idCovoit)
         try {
-            //await CovoitAPI.delPassenger(id);
-            await CovoitAPI.patch(idCovoit, covoit);
-            toast.success("Vous vous êtes bien désinscris");
-            setReload("unsub");
-        } catch (e) {
-            toast.error("La désinscription a échoué");
-        }
-    }
-
-    const addPassenger = async () =>{
-        try {
-            await CovoitAPI.addPassenger(carPassenger);
+            axios.all([
+                axios.put("http://localhost:8000/api/cars/" + copyCovoit["id"], copyCovoit),
+                axios.post("http://localhost:8000/api/car_passengers", newPassenger),
+            ])
             toast.success("Vous vous êtes bien inscrit au covoiturage");
         } catch (e) {
             toast.error("L'inscription au covoiturage a échoué");
         }
+        setReload(reload+1);
+    }
+
+    const unSubscribe =  (id, covoit) => {
+        let copyCovoit = JSON.parse(JSON.stringify(covoit));
+        const idCovoit = copyCovoit["id"];
+        copyCovoit["placeRemaining"] += 1;
+        copyCovoit["userId"] = copyCovoit["userId"]["@id"];
+        for(var i = 0; i < copyCovoit["carPassengers"].length; i++){
+            copyCovoit["carPassengers"][i] = copyCovoit["carPassengers"][i]["@id"];
+        }
+        try {
+            axios.all([
+                axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
+                axios.delete("http://localhost:8000/api/car_passengers/"+ id),
+                ])
+        } catch (e) {
+            toast.error("La désinscription a échoué");
+        }
+        setReload(reload+1);
     }
 
 
@@ -103,18 +135,11 @@ const CovoitsPage = props => {
         getUserConnected();
     }, [show, reload]);
 
-    useEffect( () => {
-        if (carPassenger["user"] != '' && carPassenger["car"] != ""){
-            addPassenger();
-        }
-    }, [carPassenger]);
-
-    console.log(covoits);
 
     return(
         <>
             <h1>Espace covoiturage </h1>
-            <Button className="btn btn-primary float-right mb-3" onClick={handleShow}>
+            <Button className="btn btn-primary float-right mb-3" onClick={() => handleShow("new",0)}>
                 Nouveau covoiturage
             </Button>
             <table className="table table-hover">
@@ -145,11 +170,23 @@ const CovoitsPage = props => {
                 )}
                 </tbody>
             </table>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Nouveau covoiturage</Modal.Title>
+                    {idModal != "new" && <Modal.Title>Modifier le covoiturage</Modal.Title> || <Modal.Title>Nouveau covoiturage</Modal.Title>}
                 </Modal.Header>
-                <Modal.Body><CovoitPage id={"new"}/></Modal.Body>
+                <Modal.Body><CovoitPage id={idModal} user={userConnected}/></Modal.Body>
+            </Modal>
+            <Modal show={show[1]} onHide={() => handleClose(1)}>
+                <Modal.Header closeButton>
+                    Inscription au covoiturage
+                </Modal.Header>
+                <Modal.Body>
+                    <Field type={"text"} placeholder={"Commentaire pour le conducteur"} name={"comment"}/>
+                    <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numP"} min={0}/>
+                    <div className="from-group">
+                        <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                    </div>
+                </Modal.Body>
             </Modal>
         </>
     )
