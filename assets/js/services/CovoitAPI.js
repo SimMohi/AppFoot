@@ -16,8 +16,8 @@ function create(car){
     return axios.post("http://localhost:8000/api/cars", car);
 }
 
-function addPassenger(car){
-    return axios.post("http://localhost:8000/api/car_passengers", car);
+function addPassenger(carPass){
+    return axios.post("http://localhost:8000/api/car_passengers", carPass);
 }
 
 function delPassenger(id) {
@@ -29,6 +29,10 @@ function update(id, car){
     return axios.put("http://localhost:8000/api/cars/" + id, car);
 }
 
+function updateCarPass(id, carPass){
+    return axios.put("http://localhost:8000/api/car_passengers/" + id, carPass);
+}
+
 function patch(id, car){
     return axios.patch("http://localhost:8000/api/cars/" + id, car);
 }
@@ -38,5 +42,5 @@ function deleteCar(id){
 }
 
 export default {
-    findAll, find, create, addPassenger, update, patch, deleteCar, delPassenger
+    findAll, find, create, addPassenger, update, updateCarPass, patch, deleteCar, delPassenger
 }

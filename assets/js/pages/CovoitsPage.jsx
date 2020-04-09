@@ -15,13 +15,20 @@ const CovoitsPage = props => {
     const [show, setShow] = useState([
         false, false
     ]);
-    const [idModal, setIdeaModal] = useState("");
+    const [modalParam, setModalParam] = useState("");
     const [covoits, setCovoits] = useState([]);
     const [userConnected, setUserConnected] = useState({});
     const [reload, setReload] = useState(0);
+    const [newPassengers, setNewPassengers] = useState({
+        user: "",
+        car: "",
+        comment: "",
+        numberPassenger:"",
+        isAccepted: ""
+    })
 
     const handleShow = (id, index) => {
-        setIdeaModal(id);
+        setModalParam(id);
         let showCopy = [...show];
         showCopy[index] = true;
         setShow(showCopy);
@@ -33,9 +40,6 @@ const CovoitsPage = props => {
         setShow(showCopy);
     }
 
-    console.log(show);
-
-
     const findCovoits = async () => {
         try {
             const data = await CovoitAPI.findAll();
@@ -44,6 +48,11 @@ const CovoitsPage = props => {
             console.log(error.response);
         }
     }
+
+    const handleChange = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        setNewPassengers({...newPassengers, [name]: value});
+    };
 
     const handleDelete = async id => {
         const originalsCovoit = [...covoits];
@@ -67,15 +76,14 @@ const CovoitsPage = props => {
             }
         }
         if (placeRemaining == 0){
-            return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+            return <button className="btn btn-sm btn-success mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
         if (covoit.userId["@id"] == userConnected["@id"]){
-            return <Button className="btn btn-primary btn-sm mr-3" onClick={() => handleShow(covoit.id, 0)}>
+            return <Link to={"/covoit/"+covoit.id} className="btn btn-primary btn-sm mr-3">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
-            </Button>
+            </Link>
         }
-        // return <button onClick={() => subscribe(covoit)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
-        return <button onClick={() => handleShow(covoit.id, 1)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
 
     const getUserConnected = async () => {
@@ -85,6 +93,21 @@ const CovoitsPage = props => {
         } catch (error) {
             console.log(error.response);
         }
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        let copyNewPass = JSON.parse(JSON.stringify(newPassengers));
+        copyNewPass["user"] = userConnected["@id"];
+        copyNewPass["car"] = modalParam["@id"];
+        copyNewPass["isAccepted"] = false;
+        try{
+            await CovoitAPI.addPassenger(copyNewPass);
+            toast.success("Votre demande pour le covoiturage est enregistrée");
+        } catch (e) {
+            toast.error("Votre demande a échouée");
+        }
+        setReload(reload+1);
     }
 
     const subscribe =  (covoit) => {
@@ -120,7 +143,7 @@ const CovoitsPage = props => {
         }
         try {
             axios.all([
-                axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
+                //axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
                 axios.delete("http://localhost:8000/api/car_passengers/"+ id),
                 ])
         } catch (e) {
@@ -135,7 +158,7 @@ const CovoitsPage = props => {
         getUserConnected();
     }, [show, reload]);
 
-
+    console.log(modalParam);
     return(
         <>
             <h1>Espace covoiturage </h1>
@@ -172,20 +195,23 @@ const CovoitsPage = props => {
             </table>
             <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
-                    {idModal != "new" && <Modal.Title>Modifier le covoiturage</Modal.Title> || <Modal.Title>Nouveau covoiturage</Modal.Title>}
+                    {modalParam != "new" && <Modal.Title>Modifier le covoiturage</Modal.Title> || <Modal.Title>Nouveau covoiturage</Modal.Title>}
                 </Modal.Header>
-                <Modal.Body><CovoitPage id={idModal} user={userConnected}/></Modal.Body>
+                <Modal.Body><CovoitPage id={modalParam} user={userConnected}/></Modal.Body>
             </Modal>
             <Modal show={show[1]} onHide={() => handleClose(1)}>
                 <Modal.Header closeButton>
                     Inscription au covoiturage
                 </Modal.Header>
                 <Modal.Body>
-                    <Field type={"text"} placeholder={"Commentaire pour le conducteur"} name={"comment"}/>
-                    <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numP"} min={0}/>
-                    <div className="from-group">
-                        <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
-                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <Field type={"text"} placeholder={"Commentaire pour le conducteur"} name={"comment"} value={newPassengers["comment"]} onChange={handleChange}/>
+                        <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numberPassenger"} min={0} max={modalParam.placeRemaining}
+                               onChange={handleChange} value={newPassengers["numberPassenger"]}/>
+                        <div className="from-group">
+                            <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                        </div>
+                    </form>
                 </Modal.Body>
             </Modal>
         </>

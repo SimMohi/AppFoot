@@ -16,7 +16,7 @@ import ClubPage from "./pages/ClubPage";
 import CompetitionViewPage from "./pages/CompetitionViewPage";
 import MatchPages from "./pages/MatchsPage";
 import CovoitsPage from "./pages/CovoitsPage";
-import CovoitPage from "./pages/CovoitPage";
+import CovoitEditPage from "./pages/CovoitEditPage";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -48,7 +48,7 @@ const App = () => {
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
                         <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
-                        <PrivateRoute path={"/covoit/:id"} component={CovoitPage}/>
+                        <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>
                         <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>

@@ -3,7 +3,6 @@ import Field from "../components/forms/Fields";
 import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
-import CompetitionsAPI from "../services/CompetitionsAPI";
 
 
 const CovoitPage = props => {
@@ -17,7 +16,8 @@ const CovoitPage = props => {
         departurePlace: "",
         date: new Date(),
         placeRemaining: "",
-        userId: userId
+        userId: userId,
+        carPassengers: []
     });
 
     const [errors, setErrors] = useState({
@@ -28,9 +28,9 @@ const CovoitPage = props => {
 
     const fetchCar = async id => {
         try {
-            const { departurePlace, date, placeRemaining, userId} = await CovoitAPI.find(id);
+            const { departurePlace, date, placeRemaining, userId, carPassengers} = await CovoitAPI.find(id);
             let userIdIris = userId["@id"];
-            setCar({ departurePlace, date, placeRemaining, userIdIris});
+            setCar({ departurePlace, date, placeRemaining, userIdIris, carPassengers});
         } catch (error) {
             console.log(error.response);
         }

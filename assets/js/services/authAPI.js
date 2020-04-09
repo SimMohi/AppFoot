@@ -26,7 +26,7 @@ function setup(){
 
     if (token) {
         const { exp: expiration } = jwtDecode(token);
-        if (expiration > new Date().getTime() / 1000) {
+        if (expiration > new Date().getTime() / 10000) {
             setAxiosToken(token);
         }
     }
@@ -48,7 +48,7 @@ function isAuthenticated(){
 
     if (token) {
         const { exp: expiration } = jwtDecode(token);
-        if (expiration > new Date().getTime() / 1000) {
+        if (expiration > new Date().getTime() / 10000) {
             return true;
         }
         return false;
