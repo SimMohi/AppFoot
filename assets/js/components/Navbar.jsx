@@ -13,6 +13,7 @@ const Navbar = ({ history }) => {
         toast.info("Vous êtes désormais déconnecté");
         history.push("/login");
     };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-danger">
             <NavLink className="navbar-brand" to={"/"}>
@@ -47,6 +48,16 @@ const Navbar = ({ history }) => {
                             Covoiturage
                         </NavLink>
                     </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to={"/equipeRonvau"}>
+                            Gestion des équipes
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link" to={"/userAccess"}>
+                            Gestion des accès
+                        </NavLink>
+                    </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
                     {!isAuthenticated && <>
@@ -61,9 +72,16 @@ const Navbar = ({ history }) => {
                             </NavLink>
                         </li>
                     </> ||
-                        <li className="nav-item">
-                            <button onClick={handleLogout} className={"btn btn-danger"}>Déconnexion</button>
-                        </li>
+                        <>
+                            <li className="nav-item">
+                                <NavLink to={"/profil"} className="btn btn-danger ml-2 mr-2">
+                                    Mon profil
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <button onClick={handleLogout} className={"btn btn-danger"}>Déconnexion</button>
+                            </li>
+                        </>
                     }
                 </ul>
             </div>

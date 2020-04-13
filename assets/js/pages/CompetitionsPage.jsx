@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import {Link} from "react-router-dom";
-import ClubsAPI from "../services/ClubsAPI";
 
 const CompetitionsPage = props => {
     const [competitions, setCompetitions] = useState([]);
@@ -32,7 +30,6 @@ const CompetitionsPage = props => {
         }
     };
 
-    console.log(competitions);
     return ( <>
         <h1>Liste des compétitions</h1>
         <Link to={"/competition/new/"} className={"btn btn-info float-right"}>Nouvelle compétition</Link>

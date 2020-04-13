@@ -20,6 +20,11 @@ import CovoitEditPage from "./pages/CovoitEditPage";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ProfilPage from "./pages/ProfilPage";
+import RegisterPage from "./pages/RegisterPage";
+import RonvauTeamsPage from "./pages/RonvauTeamsPage";
+import RonvauTeamPage from "./pages/RonvauTeamPage";
+import UserAcceptPage from "./pages/UserAcceptPage";
 
 
 require("../css/app.css");
@@ -44,6 +49,7 @@ const App = () => {
                             path="/login"
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
+                        <PrivateRoute path={"/profil"} component={ProfilPage}/>
                         <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
@@ -53,6 +59,10 @@ const App = () => {
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>
                         <PrivateRoute path={"/club"} component={ClubsPage}/>
+                        <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
+                        <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
+                        <PrivateRoute path={"/userAccess"} component={UserAcceptPage}/>
+                        <Route path={"/register"} component={RegisterPage}/>
                         <Route path="/" component={HomePage} />
                     </Switch>
                 </main>

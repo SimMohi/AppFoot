@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TeamRonvauRepository")
+ * @ApiResource
  */
 class TeamRonvau
 {
@@ -20,6 +23,8 @@ class TeamRonvau
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="La catégorie est obligatoire")
+     * @Assert\Length(min=2, minMessage="La catégorie doit faire entre 2 et 255 caractères", max=255, maxMessage="La catégorie doit faire entre 2 et 255 caractères")
      */
     private $category;
 

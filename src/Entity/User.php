@@ -10,6 +10,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 
 
@@ -20,7 +22,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      "groups"={"users_read"}
  *  }
  * )
- * @ApiFilter(SearchFilter::class , properties={"email": "exact"})
+ * @ApiFilter(SearchFilter::class , properties={"email": "exact", "isAccepted": "exact"})
  */
 class User implements UserInterface
 {
@@ -34,7 +36,9 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"users_read"}) 
+     * @Groups({"users_read"})
+     * @Assert\NotBlank(message="L'email doit être renseigné !")
+     * @Assert\Email(message="L'adresse email doit avoir un format valide !")
      */
     private $email;
 
@@ -47,18 +51,23 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"users_read", "cars_read"})
+     * @Assert\NotBlank(message="Le prénom est obligatoire")
+     * @Assert\Length(min=3, minMessage="Le prénom doit faire entre 3 et 255 caractères", max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"users_read", "cars_read"})
+     * @Assert\NotBlank(message="Le nom de famille est obligatoire")
+     * @Assert\Length(min=3, minMessage="Le nom de famille doit faire entre 3 et 255 caractères", max=255, maxMessage="Le nom de famille doit faire entre 3 et 255 caractères")
      */
     private $lastName;
 
@@ -92,12 +101,19 @@ class User implements UserInterface
      */
     private $carPassengers;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $isAccepted;
+
     public function __construct()
     {
         $this->userTeams = new ArrayCollection();
         $this->playerOfTheMatches = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->carPassengers = new ArrayCollection();
+        $this->isAccepted = false;
     }
 
     public function getId(): ?int
@@ -346,6 +362,18 @@ class User implements UserInterface
                 $carPassenger->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsAccepted(): ?bool
+    {
+        return $this->isAccepted;
+    }
+
+    public function setIsAccepted(bool $isAccepted): self
+    {
+        $this->isAccepted = $isAccepted;
 
         return $this;
     }
