@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import CompetitionsAPI from "../services/CompetitionsAPI";
 import {toast} from "react-toastify";
-import TeamsAPI from "../services/TeamsAPI";
 import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import RonvauTeamAPI from "../services/RonvauTeamAPI";
+import ReactSearchBox from 'react-search-box'
+import usersAPI from "../services/usersAPI";
+
 
 const RonvauTeamPage = props => {
 
     const {id} = props.match.params;
     const [editing, setEditing] = useState(false);
+    const [users, setUsers] = useState([]);
 
     const [ronvauTeam, setRonvauTeam] = useState({
         category: "",
@@ -29,6 +31,19 @@ const RonvauTeamPage = props => {
             console.log(error.response);
         }
     };
+
+    const fetchUsers = async () =>{
+        const allUsers = await usersAPI.findAll();
+        let newArray = [];
+        for (let i = 0; i < allUsers.length; i++){
+            newArray.push({
+                "key": allUsers[i].id,
+                "value": allUsers[i].lastName+ " " + allUsers[i].firstName,
+            });
+        }
+        setUsers(newArray);
+    }
+
 
     const handleChange = ({ currentTarget }) => {
         const { name, value } = currentTarget;
@@ -65,9 +80,11 @@ const RonvauTeamPage = props => {
         if (id !== "new") {
             setEditing(true);
             fetchRonvauTeam(id);
+            fetchUsers();
         }
     }, [id]);
 
+    console.log(users);
     return  (
         <>
             {!editing && <h1>Création d'une nouvelle équipe</h1> || <h1>Modification d'une équipe</h1>}
@@ -79,6 +96,22 @@ const RonvauTeamPage = props => {
                     <Link to={"/equipeRonvau"} className={"btn btn-link"}>Retour à la liste</Link>
                 </div>
             </form>
+            <div>
+                <div className="mt-4">
+                    <ReactSearchBox
+                        placeholder="Chercher un utilisateur"
+                        data={users}
+                        onSelect={record => console.log(record)}
+                        onFocus={() => {
+                            console.log('This function is called when is focussed')
+                        }}
+                        onChange={value => console.log(value)}
+                        fuseConfigs={{
+                            threshold: 0.05,
+                        }}
+                    />
+                </div>
+            </div>
         </>
     );
 }
