@@ -6,6 +6,7 @@ import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import ReactSearchBox from 'react-search-box'
 import usersAPI from "../services/usersAPI";
 import UsersTeamAPI from "../services/UsersTeamAPI";
+import CompetitionsAPI from "../services/CompetitionsAPI";
 
 
 const RonvauTeamPage = props => {
@@ -13,10 +14,12 @@ const RonvauTeamPage = props => {
     const {id} = props.match.params;
     const [editing, setEditing] = useState(false);
     const [users, setUsers] = useState([]);
+    const [compet, setCompet] = useState([]);
     const [reload, setReload] = useState(0);
     const [selectUser, setSelectUser] = useState({
         role: 0,
     });
+    const [selectCompet, setSelectCompet] = useState("");
 
     const [ronvauTeam, setRonvauTeam] = useState({
         category: "",
@@ -29,6 +32,21 @@ const RonvauTeamPage = props => {
         select: ""
     });
 
+    const fetchCompetition = async id => {
+        try {
+            const competitions = await CompetitionsAPI.findAll();
+            let newArray = [];
+            for (let i = 0; i < competitions.length; i++){
+                newArray.push({
+                    "key": competitions[i].id,
+                    "value": competitions[i].name
+                });
+            }
+            setCompet(newArray);
+        } catch (error) {
+            console.log(error.response);
+        }
+    };
 
     const fetchRonvauTeam = async id => {
         try {
@@ -40,15 +58,19 @@ const RonvauTeamPage = props => {
     };
 
     const fetchUsers = async () =>{
-        const allUsers = await usersAPI.findAll();
-        let newArray = [];
-        for (let i = 0; i < allUsers.length; i++){
-            newArray.push({
-                "key": allUsers[i].id,
-                "value": allUsers[i].lastName+ " " + allUsers[i].firstName,
-            });
+        try{
+            const allUsers = await usersAPI.findAll();
+            let newArray = [];
+            for (let i = 0; i < allUsers.length; i++){
+                newArray.push({
+                    "key": allUsers[i].id,
+                    "value": allUsers[i].lastName+ " " + allUsers[i].firstName,
+                });
+            }
+            setUsers(newArray);
+        } catch (error) {
+            console.log(error.response);
         }
-        setUsers(newArray);
     }
 
 
@@ -59,13 +81,17 @@ const RonvauTeamPage = props => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let copyRonvauTeam = JSON.parse(JSON.stringify(ronvauTeam));
+        for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){
+            copyRonvauTeam["userTeams"][i] = copyRonvauTeam["userTeams"][i]["@id"];
+        }
         try {
             if (editing){
-                await RonvauTeamAPI.update(id, ronvauTeam);
+                await RonvauTeamAPI.update(id, copyRonvauTeam);
                 toast.success("L'équipe a bien été modifiée");
                 props.history.replace("/equipeRonvau");
             } else {
-                await RonvauTeamAPI.create(ronvauTeam);
+                await RonvauTeamAPI.create(copyRonvauTeam);
                 toast.success("L'équipe a bien été créée");
                 props.history.replace("/equipeRonvau");
             }
@@ -84,7 +110,7 @@ const RonvauTeamPage = props => {
 
     const AddUserTeam = async () =>{
         if (typeof selectUser["id"] == 'undefined'){
-            toast.error("Renseigner un joueur");
+            toast.error("Renseigner un utilisateur");
             return;
         }
         let newUserTeam = {
@@ -116,6 +142,15 @@ const RonvauTeamPage = props => {
         console.log(currentTarget);
     }
 
+    const AddCompetTeam = () => {
+        if (typeof selectCompet == 'undefined' || selectCompet == ""){
+            toast.error("Renseigner une compétition");
+            return;
+        }
+        let copyRonvauTeam = JSON.parse(JSON.stringify(ronvauTeam));
+        copyRonvauTeam["competition"] = "/api/competitions/"+selectCompet;
+    }
+
     const handleDelete = async (idUserTeam) => {
         try{
             await UsersTeamAPI.deleteUserTeam(idUserTeam);
@@ -132,65 +167,100 @@ const RonvauTeamPage = props => {
             setEditing(true);
             fetchRonvauTeam(id);
             fetchUsers();
+            fetchCompetition();
         }
     }, [id, reload]);
 
-    console.log(ronvauTeam);
     return  (
         <>
             {!editing && <h1>Création d'une nouvelle équipe</h1> || <h1>Modification d'une équipe</h1>}
-            <form onSubmit={handleSubmit}>
-                <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
-                <Field name={"coach"} label={"Coach de l'équipe"} type={"text"} value={ronvauTeam.coach} onChange={handleChange} error={errors.coach}/>
-                <div className={"container"}>
+            <div className={"container"}>
+                <form onSubmit={handleSubmit}>
                     <div className="row">
-                        <div className="mt-3 col-4 p-0">
-                            <ReactSearchBox
-                                placeholder="Chercher un utilisateur"
-                                data={users}
-                                onSelect={record => setSelectUser({...selectUser, ["id"] : record["key"]})}
-                                onFocus={() => {
-                                }}
-                                onChange={value => console.log(value)}
-                                fuseConfigs={{
-                                    threshold: 0.05,
-                                }}
-                            />
+                        <div className="col-8">
+                            <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
+                            <Field name={"coach"} label={"Coach de l'équipe"} type={"text"} value={ronvauTeam.coach} onChange={handleChange} error={errors.coach}/>
+                            {editing &&
+                                <table className="mt-5 table table-hover text-center">
+                                    <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>joueur</th>
+                                        <th>Staff</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {ronvauTeam["userTeams"].map(userTeam =>
+                                        <tr key={userTeam.id}>
+                                            <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
+                                            <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i class="fas fa-times"></i>}</td>
+                                            <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
+                                            <td>
+                                                <button onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                            </td>
+                                        </tr>
+                                    )}
+                                    </tbody>
+                                </table>}
                         </div>
-                        <select className="form-control col-2 mt-3 ml-3" name={"role"} value={selectUser["role"]} onChange={handleChangeSelect}>
-                            <option value={0}>Joueur</option>
-                            <option value={1}>Coach</option>
-                            <option value={2}>Coach - Joueur</option>
-                        </select>
-                        <button type={"button"} onClick={() => AddUserTeam()} className="btn btn-primary col-1 mt-3 ml-3">Ajouter</button>
+                        <div className="col-4">
+                            <div className="col">
+                                {editing &&
+                                <>
+                                    <div className="mt-3 p-0">
+                                        <ReactSearchBox
+                                            placeholder="Ajouter l'équipe à une compétition"
+                                            data={compet}
+                                            onSelect={record => setSelectCompet(record["key"])}
+                                            onFocus={() => {
+                                            }}
+                                            onChange={() => {}}
+                                            fuseConfigs={{
+                                                threshold: 0.05,
+                                            }}
+                                        />
+                                    </div>
+                                    <div className={"mt-3 mb-5"}>
+                                        <button type={"button"} onClick={() => AddCompetTeam()}
+                                                className="btn btn-primary ml-auto d-block">Ajouter
+                                        </button>
+                                    </div>
+                                    <div className="mt-3 p-0">
+                                        <ReactSearchBox
+                                            placeholder="Ajouter un utilisateur à l'équipe"
+                                            data={users}
+                                            onSelect={record => setSelectUser({...selectUser, ["id"]: record["key"]})}
+                                            onFocus={() => {
+                                            }}
+                                            onChange={() => {}}
+                                            fuseConfigs={{
+                                                threshold: 0.05,
+                                            }}
+                                        />
+                                    </div>
+                                    <select className="form-control mt-3" name={"role"} value={selectUser["role"]}
+                                            onChange={handleChangeSelect}>
+                                        <option value={0}>Joueur</option>
+                                        <option value={1}>Coach</option>
+                                        <option value={2}>Coach - Joueur</option>
+                                    </select>
+                                    <div className={"mt-3 mb-5"}>
+                                        <button type={"button"} onClick={() => AddUserTeam()}
+                                                className="btn btn-primary ml-auto d-block">Ajouter
+                                        </button>
+                                    </div>
+                                </>
+                                }
+                                <div className="from-group mt-5">
+                                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
+                                    <Link to={"/equipeRonvau"} className={"btn btn-link"}>Retour à la liste</Link>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className="from-group mt-3 float-right">
-                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
-                    <Link to={"/equipeRonvau"} className={"btn btn-link"}>Retour à la liste</Link>
-                </div>
-            </form>
-            <table className="mt-5 table table-hover text-center">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>joueur</th>
-                    <th>Staff</th>
-                </tr>
-                </thead>
-                <tbody>
-                {ronvauTeam["userTeams"].map(userTeam =>
-                    <tr key={userTeam.id}>
-                        <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
-                        <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i class="fas fa-times"></i>}</td>
-                        <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                        <td>
-                            <button onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
-                        </td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+                </form>
+            </div>
         </>
     );
 }

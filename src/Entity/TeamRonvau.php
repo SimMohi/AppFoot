@@ -62,6 +62,11 @@ class TeamRonvau
      */
     private $eventsTeams;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Competition", inversedBy="teamRonvau", cascade={"persist", "remove"})
+     */
+    private $competition;
+
     public function __construct()
     {
         $this->userTeams = new ArrayCollection();
@@ -199,6 +204,18 @@ class TeamRonvau
                 $eventsTeam->setIdTeamRonvau(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCompetition(): ?Competition
+    {
+        return $this->competition;
+    }
+
+    public function setCompetition(?Competition $competition): self
+    {
+        $this->competition = $competition;
 
         return $this;
     }
