@@ -7,10 +7,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TeamRonvauRepository")
- * @ApiResource
+ * @ApiResource(
+ *      normalizationContext={"groups"={"team_ronvau_read"}},
+ * )
  */
 class TeamRonvau
 {
@@ -18,6 +22,7 @@ class TeamRonvau
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"team_ronvau_read"})
      */
     private $id;
 
@@ -25,21 +30,25 @@ class TeamRonvau
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="La catégorie est obligatoire")
      * @Assert\Length(min=2, minMessage="La catégorie doit faire entre 2 et 255 caractères", max=255, maxMessage="La catégorie doit faire entre 2 et 255 caractères")
+     * @Groups({"team_ronvau_read"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"team_ronvau_read"})
      */
     private $coach;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"team_ronvau_read"})
      */
     private $coachPhone;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="teamRonvauId")
+     * @Groups({"team_ronvau_read"})
      */
     private $userTeams;
 

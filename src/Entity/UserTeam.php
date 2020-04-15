@@ -3,11 +3,17 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserTeamRepository")
+ * @ApiResource(
+ *     normalizationContext={"groups"={"user_team_read"}},
+ * )
  */
 class UserTeam
 {
@@ -15,12 +21,14 @@ class UserTeam
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"team_ronvau_read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="userTeams")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"team_ronvau_read"})
      */
     private $userId;
 
@@ -32,11 +40,13 @@ class UserTeam
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"team_ronvau_read"})
      */
     private $isStaff;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"team_ronvau_read"})
      */
     private $isPlayer;
 

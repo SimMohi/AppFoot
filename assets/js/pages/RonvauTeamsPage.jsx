@@ -35,11 +35,12 @@ const RonvauTeamsPage = () => {
         return ( <>
             <h1>Liste des equipes</h1>
             <Link to={"/equipeRonvau/new/"} className={"btn btn-info float-right"}>Nouvelle équipe</Link>
-            <table className="table table-hover">
+            <table className="table table-hover text-center">
                 <thead>
                 <tr>
                     <th>Catégorie</th>
                     <th>coach</th>
+                    <th>Nombre de joueurs</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,8 +48,8 @@ const RonvauTeamsPage = () => {
                     <tr key={ronvauTeam.id}>
                         <td>{ronvauTeam.category}</td>
                         <td>{ronvauTeam.coach}</td>
+                        <td>{ronvauTeam["userTeams"].length}</td>
                         <td>
-                            {/*<Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>*/}
                             <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-primary mr-3"}>Editer</Link>
                             <button onClick={() => handleDelete(ronvauTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
                         </td>
