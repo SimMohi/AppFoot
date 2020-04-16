@@ -3,9 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TrainingDayRepository")
+ * @ApiResource
+ * @ApiFilter(SearchFilter::class , properties={"teamRonvau": "exact"})
  */
 class TrainingDay
 {
@@ -17,7 +22,7 @@ class TrainingDay
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $day;
 
@@ -27,17 +32,27 @@ class TrainingDay
      */
     private $teamRonvau;
 
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $hourStart;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $hourEnd;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDay(): ?int
+    public function getDay(): ?string
     {
         return $this->day;
     }
 
-    public function setDay(int $day): self
+    public function setDay(string $day): self
     {
         $this->day = $day;
 
@@ -52,6 +67,30 @@ class TrainingDay
     public function setTeamRonvau(?TeamRonvau $teamRonvau): self
     {
         $this->teamRonvau = $teamRonvau;
+
+        return $this;
+    }
+
+    public function getHourStart(): ?\DateTimeInterface
+    {
+        return $this->hourStart;
+    }
+
+    public function setHourStart(\DateTimeInterface $hourStart): self
+    {
+        $this->hourStart = $hourStart;
+
+        return $this;
+    }
+
+    public function getHourEnd(): ?\DateTimeInterface
+    {
+        return $this->hourEnd;
+    }
+
+    public function setHourEnd(\DateTimeInterface $hourEnd): self
+    {
+        $this->hourEnd = $hourEnd;
 
         return $this;
     }

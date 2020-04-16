@@ -20,10 +20,15 @@ function findMatchDay(matchDay){
 
 function findCompetMatchDay(compet, matchDay){
     return axios
-        .get("http://localhost:8000/getRonvauMatch/"+compet+"/"+matchDay)
+        .get("http://localhost:8000/getMatchCompetition/"+compet+"/"+matchDay)
         .then(response => response.data);
 }
 
+function getRonvauTeamMatch(idRTeam){
+    return axios
+        .get("http://localhost:8000/getRonvauTeamMatch/"+idRTeam)
+        .then(response => response.data);
+}
 
 function create(matche){
     return axios.post("http://localhost:8000/api/matches", matche);
@@ -38,5 +43,5 @@ function deleteMatche(id){
 }
 
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, deleteMatche
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche
 }

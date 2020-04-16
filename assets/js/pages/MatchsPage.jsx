@@ -108,10 +108,10 @@ const MatchPages = props => {
                                     <option value={matchProgrammed[i].homeTeam.club.name}>{matchProgrammed[i].homeTeam.club.name}</option>
                                 </select>
                                 {matchProgrammed[i].isOver &&
-                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"] || ""} onChange={changeScore}
+                                <input type="number" min={0} value={matchProgrammed[i]["homeTeamGoal"]} onChange={changeScore}
                                        className={"col-2 m-2"} id={"scoreA" + i} disabled={true}/>
                                 ||
-                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"] || ""} onChange={changeScore}
+                                <input type="number" min={0} value={matchProgrammed[i]["homeTeamGoal"] || ""} onChange={changeScore}
                                        className={"col-2 m-2"} id={"scoreA" + i}/>
                                 }
                             </div>
@@ -194,9 +194,9 @@ const MatchPages = props => {
                     && (match[i]["visitorTeamGoal"] == "" || typeof match[i]["visitorTeamGoal"] == "undefined" || match[i]["visitorTeamGoal"] == null)) {
                     continue;
                 }
-                if (match[i]["homeTeamGoal"] == ""){
+                if (match[i]["homeTeamGoal"] == "" || match[i]["homeTeamGoal"] == null){
                     match[i]["homeTeamGoal"] = 0;
-                } else if(match[i]["visitorTeamGoal"] == ""){
+                } else if(match[i]["visitorTeamGoal"] == "" || match[i]["visitorTeamGoal"] == null){
                     match[i]["visitorTeamGoal"] = 0;
                 }
                 match[i]["homeTeam"] = match[i]["homeTeam"]["@id"];

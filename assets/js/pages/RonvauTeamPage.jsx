@@ -6,6 +6,8 @@ import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import ReactSearchBox from 'react-search-box'
 import usersAPI from "../services/usersAPI";
 import UsersTeamAPI from "../services/UsersTeamAPI";
+import TrainingsAPI from "../services/TrainingsAPI";
+import Moment from "react-moment";
 
 
 const RonvauTeamPage = props => {
@@ -14,12 +16,17 @@ const RonvauTeamPage = props => {
     const [editing, setEditing] = useState(false);
     const [users, setUsers] = useState([]);
     const [compet, setCompet] = useState([]);
+    const [trainingDay, setTrainingDay] = useState([]);
     const [reload, setReload] = useState(0);
     const [selectUser, setSelectUser] = useState({
         role: 0,
     });
     const [selectCompet, setSelectCompet] = useState("");
-
+    const [selectTraining, setSelectTraining] = useState({
+       day: "Lundi",
+       hourStart: "20:00",
+       hourEnd: "21:30",
+    });
     const [ronvauTeam, setRonvauTeam] = useState({
         id: "",
         category: "",
@@ -48,6 +55,15 @@ const RonvauTeamPage = props => {
             console.log(error.response);
         }
     };
+
+    const fetchTrainingDay = async () => {
+        try{
+            const allTrainingDay = await TrainingsAPI.findAllTrainingDay(id);
+            setTrainingDay(allTrainingDay);
+        }catch (e) {
+            console.log(e.response);
+        }
+    }
 
     const fetchRonvauTeam = async idRT => {
         try {
@@ -145,6 +161,11 @@ const RonvauTeamPage = props => {
         setSelectUser({...selectUser, [name] : value});
     }
 
+    const handleChangeSelectTraining = ({ currentTarget }) => {
+        let { name, value } = currentTarget;
+        setSelectTraining({...selectTraining, [name] : value});
+    }
+
     const AddCompetTeam = async () => {
         if (typeof selectCompet == 'undefined' || selectCompet == ""){
             toast.error("Renseigner une compétition");
@@ -189,11 +210,39 @@ const RonvauTeamPage = props => {
         setReload(reload+1);
     }
 
+    const submitTraining = async () => {
+        let copySelectTraining = JSON.parse(JSON.stringify(selectTraining));
+        let start = copySelectTraining["hourStart"].replace(":", "");
+        let end = copySelectTraining["hourEnd"].replace(":", "");
+        if (start >= end){
+            toast.error("L'heure de fin doit être supérieur à l'heure de début");
+            return ;
+        }
+        copySelectTraining["teamRonvau"] = "/api/team_ronvaus/"+id;
+        try{
+            await TrainingsAPI.createTrainingDay(copySelectTraining);
+            toast.success("L'entraînement a été ajouté avec succès");
+        }catch (e) {
+            toast.error("L'entraînement n'a pas été ajouté");
+        }
+        setReload(reload+1);
+    }
+
+    const handleDeleteTrainingDay = async (id) => {
+        try {
+            await TrainingsAPI.deleteTrainingDay(id);
+            toast.success("L'entraînement a bien été supprimé");
+        } catch (e) {
+            toast.error("L'entraînement n'a pas été supprimé");
+        }
+        setReload(reload+1);
+    }
     useEffect(() => {
         if (id !== "new") {
             setEditing(true);
             fetchRonvauTeam(id);
             fetchUsers();
+            fetchTrainingDay();
         }
     }, [id, reload]);
 
@@ -207,28 +256,90 @@ const RonvauTeamPage = props => {
                             <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
                             <Field name={"coach"} label={"Coach de l'équipe"} type={"text"} value={ronvauTeam.coach} onChange={handleChange} error={errors.coach}/>
                             {editing &&
-                                <table className="mt-5 table table-hover text-center">
-                                    <thead>
-                                    <tr>
-                                        <th>Nom</th>
-                                        <th>joueur</th>
-                                        <th>Staff</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {ronvauTeam["userTeams"].map(userTeam =>
-                                        <tr key={userTeam.id}>
-                                            <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
-                                            <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                            <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                            <td>
-                                                <button onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
-                                            </td>
+                                <>
+                                    <table className="mt-5 table table-hover text-center">
+                                        <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>joueur</th>
+                                            <th>Staff</th>
+                                            <th></th>
                                         </tr>
-                                    )}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {ronvauTeam["userTeams"].map(userTeam =>
+                                            <tr key={userTeam.id}>
+                                                <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
+                                                <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
+                                                <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
+                                                <td>
+                                                    <button type={"button"} onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        </tbody>
+                                    </table>
+                                    <h5 className={"mt-5"}>Programmation des entraînements</h5>
+                                    <div className={"m-4 container"}>
+                                        <table className="mt-5 table table-hover text-center">
+                                            <thead className={"container"}>
+                                                <tr className={"row"}>
+                                                    <th className={"col-3"}>Jour</th>
+                                                    <th className={"col-3"}>heure de début</th>
+                                                    <th className={"col-3"}>heure de fin</th>
+                                                    <th className={"col-3"}></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {trainingDay.map(td =>
+                                                <tr className={"row"} key={td.id}>
+                                                    <td className={"col-3"}>
+                                                        {td.day}
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <Moment format="HH:mm">
+                                                            {td.hourStart}
+                                                        </Moment>
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <Moment format="HH:mm">
+                                                            {td.hourEnd}
+                                                        </Moment>
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <button type={"button"} onClick={() => handleDeleteTrainingDay(td.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                                <tr className="row">
+                                                    <td className={"col-3"}>
+                                                        <select className="form-control" name={"day"} value={selectTraining["day"]}
+                                                                onChange={handleChangeSelectTraining}>
+                                                            <option value={"Lundi"}>Lundi</option>
+                                                            <option value={"Mardi"}>Mardi</option>
+                                                            <option value={"Mercredi"}>Mercredi</option>
+                                                            <option value={"Jeudi"}>Jeudi</option>
+                                                            <option value={"Vendredi"}>Vendredi</option>
+                                                            <option value={"Samedi"}>Samedi</option>
+                                                            <option value={"Dimanche"}>Dimanche</option>
+                                                        </select>
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <input type="time" name={"hourStart"} className={"form-control"} step={300}
+                                                               value={selectTraining["hourStart"]} onChange={handleChangeSelectTraining}/>
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <input type="time"name={"hourEnd"} className={"form-control"} step={300}
+                                                               value={selectTraining["hourEnd"]} onChange={handleChangeSelectTraining}/>
+                                                    </td>
+                                                    <td className={"col-3"}>
+                                                        <button type={"button"} onClick={submitTraining} className="btn btn-sm btn-success">Ajouter un entraînement</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
                             }
                         </div>
                         <div className="col-4">
