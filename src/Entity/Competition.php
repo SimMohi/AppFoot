@@ -34,7 +34,7 @@ class Competition
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le nom de la compéttion est obligatoire")
      * @Assert\Length(min=2, minMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères")
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "team_ronvau_read"})
      */
     private $name;
 

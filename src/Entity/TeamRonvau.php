@@ -64,14 +64,21 @@ class TeamRonvau
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Competition", inversedBy="teamRonvau", cascade={"persist", "remove"})
+     * @Groups({"team_ronvau_read"})
      */
     private $competition;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\TrainingDay", mappedBy="teamRonvau")
+     */
+    private $trainingDays;
 
     public function __construct()
     {
         $this->userTeams = new ArrayCollection();
         $this->trainings = new ArrayCollection();
         $this->eventsTeams = new ArrayCollection();
+        $this->trainingDays = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +223,37 @@ class TeamRonvau
     public function setCompetition(?Competition $competition): self
     {
         $this->competition = $competition;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TrainingDay[]
+     */
+    public function getTrainingDays(): Collection
+    {
+        return $this->trainingDays;
+    }
+
+    public function addTrainingDay(TrainingDay $trainingDay): self
+    {
+        if (!$this->trainingDays->contains($trainingDay)) {
+            $this->trainingDays[] = $trainingDay;
+            $trainingDay->setTeamRonvau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrainingDay(TrainingDay $trainingDay): self
+    {
+        if ($this->trainingDays->contains($trainingDay)) {
+            $this->trainingDays->removeElement($trainingDay);
+            // set the owning side to null (unless already changed)
+            if ($trainingDay->getTeamRonvau() === $this) {
+                $trainingDay->setTeamRonvau(null);
+            }
+        }
 
         return $this;
     }

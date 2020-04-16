@@ -12,6 +12,12 @@ function find(id){
         .then(response => response.data);
 }
 
+function findCompetRonvau(){
+    return axios
+        .get("http://localhost:8000/getCompetitionsRonvau/")
+        .then(response => response.data);
+}
+
 function create(teamRonvau){
     return axios.post("http://localhost:8000/api/team_ronvaus", teamRonvau);
 }
@@ -25,5 +31,5 @@ function deleteTeamRonvau(id){
 }
 
 export default {
-    findAll, find, create, update, deleteTeamRonvau
+    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau
 }

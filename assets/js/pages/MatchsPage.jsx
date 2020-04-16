@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import TeamsAPI from "../services/TeamsAPI";
 import MatcheAPI from "../services/MatcheAPI";
-import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 
@@ -18,8 +17,6 @@ const MatchPages = props => {
     const [matchProgrammed, setMatchProgrammed] = useState([]);
     const [change, setChange] = useState(0);
 
-    console.log(matchProgrammed);
-
     const FindMatchDayNumber = async () => {
         const compet = await CompetitionsAPI.find(id);
         setMatchDayNumber(compet.matchDayNumber);
@@ -30,7 +27,7 @@ const MatchPages = props => {
     }
 
     const findMatches = async () => {
-        const match = await MatcheAPI.findMatchDay(selectedMatchDay);
+        const match = await MatcheAPI.findCompetMatchDay(id, selectedMatchDay);
         for (let i = 0; i < match.length; i++){
             if (typeof match[i]["homeTeamGoal"] == 'undefined'){
                 match[i]["homeTeamGoal"] = "";
@@ -111,10 +108,10 @@ const MatchPages = props => {
                                     <option value={matchProgrammed[i].homeTeam.club.name}>{matchProgrammed[i].homeTeam.club.name}</option>
                                 </select>
                                 {matchProgrammed[i].isOver &&
-                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"]} onChange={changeScore}
+                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"] || ""} onChange={changeScore}
                                        className={"col-2 m-2"} id={"scoreA" + i} disabled={true}/>
                                 ||
-                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"]} onChange={changeScore}
+                                <input type="number" value={matchProgrammed[i]["homeTeamGoal"] || ""} onChange={changeScore}
                                        className={"col-2 m-2"} id={"scoreA" + i}/>
                                 }
                             </div>
@@ -127,7 +124,7 @@ const MatchPages = props => {
                                 </select>
                                 {matchProgrammed[i].isOver &&
                                     <input type="number" min={0} value={matchProgrammed[i]["visitorTeamGoal"]} onChange={changeScore} className={"col-2 m-2"} id={"scoreB"+i} disabled={true}/>
-                                    ||  <input type="number" min={0} value={matchProgrammed[i]["visitorTeamGoal"]} onChange={changeScore} className={"col-2 m-2"} id={"scoreB"+i}/>
+                                    ||  <input type="number" min={0} value={matchProgrammed[i]["visitorTeamGoal"] || ""} onChange={changeScore} className={"col-2 m-2"} id={"scoreB"+i}/>
                                 }
                             </div>
                         </td>
@@ -193,7 +190,8 @@ const MatchPages = props => {
             }
             let match = JSON.parse(JSON.stringify(matchProgrammed));
             for (let i = 0; i < match.length; i++) {
-                if (match[i]["homeTeamGoal"] == "" && match[i]["visitorTeamGoal"] == "") {
+                if ((match[i]["homeTeamGoal"] == "" || typeof match[i]["homeTeamGoal"] == "undefined" || match[i]["homeTeamGoal"] == null)
+                    && (match[i]["visitorTeamGoal"] == "" || typeof match[i]["visitorTeamGoal"] == "undefined" || match[i]["visitorTeamGoal"] == null)) {
                     continue;
                 }
                 if (match[i]["homeTeamGoal"] == ""){
@@ -205,9 +203,25 @@ const MatchPages = props => {
                 match[i]["visitorTeam"] = match[i]["visitorTeam"]["@id"];
                 match[i]["isOver"] = true;
                 let teamA = JSON.parse(JSON.stringify(matchProgrammed[i]["homeTeam"]));
-                console.log(teamA);
                 let teamB = JSON.parse(JSON.stringify(matchProgrammed[i]["visitorTeam"]));
-                console.log(teamA);
+                if (teamA["drawn"] == null){
+                    teamA["drawn"] = 0;
+                }
+                if (teamB["drawn"] == null){
+                    teamB["drawn"] = 0;
+                }
+                if (teamA["lost"] == null){
+                    teamA["lost"] = 0;
+                }
+                if (teamB["lost"] == null){
+                    teamB["lost"] = 0;
+                }
+                if (teamA["won"] == null){
+                    teamA["won"] = 0;
+                }
+                if (teamB["won"] == null){
+                    teamB["won"] = 0;
+                }
                 if (match[i]["homeTeamGoal"] == match[i]["visitorTeamGoal"]){
                     if (typeof teamA["drawn"] == 'undefined'){
                         teamA["drawn"] = 1;
@@ -244,12 +258,13 @@ const MatchPages = props => {
                 }
                 teamA["club"] = teamA["club"]["@id"];
                 teamB["club"] = teamB["club"]["@id"];
+                teamA["competition"] = "/api/competitions/"+teamA["competition"]["id"];
+                teamB["competition"] = "/api/competitions/"+teamB["competition"]["id"];
                 try  {
                     MatcheAPI.update(match[i].id, match[i]);
                     TeamsAPI.update(teamA["id"], teamA);
                     TeamsAPI.update(teamB["id"], teamB);
                     toast.success("Score encodé avec succès");
-
                 } catch (e) {
                     toast.error("Erreur lors de l'encodage du score du match")
                 }

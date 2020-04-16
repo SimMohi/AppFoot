@@ -6,7 +6,6 @@ import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import ReactSearchBox from 'react-search-box'
 import usersAPI from "../services/usersAPI";
 import UsersTeamAPI from "../services/UsersTeamAPI";
-import CompetitionsAPI from "../services/CompetitionsAPI";
 
 
 const RonvauTeamPage = props => {
@@ -22,9 +21,11 @@ const RonvauTeamPage = props => {
     const [selectCompet, setSelectCompet] = useState("");
 
     const [ronvauTeam, setRonvauTeam] = useState({
+        id: "",
         category: "",
         coach: "",
-        userTeams: []
+        userTeams: [],
+        competition: ""
     });
     const [errors, setErrors] = useState({
         category: "",
@@ -32,9 +33,9 @@ const RonvauTeamPage = props => {
         select: ""
     });
 
-    const fetchCompetition = async id => {
+    const fetchCompetition = async () => {
         try {
-            const competitions = await CompetitionsAPI.findAll();
+            const competitions = await RonvauTeamAPI.findCompetRonvau();
             let newArray = [];
             for (let i = 0; i < competitions.length; i++){
                 newArray.push({
@@ -48,10 +49,13 @@ const RonvauTeamPage = props => {
         }
     };
 
-    const fetchRonvauTeam = async id => {
+    const fetchRonvauTeam = async idRT => {
         try {
-            const { category, coach, userTeams} = await RonvauTeamAPI.find(id);
-            setRonvauTeam({ category, coach, userTeams});
+            const { id, category, coach, userTeams, competition} = await RonvauTeamAPI.find(idRT);
+            setRonvauTeam({ id, category, coach, userTeams, competition});
+            if (typeof competition == 'undefined'){
+                await fetchCompetition();
+            }
         } catch (error) {
             console.log(error.response);
         }
@@ -139,16 +143,25 @@ const RonvauTeamPage = props => {
     const handleChangeSelect = ({ currentTarget }) => {
         let { name, value } = currentTarget;
         setSelectUser({...selectUser, [name] : value});
-        console.log(currentTarget);
     }
 
-    const AddCompetTeam = () => {
+    const AddCompetTeam = async () => {
         if (typeof selectCompet == 'undefined' || selectCompet == ""){
             toast.error("Renseigner une compétition");
             return;
         }
         let copyRonvauTeam = JSON.parse(JSON.stringify(ronvauTeam));
+        for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){
+            copyRonvauTeam["userTeams"][i] = copyRonvauTeam["userTeams"][i]["@id"];
+        }
         copyRonvauTeam["competition"] = "/api/competitions/"+selectCompet;
+        try{
+            await RonvauTeamAPI.update(copyRonvauTeam.id, copyRonvauTeam);
+            toast.success("L'équipe a bien été liée à la comptétition");
+        } catch (e) {
+            toast.error("L'équipe n'a pas été liée à la compétition");
+        }
+        setReload(reload+1);
     }
 
     const handleDelete = async (idUserTeam) => {
@@ -161,13 +174,26 @@ const RonvauTeamPage = props => {
         setReload(reload+1);
     }
 
+    const handleDeleteCompet = async () => {
+        let copyRonvauTeam = JSON.parse(JSON.stringify(ronvauTeam));
+        for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){
+            copyRonvauTeam["userTeams"][i] = copyRonvauTeam["userTeams"][i]["@id"];
+        }
+        copyRonvauTeam["competition"] = null;
+        toast.success("l'équipe a bien été retirée de la compétition");
+        try {
+            await RonvauTeamAPI.update(copyRonvauTeam.id, copyRonvauTeam);
+        } catch (e) {
+            toast.error("l'équipe n'a pas été retirée de la compétition");
+        }
+        setReload(reload+1);
+    }
 
     useEffect(() => {
         if (id !== "new") {
             setEditing(true);
             fetchRonvauTeam(id);
             fetchUsers();
-            fetchCompetition();
         }
     }, [id, reload]);
 
@@ -194,7 +220,7 @@ const RonvauTeamPage = props => {
                                     {ronvauTeam["userTeams"].map(userTeam =>
                                         <tr key={userTeam.id}>
                                             <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
-                                            <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i class="fas fa-times"></i>}</td>
+                                            <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
                                             <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
                                             <td>
                                                 <button onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
@@ -202,30 +228,44 @@ const RonvauTeamPage = props => {
                                         </tr>
                                     )}
                                     </tbody>
-                                </table>}
+                                </table>
+                            }
                         </div>
                         <div className="col-4">
                             <div className="col">
                                 {editing &&
                                 <>
-                                    <div className="mt-3 p-0">
-                                        <ReactSearchBox
-                                            placeholder="Ajouter l'équipe à une compétition"
-                                            data={compet}
-                                            onSelect={record => setSelectCompet(record["key"])}
-                                            onFocus={() => {
-                                            }}
-                                            onChange={() => {}}
-                                            fuseConfigs={{
-                                                threshold: 0.05,
-                                            }}
-                                        />
-                                    </div>
-                                    <div className={"mt-3 mb-5"}>
-                                        <button type={"button"} onClick={() => AddCompetTeam()}
-                                                className="btn btn-primary ml-auto d-block">Ajouter
-                                        </button>
-                                    </div>
+                                    {typeof ronvauTeam["competition"] == 'undefined' &&
+                                        <>
+                                            <div className="mt-3 p-0">
+                                                <ReactSearchBox
+                                                    placeholder="Ajouter l'équipe à une compétition"
+                                                    data={compet}
+                                                    onSelect={record => setSelectCompet(record["key"])}
+                                                    onFocus={() => {
+                                                    }}
+                                                    onChange={() => {
+                                                    }}
+                                                    fuseConfigs={{
+                                                        threshold: 0.05,
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className={"mt-3 mb-5"}>
+                                                <button type={"button"} onClick={() => AddCompetTeam()}
+                                                        className="btn btn-primary ml-auto d-block">Ajouter
+                                                </button>
+                                            </div>
+                                        </>
+                                    ||
+                                        <>
+                                            <h5>L'équipe est liée à la compétition: </h5>
+                                            <h5>
+                                                {ronvauTeam["competition"]["name"]}
+                                                <button type={"button"} onClick={handleDeleteCompet} className="btn btn-sm btn-danger float-right">Supprimer</button>
+                                            </h5>
+                                        </>
+                                    }
                                     <div className="mt-3 p-0">
                                         <ReactSearchBox
                                             placeholder="Ajouter un utilisateur à l'équipe"

@@ -25,9 +25,9 @@ class Training
     private $teamRonvau;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="integer")
      */
-    private $date;
+    private $day;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerTraining", mappedBy="idTraining", orphanRemoval=true)
@@ -56,14 +56,14 @@ class Training
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDay(): ?int
     {
-        return $this->date;
+        return $this->day;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(int $day): self
     {
-        $this->date = $date;
+        $this->day = $day;
 
         return $this;
     }

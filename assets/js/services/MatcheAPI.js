@@ -18,6 +18,13 @@ function findMatchDay(matchDay){
         .then(response => response.data["hydra:member"]);
 }
 
+function findCompetMatchDay(compet, matchDay){
+    return axios
+        .get("http://localhost:8000/getRonvauMatch/"+compet+"/"+matchDay)
+        .then(response => response.data);
+}
+
+
 function create(matche){
     return axios.post("http://localhost:8000/api/matches", matche);
 }
@@ -31,5 +38,5 @@ function deleteMatche(id){
 }
 
 export default {
-    findAll, find, findMatchDay, create, update, deleteMatche
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, deleteMatche
 }
