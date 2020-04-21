@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import usersAPI from "../services/usersAPI";
-import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
 
 const UserAcceptPage = () => {

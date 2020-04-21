@@ -26,6 +26,7 @@ import RonvauTeamsPage from "./pages/RonvauTeamsPage";
 import RonvauTeamPage from "./pages/RonvauTeamPage";
 import UserAcceptPage from "./pages/UserAcceptPage";
 import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
+import CompetitionTeamsPage from "./pages/CompetitionTeamsPage";
 
 
 require("../css/app.css");
@@ -53,6 +54,7 @@ const App = () => {
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
                         <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
+                        <PrivateRoute path={"/competition/:id/équipes"} component={CompetitionTeamsPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
                         <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
                         <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>

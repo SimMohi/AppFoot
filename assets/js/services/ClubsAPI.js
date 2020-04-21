@@ -12,6 +12,12 @@ function find(id){
         .then(response => response.data);
 }
 
+function findTeam(id){
+    return axios
+        .get("http://localhost:8000/api/clubs/" + id)
+        .then(response => response.data);
+}
+
 function create(club){
     return axios.post("http://localhost:8000/api/clubs", club);
 }

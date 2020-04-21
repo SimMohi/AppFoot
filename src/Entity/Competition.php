@@ -16,7 +16,8 @@ Use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CompetitionRepository")
  * @ApiResource(
- *  denormalizationContext={"disable_type_enforcement"=true}
+ *     normalizationContext={"groups"={"competitions_read"}},
+ *     denormalizationContext={"disable_type_enforcement"=true}
  *)
  */
 
@@ -26,7 +27,7 @@ class Competition
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "competitions_read"})
      */
     private $id;
 
@@ -34,30 +35,32 @@ class Competition
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le nom de la compéttion est obligatoire")
      * @Assert\Length(min=2, minMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères")
-     * @Groups({"teams_read", "team_ronvau_read"})
+     * @Groups({"teams_read", "team_ronvau_read", "competitions_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "competitions_read"})
      */
     private $season;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"teams_read",})
+     * @Groups({"teams_read", "competitions_read"})
      */
     private $format;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="competition", orphanRemoval=true)
+     * @Groups({"competitions_read"})
      * @ApiSubresource
      */
     private $teams;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"competitions_read"})
      */
     private $matchDayNumber;
 

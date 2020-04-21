@@ -14,7 +14,7 @@ function findUnaccepted(){
 
 function create (user){
     return axios
-        .post("http://localhost:8000/api/users");
+        .post("http://localhost:8000/api/users", user);
 }
 
 

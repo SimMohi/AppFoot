@@ -2,43 +2,23 @@ import React, { useState, useEffect } from 'react';
 import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
-import ClubsAPI from "../services/ClubsAPI";
-import TeamsAPI from "../services/TeamsAPI";
 import {toast} from "react-toastify";
+import axios from "axios";
+import ReactSearchBox from "react-search-box";
+import TeamsAPI from "../services/TeamsAPI";
 
 const CompetitionPage = props => {
 
     const {id} = props.match.params;
+    const [editing, setEditing] = useState(false);
 
     const [competition, setCompetition] = useState({
         name: "",
         format: "",
         season: "",
-        matchDayNumber: ""
+        matchDayNumber: "",
+        teams: ""
     });
-
-    const idClubs = {};
-
-    const postTeam = {
-        club: "",
-        competition: "",
-    }
-
-    const [team, setTeam] = useState({
-        club: "",
-        competition: "",
-    });
-
-    const [clubs, setClubs] = useState([]);
-
-    const getClubs = async () => {
-        try{
-            const allClubs = await ClubsAPI.findAll();
-            setClubs(allClubs);
-        } catch (error) {
-            console.log(error.response);
-        }
-    };
 
     const [errors, setErrors] = useState({
         name: "",
@@ -47,58 +27,30 @@ const CompetitionPage = props => {
         matchDayNumber: ""
     });
 
-    const [editing, setEditing] = useState(false);
-
     const fetchCompetition = async id => {
-        try {
-            const { name, format, season, matchDayNumber} = await CompetitionsAPI.find(id);
-            setCompetition({ name, format, season, matchDayNumber});
-        } catch (error) {
-            console.log(error.response);
+        try{
+            const { name, format, season, matchDayNumber, teams} = await CompetitionsAPI.find(id);
+            setCompetition({ name, format, season, matchDayNumber, teams});
+        } catch (e) {
+            console.log(e.response);
         }
     };
-
-    useEffect(() => {
-        if (id !== "new") {
-            setEditing(true);
-            fetchCompetition(id);
-            getClubs();
-            setTeam({...team, ["competition"] : "/api/competitions/"+id});
-        }
-    }, [id]);
-
 
     const handleChangeCompet = ({ currentTarget }) => {
         const { name, value } = currentTarget;
         setCompetition({...competition, [name]: value});
     };
 
-    const handleChangeClub = ({ currentTarget }) => {
-        const { name, value } = currentTarget;
-        if(idClubs[value] === 1){
-            idClubs[value] = 0;
-        } else if(idClubs[value] === 0 || typeof idClubs[value] == 'undefined') {
-            idClubs[value] = 1;
-        }
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             if (editing){
-                const response = await CompetitionsAPI.update(id, competition);
+                await CompetitionsAPI.update(id, competition);
                 toast.success("La compétition a bien été modifiée");
             } else {
-                const response = await CompetitionsAPI.create(competition);
+                await CompetitionsAPI.create(competition);
                 toast.success("La compétition a bien été créée");
                 props.history.replace("/competition");
-            }
-            for (const index in idClubs) {
-                if(idClubs[index] === 1){
-                    postTeam["competition"] = team["competition"];
-                    postTeam["club"] = "/api/clubs/"+index;
-                    const responseTeam = await TeamsAPI.create(postTeam);
-                }
             }
             setErrors({});
         } catch (error) {
@@ -113,26 +65,31 @@ const CompetitionPage = props => {
         }
     };
 
+
+    useEffect(() => {
+        if (id !== "new") {
+            setEditing(true);
+            fetchCompetition(id);
+        }
+    }, [id]);
+
     return  (
         <>
-            {!editing && <h1>Création d'une nouvelle Compétition</h1> || <h1>Modification d'une Compétition</h1>}
+            {!editing && <h1>Création d'une nouvelle Compétition</h1> ||
+            <div className={"container"}>
+                <div className="row">
+                    <h1 className={"col-8"}>Modification d'une Compétition</h1>
+                    <div className="col-4">
+                        <Link to={"/competition/"+id+"/équipes"} className={"btn btn-primary mt-3 float-right"}>Gérer les équipes</Link>
+                    </div>
+                </div>
+            </div>}
             <form onSubmit={handleSubmit}>
                 <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet} error={errors.name}/>
                 <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChangeCompet} error={errors.format}/>
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
                 <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet}
                        error={errors.matchDayNumber}></Field>
-                <div className="form-check">
-                    {clubs.map(club =>
-                        <div className="form-check" key={club.id}>
-                            <input className="form-check-input" name={"idClub"} type="checkbox" value={club.id}
-                                   id={"check" + club.id} onChange={handleChangeClub}/>
-                            <label className="form-check-label" htmlFor={"check" + club.id}>
-                                {club.name}
-                            </label>
-                        </div>
-                    )}
-                </div>
                 <div className="from-group">
                     <button type={"submit"} className="btn btn-success">Enregistrer</button>
                     <Link to={"/competition"} className={"btn btn-link"}>Retour à la liste</Link>

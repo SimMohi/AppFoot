@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      "groups"={"users_read"}
  *  }
  * )
+ * @UniqueEntity("email", message="Un utilisateur ayant cette adresse email existe déjà")
  * @ApiFilter(SearchFilter::class , properties={"email": "exact", "isAccepted": "exact"})
  */
 class User implements UserInterface
