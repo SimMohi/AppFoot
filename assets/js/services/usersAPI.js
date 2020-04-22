@@ -26,6 +26,10 @@ function deleteUser(id){
     return axios.delete("http://localhost:8000/api/users/" + id);
 }
 
+function profile(id) {
+    return axios.get("http://localhost:8000/profile/" + id);
+}
+
 export default {
-    findAll, create, findUnaccepted, update, deleteUser
+    findAll, create, findUnaccepted, update, profile, deleteUser
 }

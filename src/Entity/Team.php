@@ -42,7 +42,7 @@ class Team
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Competition", inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"teams_read", "clubs_read"})
+     * @Groups({"teams_read", "clubs_read", "team_ronvau_read"})
      *
      */
     private $competition;
@@ -86,6 +86,12 @@ class Team
      * @Groups({"teams_read", "competitions_read", "clubs_read"})
      */
     private $hour;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\TeamRonvau", mappedBy="team", cascade={"persist", "remove"})
+     * @Groups({"matchs_read"})
+     */
+    private $teamRonvau;
 
 
     public function __construct()
@@ -257,6 +263,24 @@ class Team
     public function setHour(?\DateTimeInterface $hour): self
     {
         $this->hour = $hour;
+
+        return $this;
+    }
+
+    public function getTeamRonvau(): ?TeamRonvau
+    {
+        return $this->teamRonvau;
+    }
+
+    public function setTeamRonvau(?TeamRonvau $teamRonvau): self
+    {
+        $this->teamRonvau = $teamRonvau;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newTeam = null === $teamRonvau ? null : $this;
+        if ($teamRonvau->getTeam() !== $newTeam) {
+            $teamRonvau->setTeam($newTeam);
+        }
 
         return $this;
     }

@@ -43,7 +43,6 @@ const UserAcceptPage = () => {
         findUnacceptedUsers();
     }, [reload]);
 
-    console.log(unacceptedUsers);
     return(
         <>
             <h1>Liste des utilisateurs demandant l'accès à l'application</h1>

@@ -30,7 +30,7 @@ class Club
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(min=3, minMessage="Entre 3 et 255", max=255, maxMessage="Entre 3 et 255")
-     * @Assert\NotBlank(message="Le prénom du customer est obligatoire")
+     * @Assert\NotBlank(message="Le nom du club est obligatoire")
      * @Groups({"teams_read", "matchs_read", "clubs_read", "competitions_read"})
      */
     private $name;

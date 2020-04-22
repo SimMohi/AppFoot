@@ -71,6 +71,7 @@ class Matche
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerMatch", mappedBy="idMatch")
+     * @Groups({"matchs_read"})
      */
     private $playerMatches;
 

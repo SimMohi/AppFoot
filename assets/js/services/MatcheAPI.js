@@ -42,6 +42,14 @@ function deleteMatche(id){
     return axios.delete("http://localhost:8000/api/matches/" + id);
 }
 
+function postCallMatch(data){
+    return axios.post("http://localhost:8000/postCallMatch", data);
+}
+
+function postEncodeMatch(data){
+    return axios.post("http://localhost:8000/postEncodeMatch", data);
+}
+
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch
 }

@@ -11,8 +11,6 @@ const CompetitionTeamsPage = props => {
     const [teams, setTeams] = useState([]);
     const [selectClub, setSelectClub] = useState(0);
     const [selectMatch, setSelectMatch] = useState({
-        day: "Samedi",
-        hour: "20:00",
     });
 
     const fetchClubs = async () => {
@@ -68,6 +66,19 @@ const CompetitionTeamsPage = props => {
     }
 
     const addTeam = async () => {
+        if (selectClub == 0){
+            toast.error("Séléctionnez une équipe");
+            return ;
+        }
+        if (selectMatch["day"] == "0" || typeof selectMatch["day"] == 'undefined'){
+            toast.error("Sélectionnez un jour");
+            return ;
+        }
+        if (typeof selectMatch["hour"] == 'undefined'){
+            toast.error("Sélectionnez une heure");
+            return ;
+        }
+        return ;
         let postTeam = {};
         postTeam["competition"] = "/api/competitions/"+id;
         postTeam["club"] = "/api/clubs/"+selectClub;
@@ -77,11 +88,29 @@ const CompetitionTeamsPage = props => {
             await TeamsAPI.create(postTeam);
             toast.success("L'équipe à été ajoutée à la compétition");
         } catch (e) {
-            toast.error("L'équipe n'a pas été ajouté à la compétition");
+            toast.error("L'équipe n'a pas été ajoutée à la compétition");
         }
     }
 
-    console.log(teams);
+    const modifyTeam = async (index) => {
+        if (teams[index]["day"] == "0" || typeof teams[index]["day"] == 'undefined'){
+            toast.error("Sélectionnez un jour");
+            return ;
+        }
+        if (typeof teams[index]["hour"] == 'undefined' || teams[index]["hour"] == "NaN:NaN"){
+            toast.error("Sélectionnez une heure");
+            return ;
+        }
+        let copyTeam = JSON.parse(JSON.stringify(teams[index]));
+        copyTeam["club"] = copyTeam["club"]["@id"];
+        try{
+            await TeamsAPI.update(copyTeam.id, copyTeam);
+            toast.success("La modification a réussi");
+        } catch (e) {
+            toast.error("La modification a échoué");
+        }
+        console.log(copyTeam);
+    }
 
     useEffect(() => {
         fetchClubs();
@@ -108,6 +137,7 @@ const CompetitionTeamsPage = props => {
                         <td className="col-3">
                             <select className="form-control" name={"day"} value={team.day} id={index}
                                     onChange={handleChangeSelectMatch}>
+                                <option value="0">Choissisez un jour</option>
                                 <option value={"Lundi"}>Lundi</option>
                                 <option value={"Mardi"}>Mardi</option>
                                 <option value={"Mercredi"}>Mercredi</option>
@@ -122,7 +152,7 @@ const CompetitionTeamsPage = props => {
                                    value={team.hour} onChange={handleChangeSelectMatch}/>
                         </td>
                         <td className="col-2 ml-auto">
-                            <button type={"button"} onClick={addTeam} className="btn btn-primary">Modifier</button>
+                            <button type={"button"} onClick={()=> modifyTeam(index)} className="btn btn-primary">Modifier</button>
                         </td>
                     </tr>
                 )}
@@ -144,6 +174,7 @@ const CompetitionTeamsPage = props => {
                     <td className="col-3">
                         <select className="form-control" name={"day"} value={selectMatch["day"]}
                                 onChange={handleAddSelectMatch}>
+                            <option value="0">Choissisez un jour</option>
                             <option value={"Lundi"}>Lundi</option>
                             <option value={"Mardi"}>Mardi</option>
                             <option value={"Mercredi"}>Mercredi</option>

@@ -9,6 +9,7 @@ use App\Entity\Matche;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,6 +30,7 @@ class CompetitionsController extends AbstractController
             $add = array();
             $add["id"] = $competition->getId();
             $add["name"] = $competition->getName();
+            $add["team"] = $team->getId();
             $response[] = $add;
         }
 
@@ -42,7 +44,7 @@ class CompetitionsController extends AbstractController
      * @Route("/getMatchCompetition/{idCompet}/{matchDay}")
      * @param int $idCompet
      * @param int $matchDay
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function getMatchCompetition(int $idCompet, int $matchDay){
 
@@ -92,7 +94,8 @@ class CompetitionsController extends AbstractController
      */
     public function getRonvauTeamMatch(int $idRTeam){
         $ronvauTeam = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $idRTeam]);
-        $competition = $ronvauTeam->getCompetition();
+        $team = $ronvauTeam->getTeam();
+        $competition = $team->getCompetition();
         $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['name' => "F.C. Ronvau Chaumont"]);
         $team = $this->getDoctrine()->getRepository(Team::class)->findOneBy(['club' => $ronvau->getId(), 'competition' => $competition->getId()]);
 

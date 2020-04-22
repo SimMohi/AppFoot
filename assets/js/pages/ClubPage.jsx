@@ -1,11 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
-import CompetitionsAPI from "../services/CompetitionsAPI";
 import ClubsAPI from "../services/ClubsAPI";
 import {toast} from "react-toastify";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
 
 const ClubPage = props => {
 

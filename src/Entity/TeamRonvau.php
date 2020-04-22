@@ -22,7 +22,7 @@ class TeamRonvau
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"team_ronvau_read"})
+     * @Groups({"team_ronvau_read", "matchs_read"})
      */
     private $id;
 
@@ -48,7 +48,7 @@ class TeamRonvau
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="teamRonvauId")
-     * @Groups({"team_ronvau_read"})
+     * @Groups({"team_ronvau_read", "matchs_read"})
      */
     private $userTeams;
 
@@ -63,10 +63,10 @@ class TeamRonvau
     private $eventsTeams;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Competition", inversedBy="teamRonvau", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="App\Entity\Team", inversedBy="teamRonvau", cascade={"persist", "remove"})
      * @Groups({"team_ronvau_read"})
      */
-    private $competition;
+    private $team;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TrainingDay", mappedBy="teamRonvau")
@@ -215,14 +215,14 @@ class TeamRonvau
         return $this;
     }
 
-    public function getCompetition(): ?Competition
+    public function getTeam(): ?Team
     {
-        return $this->competition;
+        return $this->team;
     }
 
-    public function setCompetition(?Competition $competition): self
+    public function setTeam(?Team $team): self
     {
-        $this->competition = $competition;
+        $this->team = $team;
 
         return $this;
     }

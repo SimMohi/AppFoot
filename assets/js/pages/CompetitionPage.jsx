@@ -3,9 +3,6 @@ import Field from "../components/forms/Fields";
 import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import {toast} from "react-toastify";
-import axios from "axios";
-import ReactSearchBox from "react-search-box";
-import TeamsAPI from "../services/TeamsAPI";
 
 const CompetitionPage = props => {
 

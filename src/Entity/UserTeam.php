@@ -28,7 +28,7 @@ class UserTeam
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="userTeams")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"team_ronvau_read"})
+     * @Groups({"team_ronvau_read", "matchs_read"})
      */
     private $userId;
 
@@ -52,6 +52,7 @@ class UserTeam
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerMatch", mappedBy="idUserTeam", orphanRemoval=true)
+     * @Groups({"team_ronvau_read"})
      */
     private $playerMatches;
 

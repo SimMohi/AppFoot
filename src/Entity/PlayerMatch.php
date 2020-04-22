@@ -5,9 +5,16 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerMatchRepository")
+ * @ApiResource
+ * @ApiFilter(SearchFilter::class , properties={"idMatch": "exact"})
  */
 class PlayerMatch
 {
@@ -15,6 +22,7 @@ class PlayerMatch
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"matchs_read"})
      */
     private $id;
 
@@ -26,31 +34,37 @@ class PlayerMatch
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\UserTeam", inversedBy="playerMatches")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"matchs_read"})
      */
     private $idUserTeam;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean")
+     * @Groups({"matchs_read"})
      */
     private $played;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read"})
      */
     private $goal;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read"})
      */
     private $yellowCard;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"matchs_read"})
      */
     private $redCard;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"team_ronvau_read", "matchs_read"})
      */
     private $hasConfirmed;
 
@@ -61,6 +75,8 @@ class PlayerMatch
 
     public function __construct()
     {
+        $this->setPlayed(false);
+        $this->setHasConfirmed(false);
         $this->playerOfTheMatches = new ArrayCollection();
     }
 
@@ -93,12 +109,12 @@ class PlayerMatch
         return $this;
     }
 
-    public function getPlayed(): ?int
+    public function getPlayed(): ?bool
     {
         return $this->played;
     }
 
-    public function setPlayed(int $played): self
+    public function setPlayed(bool $played): self
     {
         $this->played = $played;
 

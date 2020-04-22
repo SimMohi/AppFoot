@@ -30,8 +30,6 @@ const RonvauTeamsPage = () => {
             FindRonvauTeam();
         }, []);
 
-        console.log(ronvauTeams);
-
         return ( <>
             <h1>Liste des equipes</h1>
             <Link to={"/equipeRonvau/new/"} className={"btn btn-info float-right"}>Nouvelle équipe</Link>
@@ -50,6 +48,7 @@ const RonvauTeamsPage = () => {
                         <td>{ronvauTeam.coach}</td>
                         <td>{ronvauTeam["userTeams"].length}</td>
                         <td>
+                            <Link to={"/equipeRonvau/"+ronvauTeam.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Sélectionner</Link>
                             <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-primary mr-3"}>Editer</Link>
                             <button onClick={() => handleDelete(ronvauTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
                         </td>

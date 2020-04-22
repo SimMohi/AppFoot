@@ -64,11 +64,6 @@ class Competition
      */
     private $matchDayNumber;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\TeamRonvau", mappedBy="competition", cascade={"persist", "remove"})
-     */
-    private $teamRonvau;
-
 
     public function __construct()
     {
@@ -155,24 +150,6 @@ class Competition
     public function setMatchDayNumber(int $matchDayNumber): self
     {
         $this->matchDayNumber = $matchDayNumber;
-
-        return $this;
-    }
-
-    public function getTeamRonvau(): ?TeamRonvau
-    {
-        return $this->teamRonvau;
-    }
-
-    public function setTeamRonvau(?TeamRonvau $teamRonvau): self
-    {
-        $this->teamRonvau = $teamRonvau;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newCompetition = null === $teamRonvau ? null : $this;
-        if ($teamRonvau->getCompetition() !== $newCompetition) {
-            $teamRonvau->setCompetition($newCompetition);
-        }
 
         return $this;
     }

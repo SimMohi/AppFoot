@@ -21,7 +21,7 @@ const RonvauTeamPage = props => {
     const [selectUser, setSelectUser] = useState({
         role: 0,
     });
-    const [selectCompet, setSelectCompet] = useState("");
+    const [selectCompet, setSelectCompet] = useState({});
     const [selectTraining, setSelectTraining] = useState({
        day: "Lundi",
        hourStart: "20:00",
@@ -32,13 +32,15 @@ const RonvauTeamPage = props => {
         category: "",
         coach: "",
         userTeams: [],
-        competition: ""
+        team: ""
     });
     const [errors, setErrors] = useState({
         category: "",
         coach: "",
         select: ""
     });
+
+    console.log(ronvauTeam);
 
     const fetchCompetition = async () => {
         try {
@@ -47,7 +49,8 @@ const RonvauTeamPage = props => {
             for (let i = 0; i < competitions.length; i++){
                 newArray.push({
                     "key": competitions[i].id,
-                    "value": competitions[i].name
+                    "value": competitions[i].name,
+                    "team": competitions[i].team
                 });
             }
             setCompet(newArray);
@@ -67,9 +70,9 @@ const RonvauTeamPage = props => {
 
     const fetchRonvauTeam = async idRT => {
         try {
-            const { id, category, coach, userTeams, competition} = await RonvauTeamAPI.find(idRT);
-            setRonvauTeam({ id, category, coach, userTeams, competition});
-            if (typeof competition == 'undefined'){
+            const { id, category, coach, userTeams, team} = await RonvauTeamAPI.find(idRT);
+            setRonvauTeam({ id, category, coach, userTeams, team});
+            if (typeof team == 'undefined'){
                 await fetchCompetition();
             }
         } catch (error) {
@@ -167,7 +170,7 @@ const RonvauTeamPage = props => {
     }
 
     const AddCompetTeam = async () => {
-        if (typeof selectCompet == 'undefined' || selectCompet == ""){
+        if (Object.keys(selectCompet).length === 0 && selectCompet.constructor === Object){
             toast.error("Renseigner une compétition");
             return;
         }
@@ -175,7 +178,8 @@ const RonvauTeamPage = props => {
         for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){
             copyRonvauTeam["userTeams"][i] = copyRonvauTeam["userTeams"][i]["@id"];
         }
-        copyRonvauTeam["competition"] = "/api/competitions/"+selectCompet;
+        copyRonvauTeam["team"] = "/api/teams/"+selectCompet["team"];
+
         try{
             await RonvauTeamAPI.update(copyRonvauTeam.id, copyRonvauTeam);
             toast.success("L'équipe a bien été liée à la comptétition");
@@ -200,10 +204,10 @@ const RonvauTeamPage = props => {
         for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){
             copyRonvauTeam["userTeams"][i] = copyRonvauTeam["userTeams"][i]["@id"];
         }
-        copyRonvauTeam["competition"] = null;
-        toast.success("l'équipe a bien été retirée de la compétition");
+        copyRonvauTeam["team"] = null;
         try {
             await RonvauTeamAPI.update(copyRonvauTeam.id, copyRonvauTeam);
+            toast.success("l'équipe a bien été retirée de la compétition");
         } catch (e) {
             toast.error("l'équipe n'a pas été retirée de la compétition");
         }
@@ -346,13 +350,16 @@ const RonvauTeamPage = props => {
                             <div className="col">
                                 {editing &&
                                 <>
-                                    {typeof ronvauTeam["competition"] == 'undefined' &&
+                                    {(typeof ronvauTeam["team"] == 'undefined' || ronvauTeam["team"] == "" ) &&
                                         <>
                                             <div className="mt-3 p-0">
                                                 <ReactSearchBox
                                                     placeholder="Ajouter l'équipe à une compétition"
                                                     data={compet}
-                                                    onSelect={record => setSelectCompet(record["key"])}
+                                                    onSelect={record => setSelectCompet({
+                                                            key: record["key"],
+                                                            team: record["team"]
+                                                        })}
                                                     onFocus={() => {
                                                     }}
                                                     onChange={() => {
@@ -372,7 +379,7 @@ const RonvauTeamPage = props => {
                                         <>
                                             <h5>L'équipe est liée à la compétition: </h5>
                                             <h5>
-                                                {ronvauTeam["competition"]["name"]}
+                                                {ronvauTeam["team"]["competition"]["name"]}
                                                 <button type={"button"} onClick={handleDeleteCompet} className="btn btn-sm btn-danger float-right">Supprimer</button>
                                             </h5>
                                         </>

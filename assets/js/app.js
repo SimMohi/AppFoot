@@ -27,6 +27,9 @@ import RonvauTeamPage from "./pages/RonvauTeamPage";
 import UserAcceptPage from "./pages/UserAcceptPage";
 import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
 import CompetitionTeamsPage from "./pages/CompetitionTeamsPage";
+import SelectPlayerMatchPage from "./pages/SelectPlayerPage";
+import RonvauTeamSelectPage from "./pages/RonvauTeamSelectPage";
+import EncodeMatchPage from "./pages/EncodeMatchPage";
 
 
 require("../css/app.css");
@@ -62,6 +65,9 @@ const App = () => {
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>
                         <PrivateRoute path={"/club"} component={ClubsPage}/>
+                        <PrivateRoute path={"/match/:id/encode"} component={EncodeMatchPage}/>
+                        <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
+                        <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
                         <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
