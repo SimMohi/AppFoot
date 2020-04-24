@@ -30,6 +30,7 @@ import CompetitionTeamsPage from "./pages/CompetitionTeamsPage";
 import SelectPlayerMatchPage from "./pages/SelectPlayerPage";
 import RonvauTeamSelectPage from "./pages/RonvauTeamSelectPage";
 import EncodeMatchPage from "./pages/EncodeMatchPage";
+import ProfilUserPage from "./pages/ProfilUserPage";
 
 
 require("../css/app.css");
@@ -54,6 +55,7 @@ const App = () => {
                             path="/login"
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
+                        <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
                         <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>

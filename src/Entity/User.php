@@ -54,6 +54,7 @@ class User implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Le mot de passe est obligatoire")
+     * @Assert\Length(min=5, minMessage="Le mot de passe doit faire entre 5 et 255 caractères", max=255, maxMessage="Le mot de passe doit faire entre 3 et 255 caractères")
      */
     private $password;
 
@@ -75,6 +76,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users_read"})
+     * @Assert\Length(min=9, minMessage="Le numéro de gsm/tel doit faire minimum 9 caractères", max=10, maxMessage="Le numéro de gsm/tel doit faire maximum 10 caractères")
      */
     private $gsm;
 

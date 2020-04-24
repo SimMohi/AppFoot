@@ -4,20 +4,25 @@ import {toast} from "react-toastify";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
 import Field from "../components/forms/Fields";
+import ReactSearchBox from "react-search-box";
 
-const ProfilPage = () => {
+const ProfilPage = props => {
 
     const [user, setUser] = useState({
+        id: "",
         lastName: "",
         firstName: "",
-        email: ""
+        email: "",
+        gsm: ""
     });
     const [info, setInfo] = useState([]);
     const [errors, setErrors] = useState({
         lastName: "",
         firstName: "",
-        email: ""
+        email: "",
+        gsm: ""
     });
+    const [allUsers, setAllUSers] = useState([]);
 
     const getUserConnected =  async () => {
         const token = window.localStorage.getItem(("authToken"));
@@ -25,12 +30,26 @@ const ProfilPage = () => {
             const {username: user} = jwtDecode(token);
             axios.all([
                 axios.get("http://localhost:8000/api/users?email=" + user),
+                axios.get("http://localhost:8000/api/users")
             ]).then(axios.spread(async (...responses) => {
-                const userConnected = responses[0]["data"]["hydra:member"][0];
-                const id = userConnected.id;
-                const response = await usersAPI.profile(id);
-                setUser(userConnected);
-                setInfo(response["data"]);
+                const usersResponse = responses[1]["data"]["hydra:member"];
+                let allUsersArray = [];
+                for (let i = 0; i < usersResponse.length; i++){
+                    if (usersResponse[i].email == user){
+                        const { id, lastName, firstName, email, gsm} = usersResponse[i];
+                        setUser({ id, lastName, firstName, email, gsm});
+                        const response = await usersAPI.profile(id);
+                        setInfo(response["data"]);
+                    } else {
+                        let user =  {
+                            "key": usersResponse[i].id,
+                            "value": usersResponse[i].firstName + " " + usersResponse[i].lastName,
+                        }
+                        allUsersArray.push(user);
+                    }
+                }
+                setAllUSers(allUsersArray);
+
             })).catch(errors => {
                 console.log(errors.response);
             })
@@ -44,6 +63,15 @@ const ProfilPage = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log(user.gsm/0);
+        let intGsm = parseInt(user.gsm);
+        if (user.gsm/0 != 'Infinity'){
+            let error = {};
+            error["gsm"] = "Numéro de gsm non-valide";
+            console.log(error);
+            setErrors(error);
+            return ;
+        }
         try {
             await usersAPI.update(user.id, user);
             toast.success("Profil modifié avec Succès");
@@ -56,38 +84,62 @@ const ProfilPage = () => {
                 error.response.data.violations.forEach(violation => {
                     apiErrors[violation.propertyPath] = violation.message;
                 });
-                console.log(apiErrors);
                 setErrors(apiErrors);
             }
         }
+    }
+
+    const goToProfile = (id) => {
+        props.history.replace("/profil/" + id);
     }
 
     useEffect( () => {
         getUserConnected();
     }, []);
 
-    console.log(user);
-    console.log(info);
-    console.log(typeof info);
-
     return(
         <>
             <h1 className={"text-center"}>Profil</h1>
-            <form onSubmit={handleSubmit} className={"container w-50 mt-5"}>
+            <div className="container">
                 <div className="row">
-                    <div className="col-6">
-                        <Field name={"lastName"} label={"Nom de famille"} type={"text"} value={user.lastName} onChange={handleChange} error={errors.lastName}/>
+                    <div className="col-8">
+                        <form onSubmit={handleSubmit} className={"container mt-5"}>
+                            <div className="row">
+                                <div className="col-6">
+                                    <Field name={"lastName"} label={"Nom de famille"} type={"text"} value={user.lastName} onChange={handleChange} error={errors.lastName}/>
+                                </div>
+                                <div className="col-6">
+                                    <Field name={"firstName"} label={"Prénom"} type={"text"} value={user.firstName} onChange={handleChange} error={errors.firstName}/>
+                                </div>
+                            </div>
+                            <Field name={"email"} label={"Email"} type={"text"} value={user.email} onChange={handleChange} error={errors.email}/>
+                            <div className="form-group">
+                                <input placeholder={"Ajoutez un numéro de gsm. Format: 04XXXXXXXX"} className={"form-control " + (errors.gsm &&  "is-invalid")} type="tel" id="gsm" name="gsm"
+                                       value={user.gsm || ""} onChange={handleChange}/>
+                                { errors.gsm && <p className={"invalid-feedback"}>{errors.gsm}</p>}
+                            </div>
+                            <div className="from-group">
+                                <button type={"submit"} className="btn btn-success">Enregistrer</button>
+                            </div>
+                        </form>
                     </div>
-                    <div className="col-6">
-                        <Field name={"firstName"} label={"Prénom"} type={"text"} value={user.firstName} onChange={handleChange} error={errors.firstName}/>
+                    <div className="col-4">
+                        <ReactSearchBox
+                            placeholder="Rechercher quelqu'un"
+                            data={allUsers}
+                            onSelect={record => goToProfile(record["key"])}
+                            onFocus={() => {
+                            }}
+                            onChange={() => {
+                            }}
+                            fuseConfigs={{
+                                threshold: 0.05,
+                            }}
+                        />
                     </div>
                 </div>
-                <Field name={"email"} label={"Email"} type={"text"} value={user.email} onChange={handleChange} error={errors.email}/>
-                <div className="from-group">
-                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
-                </div>
-            </form>
-
+            </div>
+            <h5 className={"mt-5"}>Vos statistiques pour cette saison</h5>
             <table className="table table-hover mt-5 text-center container">
                 <thead>
                 <tr className={"row"}>
