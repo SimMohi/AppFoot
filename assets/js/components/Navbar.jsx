@@ -44,6 +44,11 @@ const Navbar = ({ history }) => {
                         </NavLink>
                     </li>
                     <li className="nav-item">
+                        <NavLink className="nav-link" to={"/events"}>
+                            Events
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
                         <NavLink className="nav-link" to={"/covoit"}>
                             Covoiturage
                         </NavLink>

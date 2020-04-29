@@ -5,9 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventsRepository")
+ * @ApiResource
  */
 class Events
 {
@@ -20,6 +24,8 @@ class Events
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Le nom de l'événement est obligatoire")
+     * @Assert\Length(min=2, minMessage="Le nom de l'événement doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de l'événement doit faire entre 2 et 255 caractères")
      */
     private $name;
 

@@ -35,7 +35,6 @@ const ClubPage = props => {
 
 
     const handleChange = ({ currentTarget }) => {
-        console.log("cou");
         const { name, value } = currentTarget;
         setClub({...club, [name]: value});
     };

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import Field from "../components/forms/Fields";
-import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
 import axios from "axios";

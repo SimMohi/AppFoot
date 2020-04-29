@@ -25,14 +25,21 @@ class Training
     private $teamRonvau;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="datetime")
      */
-    private $day;
+    private $start;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $end;
+
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerTraining", mappedBy="idTraining", orphanRemoval=true)
      */
     private $playerTrainings;
+
 
     public function __construct()
     {
@@ -56,14 +63,14 @@ class Training
         return $this;
     }
 
-    public function getDay(): ?int
+    public function getStart(): ?\DateTimeInterface
     {
-        return $this->day;
+        return $this->start;
     }
 
-    public function setDate(int $day): self
+    public function setStart(?\DateTimeInterface $start): self
     {
-        $this->day = $day;
+        $this->start = $start;
 
         return $this;
     }
@@ -95,6 +102,18 @@ class Training
                 $playerTraining->setIdTraining(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEnd(): ?\DateTimeInterface
+    {
+        return $this->end;
+    }
+
+    public function setEnd(\DateTimeInterface $end): self
+    {
+        $this->end = $end;
 
         return $this;
     }

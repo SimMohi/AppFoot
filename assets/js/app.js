@@ -25,12 +25,14 @@ import RegisterPage from "./pages/RegisterPage";
 import RonvauTeamsPage from "./pages/RonvauTeamsPage";
 import RonvauTeamPage from "./pages/RonvauTeamPage";
 import UserAcceptPage from "./pages/UserAcceptPage";
-import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
+import RonvauTeamCalendarMatch from "./pages/RonvauTeamCalendarMatch";
 import CompetitionTeamsPage from "./pages/CompetitionTeamsPage";
 import SelectPlayerMatchPage from "./pages/SelectPlayerPage";
 import RonvauTeamSelectPage from "./pages/RonvauTeamSelectPage";
 import EncodeMatchPage from "./pages/EncodeMatchPage";
 import ProfilUserPage from "./pages/ProfilUserPage";
+import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
+import EventsPage from "./pages/EventsPage";
 
 
 require("../css/app.css");
@@ -64,6 +66,7 @@ const App = () => {
                         <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
                         <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>
                         <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
+                        <PrivateRoute path={"/events"} component={EventsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>
                         <PrivateRoute path={"/club"} component={ClubsPage}/>
@@ -71,6 +74,7 @@ const App = () => {
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>
+                        <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
                         <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
                         <PrivateRoute path={"/userAccess"} component={UserAcceptPage}/>

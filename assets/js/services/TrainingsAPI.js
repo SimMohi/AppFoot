@@ -7,7 +7,8 @@ function findAllTrainingDay(teamRonvau) {
 }
 
 function createTrainingDay(teamRonvau){
-    return axios.post("http://localhost:8000/api/training_days", teamRonvau);
+    console.log(teamRonvau);
+    //return axios.post("http://localhost:8000/api/training_days", teamRonvau);
 }
 
 function deleteTrainingDay(id){
