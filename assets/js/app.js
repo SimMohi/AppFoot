@@ -34,6 +34,7 @@ import ProfilUserPage from "./pages/ProfilUserPage";
 import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
 import EventsPage from "./pages/EventsPage";
 import UsersPage from "./pages/UsersPage";
+import jwtDecode from "jwt-decode";
 
 
 require("../css/app.css");
@@ -47,6 +48,7 @@ const App = () => {
     );
 
     const NavBarWIthRouter = withRouter(NavBar);
+
 
 
     return (

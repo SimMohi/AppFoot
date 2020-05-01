@@ -17,7 +17,7 @@ Use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"events_read"}}
  * )
  */
-class Events
+class Event
 {
     /**
      * @ORM\Id()

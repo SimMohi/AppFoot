@@ -158,7 +158,6 @@ const CovoitsPage = props => {
         getUserConnected();
     }, [show, reload]);
 
-    console.log(modalParam);
     return(
         <>
             <h1>Espace covoiturage </h1>

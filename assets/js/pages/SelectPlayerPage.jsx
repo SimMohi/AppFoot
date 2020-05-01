@@ -29,17 +29,17 @@ const SelectPlayerMatchPage = props => {
         let copyNewUsers = JSON.parse(JSON.stringify(newUsers));
         let callArray = [];
         let notCallArray = [];
-        let total = {
-            accepted: 0,
-            total: 0
-        };
         for (let i = 0; i < copyNewUsers.length; i++){
-            total["total"] += 1;
             let inArray = 0;
+            let total = {
+                accepted: 0,
+                total: 0
+            };
             for (let j = 0; j < responseMatch["playerMatches"].length; j++){
                 if (responseMatch["playerMatches"][j]["hasConfirmed"] == true){
                     total["accepted"] += 1;
                 }
+                total["total"] += 1;
                 if (copyNewUsers[i]["@id"] == responseMatch["playerMatches"][j]["idUserTeam"]["@id"]){
                     let response = responseMatch["playerMatches"][j];
                     response["userId"] = copyNewUsers[i]["userId"];
@@ -53,10 +53,10 @@ const SelectPlayerMatchPage = props => {
                 copyNewUsers[i]["called"] = false;
                 notCallArray.push(copyNewUsers[i]);
             }
+            setAnswer(total);
         }
         setCall(callArray);
         setNotCall(notCallArray);
-        setAnswer(total);
     }
 
     const changeCheckBoxNotCall = ({ currentTarget }) => {

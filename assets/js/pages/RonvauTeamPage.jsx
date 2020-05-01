@@ -40,8 +40,6 @@ const RonvauTeamPage = props => {
         select: ""
     });
 
-    console.log(ronvauTeam);
-
     const fetchCompetition = async () => {
         try {
             const competitions = await RonvauTeamAPI.findCompetRonvau();

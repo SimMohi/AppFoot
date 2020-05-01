@@ -28,7 +28,7 @@ class EventsTeam
     private $idTeamRonvau;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Events", inversedBy="eventsTeams")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="eventsTeams")
      * @ORM\JoinColumn(nullable=false)
      */
     private $idEvents;
@@ -50,12 +50,12 @@ class EventsTeam
         return $this;
     }
 
-    public function getIdEvents(): ?Events
+    public function getIdEvents(): ?Event
     {
         return $this->idEvents;
     }
 
-    public function setIdEvents(?Events $idEvents): self
+    public function setIdEvents(?Event $idEvents): self
     {
         $this->idEvents = $idEvents;
 

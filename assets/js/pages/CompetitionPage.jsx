@@ -14,7 +14,6 @@ const CompetitionPage = props => {
         format: "",
         season: "",
         matchDayNumber: "",
-        teams: ""
     });
 
     const [errors, setErrors] = useState({
@@ -26,8 +25,8 @@ const CompetitionPage = props => {
 
     const fetchCompetition = async id => {
         try{
-            const { name, format, season, matchDayNumber, teams} = await CompetitionsAPI.find(id);
-            setCompetition({ name, format, season, matchDayNumber, teams});
+            const { name, format, season, matchDayNumber} = await CompetitionsAPI.find(id);
+            setCompetition({ name, format, season, matchDayNumber});
         } catch (e) {
             console.log(e.response);
         }

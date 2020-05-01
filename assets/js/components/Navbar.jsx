@@ -7,8 +7,6 @@ import axios from 'axios';
 import jwtDecode from "jwt-decode";
 import usersAPI from "../services/usersAPI";
 import Modal from "react-bootstrap/Modal";
-import CovoitPage from "../pages/CovoitPage";
-import Field from "./forms/Fields";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
 
 
@@ -17,6 +15,8 @@ const Navbar = ({ history }) => {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const [notifications, setNotifications] = useState([]);
     const [show, setShow] = useState(false);
+    const [admin, setAdmin] = useState(false);
+    const [reload, setReload] = useState(0);
 
     const handleShow = () => {
         setShow(true);
@@ -35,7 +35,8 @@ const Navbar = ({ history }) => {
     const fetchNotifications = async () =>{
         const token = window.localStorage.getItem(("authToken"));
         if (token) {
-            const {username: user} = jwtDecode(token);
+            const {username: user, roles} = jwtDecode(token);
+            if (roles.includes("ROLE_ADMIN")) setAdmin(true);
             axios.all([
                 axios.get("http://localhost:8000/api/users?email=" + user),
             ]).then(axios.spread(async (...responses) => {
@@ -48,26 +49,36 @@ const Navbar = ({ history }) => {
         }
     }
 
-    const test = (id) => {
-        console.log(id);
+    const acceptMatch = async (player) => {
+        player["hasConfirmed"] = true;
+        delete player["goal"];
+        delete player["yellowCard"];
+        delete player["redCard"];
+        try {
+            await PlayerMatchAPI.update(player.id, player);
+            toast.success("Vous avez accepté la convocation");
+        } catch (e) {
+        }
+        setReload(reload+1);
     }
+
 
     const deleteNotif = async (player) => {
         player["hasRefused"] = true;
         delete player["goal"];
         delete player["yellowCard"];
         delete player["redCard"];
-        console.log(player);
         try {
             await PlayerMatchAPI.update(player.id, player);
+            toast.error("Vous avez refusé la convocation");
         } catch (e) {
-            toast.error("L'entraînement n'a pas été supprimé");
         }
+        setReload(reload+1);
     }
 
     useEffect(() => {
         fetchNotifications();
-    }, []);
+    }, [reload]);
 
     return (
         <>
@@ -115,36 +126,44 @@ const Navbar = ({ history }) => {
 
                 <div className="collapse navbar-collapse" id="navbarColor01">
                     <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <NavLink className="nav-link" to={"/competition"}>
-                                Competitions
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={"/club"}>
-                                Clubs
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={"/events"}>
-                                Events
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={"/covoit"}>
-                                Covoiturage
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                Gestion des équipes
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink className="nav-link" to={"/userAccess"}>
-                                Gestion des accès
-                            </NavLink>
-                        </li>
+                        {isAuthenticated &&
+                            <>
+                                {admin &&
+                                    <>
+                                        <li className="nav-item active">
+                                            <NavLink className="nav-link" to={"/competition"}>
+                                                Competitions
+                                            </NavLink>
+                                        </li>
+                                        <li className="nav-item">
+                                            <NavLink className="nav-link" to={"/club"}>
+                                                Clubs
+                                            </NavLink>
+                                        </li>
+                                        <li className="nav-item">
+                                            <NavLink className="nav-link" to={"/events"}>
+                                                Events
+                                            </NavLink>
+                                        </li>
+                                    </>
+                                }
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/covoit"}>
+                                        Covoiturage
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                        Gestion des équipes
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/userAccess"}>
+                                        Gestion des accès
+                                    </NavLink>
+                                </li>
+                            </>
+                        }
                     </ul>
                     <ul className="navbar-nav ml-auto">
                         {!isAuthenticated && <>
@@ -192,7 +211,7 @@ const Navbar = ({ history }) => {
                                     {not.match}
                                 </div>
                                 <div className="col-3">
-                                    <img id={"greenCheck"} src="img/green_check.png" alt="" onClick={() => test(not["joueur"])}/>
+                                    <img id={"greenCheck"} src="img/green_check.png" alt="" onClick={() => acceptMatch(not["joueur"])}/>
                                     <img id={"redCross"} src="img/red_cross.png" alt="" onClick={() => deleteNotif(not["joueur"])}/>
                                 </div>
                             </div>

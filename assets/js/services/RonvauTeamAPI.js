@@ -30,6 +30,16 @@ function deleteTeamRonvau(id){
     return axios.delete("http://localhost:8000/api/team_ronvaus/" + id);
 }
 
+function getCalendarInfo(teamId){
+    return axios.get("http://localhost:8000/getCalendarInfo/"+ teamId +"/"+"no")
+        .then(response => response.data);
+}
+
+function getPersonnalCalendarInfo(userId){
+    return axios.get("http://localhost:8000/getPersonnalCalendarInfo/"+ userId)
+        .then(response => response.data);
+}
+
 export default {
-    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau
+    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo
 }

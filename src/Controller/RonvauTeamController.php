@@ -4,11 +4,13 @@
 namespace App\Controller;
 
 
-use App\Entity\Events;
+use App\Entity\Event;
 use App\Entity\EventsTeam;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\Training;
+use App\Entity\User;
+use App\Entity\UserTeam;
 use App\Repository\TrainingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -152,7 +154,6 @@ class RonvauTeamController extends AbstractController
      */
     public function getCalendarInfo ($teamId, $date){
 
-        $date = new \DateTime($date);
         $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
         $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
 
@@ -160,9 +161,19 @@ class RonvauTeamController extends AbstractController
         foreach ($trainings as $training){
             $trainingRes = [];
             $start = $training->getStart();
-
-            if ($start->format("YMD") == $date->format("YMD")){
+            if ($date != "no"){
+                $date = new \DateTime($date);
+                if ($start->format("YMD") == $date->format("YMD")){
+                    $end = $training->getEnd();
+                    $trainingRes["type"] = "Entraînement";
+                    $trainingRes["date"] = $start->format("m/d");
+                    $trainingRes["start"] = $start->format("H:i");
+                    $trainingRes["end"] = $end->format("H:i");
+                    $response[] = $trainingRes;
+                }
+            } else{
                 $end = $training->getEnd();
+                $trainingRes["type"] = "Entrainement";
                 $trainingRes["date"] = $start->format("m/d");
                 $trainingRes["start"] = $start->format("H:i");
                 $trainingRes["end"] = $end->format("H:i");
@@ -173,11 +184,52 @@ class RonvauTeamController extends AbstractController
         foreach ($eventsTeams as $eventsTeam){
             $eventRes = [];
             $eventsTeamId = $eventsTeam->getIdEvents()->getId();
-            $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $eventsTeamId]);
+            $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $eventsTeamId]);
             $eventRes["name"] = $event->getName();
             $eventRes["date"] = $event->getDate()->format("Y-m-d");
             $eventRes["description"] = $event->getDescription();
             $response[] = $eventRes;
+        }
+
+        return $this->json($response);
+
+    }
+
+    /**
+     * @Route("/getPersonnalCalendarInfo/{userId}")
+     * @param $userId
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getPersonnalCalendarInfo ($userId){
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
+        $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
+        $response =  [];
+        foreach ($userTeams as $userTeam){
+            $teamR = $userTeam->getTeamRonvauId();
+            $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
+
+            foreach ($trainings as $training){
+                $trainingRes = [];
+                $start = $training->getStart();
+                $end = $training->getEnd();
+                $trainingRes["type"] = "Entraînement";
+                $trainingRes["date"] = $start->format("m/d");
+                $trainingRes["start"] = $start->format("H:i");
+                $trainingRes["end"] = $end->format("H:i");
+                $response[] = $trainingRes;
+            }
+            $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
+            foreach ($eventsTeams as $eventsTeam){
+                $eventRes = [];
+                $eventsTeamId = $eventsTeam->getIdEvents()->getId();
+                $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $eventsTeamId]);
+                $eventRes["name"] = $event->getName();
+                $eventRes["date"] = $event->getDate()->format("Y-m-d");
+                $eventRes["description"] = $event->getDescription();
+                $response[] = $eventRes;
+            }
         }
 
         return $this->json($response);
@@ -192,7 +244,7 @@ class RonvauTeamController extends AbstractController
     public function postEventTeams (Request $request){
         $data = $request->getContent();
         $data = json_decode($data, true);
-        $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $data["event"]]);
+        $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $data["event"]]);
         $eventTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idEvents' => $event]);
         $eventTeamsIdRt = array();
         foreach ($eventTeams as $eventTeam){
