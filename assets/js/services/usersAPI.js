@@ -30,6 +30,11 @@ function profile(id) {
     return axios.get("http://localhost:8000/profile/" + id);
 }
 
+function getNotifications(id){
+    return axios.get("http://localhost:8000/getNotificationsUser/" + id)
+        .then(response => response.data);
+}
+
 export default {
-    findAll, create, findUnaccepted, update, profile, deleteUser
+    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications
 }

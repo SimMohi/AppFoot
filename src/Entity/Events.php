@@ -7,11 +7,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventsRepository")
- * @ApiResource
+ * @ApiResource(
+ *     normalizationContext={"groups"={"events_read"}}
+ * )
  */
 class Events
 {
@@ -19,6 +23,7 @@ class Events
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"events_read"})
      */
     private $id;
 
@@ -26,21 +31,25 @@ class Events
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Le nom de l'événement est obligatoire")
      * @Assert\Length(min=2, minMessage="Le nom de l'événement doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de l'événement doit faire entre 2 et 255 caractères")
+     * @Groups({"events_read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"events_read"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"events_read"})
      */
     private $date;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\EventsTeam", mappedBy="idEvents", orphanRemoval=true)
+     * @Groups({"events_read"})
      */
     private $eventsTeams;
 

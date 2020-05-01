@@ -24,6 +24,16 @@ function deleteEvent(id){
     return axios.delete("http://localhost:8000/api/events/" + id);
 }
 
+function addTeams(teams){
+    return axios.post("http://localhost:8000/postEventTeams", teams);
+}
+
+function getEventsTeam(eventId){
+    return axios
+        .get("http://localhost:8000/api/events/" + eventId +"/events_teams")
+        .then(response => response.data);
+}
+
 export default {
-    findAll, find, create, update, deleteEvent
+    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam
 }

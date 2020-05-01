@@ -27,8 +27,8 @@ const RonvauTeamCalendar = props => {
             date: newDate.getFullYear()+"-"+(newDate.getMonth()+1)+"-"+newDate.getDate(),
             teamId: id,
         }
-        await axios.post("http://localhost:8000/postTrainingDay/", post);
-        //await axios.get("http://localhost:8000/getCalendarInfo/"+ get.teamId+"/"+get.date);
+        //await axios.post("http://localhost:8000/postTrainingDay/", post);
+        await axios.get("http://localhost:8000/getCalendarInfo/"+ get.teamId+"/"+get.date);
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import ReactDOM from "react-dom";
 import "../css/app.css";
 import NavBar from "./components/Navbar";
@@ -33,6 +33,7 @@ import EncodeMatchPage from "./pages/EncodeMatchPage";
 import ProfilUserPage from "./pages/ProfilUserPage";
 import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
 import EventsPage from "./pages/EventsPage";
+import UsersPage from "./pages/UsersPage";
 
 
 require("../css/app.css");
@@ -46,6 +47,7 @@ const App = () => {
     );
 
     const NavBarWIthRouter = withRouter(NavBar);
+
 
     return (
         <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
@@ -77,7 +79,7 @@ const App = () => {
                         <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
                         <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
-                        <PrivateRoute path={"/userAccess"} component={UserAcceptPage}/>
+                        <PrivateRoute path={"/userAccess"} component={UsersPage}/>
                         <Route path={"/register"} component={RegisterPage}/>
                         <Route path="/" component={HomePage} />
                     </Switch>

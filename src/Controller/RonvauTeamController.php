@@ -4,6 +4,8 @@
 namespace App\Controller;
 
 
+use App\Entity\Events;
+use App\Entity\EventsTeam;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\Training;
@@ -167,8 +169,54 @@ class RonvauTeamController extends AbstractController
                 $response[] = $trainingRes;
             }
         }
+        $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
+        foreach ($eventsTeams as $eventsTeam){
+            $eventRes = [];
+            $eventsTeamId = $eventsTeam->getIdEvents()->getId();
+            $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $eventsTeamId]);
+            $eventRes["name"] = $event->getName();
+            $eventRes["date"] = $event->getDate()->format("Y-m-d");
+            $eventRes["description"] = $event->getDescription();
+            $response[] = $eventRes;
+        }
 
         return $this->json($response);
 
+    }
+
+    /**
+     * @Route("/postEventTeams")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function postEventTeams (Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $event = $this->getDoctrine()->getRepository(Events::class)->findOneBy(['id' => $data["event"]]);
+        $eventTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idEvents' => $event]);
+        $eventTeamsIdRt = array();
+        foreach ($eventTeams as $eventTeam){
+            $eventTeamsIdRt[] = $eventTeam->getidTeamRonvau()->getId();
+        }
+
+        foreach ($data["teams"] as $id){
+            if (in_array($id, $eventTeamsIdRt)){
+                $eventTeamsIdRt = array_diff($eventTeamsIdRt, array($id));
+                continue;
+            }
+            $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $id]);
+            $newEventTeam = new EventsTeam();
+            $newEventTeam->setIdEvents($event);
+            $newEventTeam->setIdTeamRonvau($teamR);
+            $this->getDoctrine()->getManager()->persist($newEventTeam);
+        }
+        if (count($eventTeamsIdRt) > 0){
+            foreach ($eventTeamsIdRt as $del){
+                $delEventTeam = $this->getDoctrine()->getRepository(EventsTeam::class)->findOneBy(['idTeamRonvau' => $del, 'idEvents' => $event]);
+                $this->getDoctrine()->getManager()->remove($delEventTeam);
+            }
+        }
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("Equipes ajoutées avec succès à l'événement");
     }
 }

@@ -3,9 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+Use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventsTeamRepository")
+ * @ApiResource
  */
 class EventsTeam
 {
@@ -19,6 +23,7 @@ class EventsTeam
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TeamRonvau", inversedBy="eventsTeams")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"events_read"})
      */
     private $idTeamRonvau;
 

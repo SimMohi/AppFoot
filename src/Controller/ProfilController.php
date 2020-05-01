@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 
+use App\Entity\Matche;
 use App\Entity\PlayerMatch;
+use App\Entity\Team;
+use App\Entity\TeamRonvau;
 use App\Entity\User;
 use App\Entity\UserTeam;
 use phpDocumentor\Reflection\Types\Object_;
@@ -39,6 +42,32 @@ class ProfilController extends AbstractController
             $return[] = $response;
         }
 
+        return $this->json($return);
+    }
+
+    /**
+     * @Route("/getNotificationsUser/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getNotificationsUser(int $id){
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
+        $return = array();
+        foreach ($userTeams as $userTeam){
+            $ronvauTeam = $userTeam->getTeamRonvauId();
+            $playerMatches = $this->getDoctrine()->getRepository(PlayerMatch::class)->findBy(['idUserTeam' => $userTeam]);
+            $matches = array();
+            foreach ($playerMatches as $playerMatch){
+                if ($playerMatch->getHasConfirmed() == false && $playerMatch->getHasRefused() == false){
+                    $match = $playerMatch->getIdMatch();
+                    $matches["name"] = $ronvauTeam->getCategory();
+                    $matches["match"] = $match->getHomeTeam()->getClub()->getName()." - ". $match->getVisitorTeam()->getClub()->getName();
+                    $matches["joueur"] = $playerMatch;
+                    $return[] = $matches;
+                }
+            }
+        }
         return $this->json($return);
     }
 }

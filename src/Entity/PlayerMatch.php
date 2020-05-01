@@ -9,12 +9,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerMatchRepository")
  * @ApiResource
- * @ApiFilter(SearchFilter::class , properties={"idMatch": "exact"})
+ * @ApiFilter(SearchFilter::class , properties={"idMatch": "exact", "idUserTeam": "exact"})
+ * @ApiFilter(BooleanFilter::class, properties={"hasConfirmed", "hasRefused"})
  */
 class PlayerMatch
 {
@@ -69,6 +72,12 @@ class PlayerMatch
     private $hasConfirmed;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"team_ronvau_read", "matchs_read"})
+     */
+    private $hasRefused;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\PlayerOfTheMatch", mappedBy="idPlayerMatch")
      */
     private $playerOfTheMatches;
@@ -77,6 +86,7 @@ class PlayerMatch
     {
         $this->setPlayed(false);
         $this->setHasConfirmed(false);
+        $this->setHasRefused(false);
         $this->playerOfTheMatches = new ArrayCollection();
     }
 
@@ -165,6 +175,18 @@ class PlayerMatch
     public function setHasConfirmed(bool $hasConfirmed): self
     {
         $this->hasConfirmed = $hasConfirmed;
+
+        return $this;
+    }
+
+    public function getHasRefused(): ?bool
+    {
+        return $this->hasRefused;
+    }
+
+    public function setHasRefused(bool $hasRefused): self
+    {
+        $this->hasRefused = $hasRefused;
 
         return $this;
     }

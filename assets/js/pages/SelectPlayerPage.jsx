@@ -9,6 +9,10 @@ const SelectPlayerMatchPage = props => {
     const [notCall, setNotCall] = useState([]);
     const [call, setCall] = useState([]);
     const [reload, setReload] = useState(0);
+    const [answer, setAnswer] = useState({
+        accepted: 0,
+        total: 0
+    })
 
     const fetchMatch = async () => {
         const responseMatch = await MatcheAPI.find(id);
@@ -25,10 +29,18 @@ const SelectPlayerMatchPage = props => {
         let copyNewUsers = JSON.parse(JSON.stringify(newUsers));
         let callArray = [];
         let notCallArray = [];
+        let total = {
+            accepted: 0,
+            total: 0
+        };
         for (let i = 0; i < copyNewUsers.length; i++){
+            total["total"] += 1;
             let inArray = 0;
             for (let j = 0; j < responseMatch["playerMatches"].length; j++){
-                if (copyNewUsers[i]["@id"] == responseMatch["playerMatches"][j]["idUserTeam"]){
+                if (responseMatch["playerMatches"][j]["hasConfirmed"] == true){
+                    total["accepted"] += 1;
+                }
+                if (copyNewUsers[i]["@id"] == responseMatch["playerMatches"][j]["idUserTeam"]["@id"]){
                     let response = responseMatch["playerMatches"][j];
                     response["userId"] = copyNewUsers[i]["userId"];
                     response["called"] = false;
@@ -44,6 +56,7 @@ const SelectPlayerMatchPage = props => {
         }
         setCall(callArray);
         setNotCall(notCallArray);
+        setAnswer(total);
     }
 
     const changeCheckBoxNotCall = ({ currentTarget }) => {
@@ -112,11 +125,12 @@ const SelectPlayerMatchPage = props => {
                     </div>
                     <div className="col-2"></div>
                     <div className="col-5">
+                        <div>{answer.accepted+" réponses positive sur "+answer.total}</div>
                         <table className="mt-5 table table-hover text-center">
                             <thead>
                             <tr className={"row"}>
                                 <th className={"col-4"}>Nom</th>
-                                <th className={"col-4"}>A accepté ?</th>
+                                <th className={"col-4"}>Réponse</th>
                                 <th className={"col-4"}></th>
                             </tr>
                             </thead>
@@ -126,7 +140,13 @@ const SelectPlayerMatchPage = props => {
                                     <td className="col-4">{user.userId.lastName + " " + user.userId.firstName}</td>
                                     <td className="custom-control custom-checkbox col-4">
                                         {user["hasConfirmed"] == true &&
-                                            <i className="fas fa-check"></i> || <i className="fas fa-times"></i>
+                                            <i className="fas fa-check"></i>
+                                        }
+                                        {user["hasRefused"] == true &&
+                                            <i className="fas fa-times"></i>
+                                        }
+                                        {(user["hasRefused"] == false && user["hasConfirmed"] == false) &&
+                                            <i className="far fa-clock"></i>
                                         }
                                     </td>
                                     <td className="col-4">

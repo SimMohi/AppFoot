@@ -57,5 +57,5 @@ function isAuthenticated(){
 }
 
 export default {
-    authenticate, getUserInfo, logout, setup, isAuthenticated
+    authenticate, getUserInfo, logout, setup, isAuthenticated, setAxiosToken
 };
