@@ -6,9 +6,11 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\EventsTeam;
+use App\Entity\PlayerTraining;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\Training;
+use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\UserTeam;
 use App\Repository\TrainingRepository;
@@ -23,7 +25,7 @@ class RonvauTeamController extends AbstractController
 {
 
     /**
-     * @Route("/postTrainingDay/")
+     * @Route("/postTrainingDay")
      * @param Request $request
      * @return JsonResponse
      */
@@ -31,9 +33,9 @@ class RonvauTeamController extends AbstractController
         $data = $request->getContent();
         $data = json_decode($data, true);
         $day = $data["day"];
-        $start = explode(":", $data["start"]);
-        $end = explode(":", $data["end"]);
-        $teamId = $data["teamId"];
+        $start = explode(":", $data["hourStart"]);
+        $end = explode(":", $data["hourEnd"]);
+        $teamId = $data["teamRonvau"];
         $begin  = new \DateTime();
 
         if ($begin->format("m") > 5 ){
@@ -68,22 +70,39 @@ class RonvauTeamController extends AbstractController
             default :
                 return $this->json("Mauvais jour encodé");
         }
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
+        $copyStart = clone $begin;
+        $copyEnd = clone $begin;
+        $copyStart->setTime($start[0], $start[1], 0);
+        $copyEnd->setTime($end[0], $end[1], 0);
+
+        $newTrD = new TrainingDay();
+        $newTrD->setTeamRonvau($teamR);
+        $newTrD->setDay($day);
+        $newTrD->setHourStart($copyStart);
+        $newTrD->setHourEnd($copyEnd);
+        $this->getDoctrine()->getManager()->persist($newTrD);
 
         $response = [];
         while ($begin <= $max){
             if($begin->format("D") == $weekDay)
             {
-                $copyStart = clone $begin;
-                $copyEnd = clone $begin;
-                $copyStart->setTime($start[0], $start[1], 0);
-                $copyEnd->setTime($end[0], $end[1], 0);
-
                 $newTraining = new Training();
-                $newTraining->setStart($copyStart);
-                $newTraining->setEnd($copyEnd);
-                $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
+                $startNew = clone $begin;
+                $startNew->setTime($start[0], $start[1], 0);
+                $endNew = clone $begin;
+                $endNew->setTime($end[0], $end[1], 0);
+                $newTraining->setStart($startNew);
+                $newTraining->setEnd($endNew);
                 $newTraining->setTeamRonvau($teamR);
                 $this->getDoctrine()->getManager()->persist($newTraining);
+                $usersTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['teamRonvauId' => $teamR]);
+                foreach ($usersTeam as $ut){
+                    $newUserTr = new PlayerTraining();
+                    $newUserTr->setIdUserTeam($ut);
+                    $newUserTr->setIdTraining($newTraining);
+                    $this->getDoctrine()->getManager()->persist($newUserTr);
+                }
             }
 
             $begin->modify('+1 day');
@@ -94,14 +113,15 @@ class RonvauTeamController extends AbstractController
     }
 
     /**
-     * @Route("/deleteTrainingDay/")
+     * @Route("/deleteTrainingDay")
      * @param Request $request
      * @return JsonResponse
      */
     public function deleteTrainingDay (Request $request){
         $data = $request->getContent();
         $data = json_decode($data, true);
-        $teamId = $data["teamId"];
+        $trainingDayId = $data["id"];
+        $teamId = $data["teamR"];
         $day = $data["day"];
 
         switch ($day) {
@@ -129,7 +149,8 @@ class RonvauTeamController extends AbstractController
             default :
                 return $this->json("Mauvais jour encodé");
         }
-
+        $trainingDay = $this->getDoctrine()->getRepository(TrainingDay::class)->findOneBy(['id' => $trainingDayId]);
+        $this->getDoctrine()->getManager()->remove($trainingDay);
         $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
         $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
         if (count($trainings) > 0){
@@ -139,8 +160,8 @@ class RonvauTeamController extends AbstractController
                     $this->getDoctrine()->getManager()->remove($training);
                 }
             }
-            $this->getDoctrine()->getManager()->flush();
         }
+        $this->getDoctrine()->getManager()->flush();
 
         return $this->json("");
     }
@@ -212,12 +233,33 @@ class RonvauTeamController extends AbstractController
 
             foreach ($trainings as $training){
                 $trainingRes = [];
+                if ($userTeam->getIsStaff() === true){
+                    $trainingRes["staff"] = true;
+                    $absences = $this->getDoctrine()->getRepository(PlayerTraining::class)->findBy([ 'idTraining' => $training, 'isAbsent' => true]);
+                    $absArr = [];
+                    foreach ($absences as $absence){
+                        $absUser = [];
+                        $userAbs = $absence->getIdUserTeam()->getUserId();
+                        $userName = $userAbs->getLastName(). " " . $userAbs->getFirstName();
+                        $absUser["name"] = $userName;
+                        $absUser["reason"] = $absence->getAbsenceJustification();
+                        $absArr[] = $absUser;
+                    }
+                    $trainingRes["absences"] = $absArr;
+                } else{
+                    $trainingRes["staff"] = false;
+                }
+
                 $start = $training->getStart();
                 $end = $training->getEnd();
-                $trainingRes["type"] = "Entraînement";
-                $trainingRes["date"] = $start->format("m/d");
-                $trainingRes["start"] = $start->format("H:i");
-                $trainingRes["end"] = $end->format("H:i");
+                $trainingRes["id"] = $training->getId();
+                $trainingRes["title"] = "Entraînement ".$teamR->getCategory();
+                $trainingRes["type"] = "training";
+                $trainingRes["date"] = $start;
+                $trainingRes["start"] = $start;
+                $trainingRes["end"] = $end;
+                $isAbs = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy([ 'idTraining' => $training, 'idUserTeam' => $userTeam]);
+                $trainingRes["abs"] = $isAbs->getIsAbsent();
                 $response[] = $trainingRes;
             }
             $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
@@ -225,8 +267,11 @@ class RonvauTeamController extends AbstractController
                 $eventRes = [];
                 $eventsTeamId = $eventsTeam->getIdEvents()->getId();
                 $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $eventsTeamId]);
-                $eventRes["name"] = $event->getName();
-                $eventRes["date"] = $event->getDate()->format("Y-m-d");
+                $eventRes["id"] = $event->getId();
+                $eventRes["type"] = "Event";
+                $eventRes["title"] = $event->getName();
+                $eventRes["start"] = $event->getDate();
+                $eventRes["end"] = $event->getDate();
                 $eventRes["description"] = $event->getDescription();
                 $response[] = $eventRes;
             }
@@ -270,5 +315,113 @@ class RonvauTeamController extends AbstractController
         }
         $this->getDoctrine()->getManager()->flush();
         return $this->json("Equipes ajoutées avec succès à l'événement");
+    }
+
+    /**
+     * @Route("/postAbsence")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function postAbsence(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["idUser"]]);
+        $training = $this->getDoctrine()->getRepository(Training::class)->findOneBy(['id' => $data["idTraining"]]);
+        $teamR = $training->getTeamRonvau();
+        $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
+
+        $trainingPl = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy(['idUserTeam' => $userTeam, 'idTraining' => $training]);
+        $trainingPl->setAbsenceJustification($data["reason"]);
+        $trainingPl->setIsAbsent(true);
+        $this->getDoctrine()->getManager()->persist($trainingPl);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("Absence encodé avec succès");
+    }
+
+    /**
+     * @Route("/remAbsence")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function remAbsence(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["idUser"]]);
+        $training = $this->getDoctrine()->getRepository(Training::class)->findOneBy(['id' => $data["idTraining"]]);
+        $teamR = $training->getTeamRonvau();
+        $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
+
+        $trainingPl = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy(['idUserTeam' => $userTeam, 'idTraining' => $training]);
+        $trainingPl->setAbsenceJustification(null);
+        $trainingPl->setIsAbsent(false);
+        $this->getDoctrine()->getManager()->persist($trainingPl);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("Absence encodé avec succès");
+    }
+
+    /**
+     * @Route("/getTrainingPlayer/{idTraining}")
+     * @param int $idTraining
+     * @return JsonResponse
+     */
+    public function getTrainingPlayer(int $idTraining){
+        $training = $this->getDoctrine()->getRepository(Training::class)->findOneBy(['id' => $idTraining]);
+        $teamR = $training->getTeamRonvau();
+
+        $trainingPl = $this->getDoctrine()->getRepository(PlayerTraining::class)->findBy(['idTraining' => $training, 'isAbsent' => false]);
+        $response = array();
+        foreach ($trainingPl as $item){
+            $userArr = [];
+            $user = $item->getIdUserTeam()->getUserId();
+            $userName = $user->getLastName(). " " . $user->getFirstName();
+            $userArr["name"] = $userName;
+            $userArr["id"] = $item->getId();
+            $userArr["present"] = $item->getWasPresent();
+            $response[] = $userArr;
+        }
+        return $this->json($response);
+    }
+
+    /**
+     * @Route("/postPresence")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function postPresence(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        foreach ($data as $arr){
+            $trainingPl = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy(['id' => $arr["id"]]);
+            $trainingPl->setWasPresent($arr["value"]);
+            $this->getDoctrine()->getManager()->persist($trainingPl);
+        }
+
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/editTraining")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function editTraining(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $start = explode(":", $data["start"]);
+        $end = explode(":", $data["end"]);
+
+        $training = $this->getDoctrine()->getRepository(Training::class)->findOneBy(['id' => $data["id"]]);
+        $startTr = new \DateTime($data["date"]);
+        $endTr = clone $startTr;
+        $startTr->setTime($start[0], $start[1], 0);
+        $endTr->setTime($end[0], $end[1], 0);
+
+        $training->setStart($startTr);
+        $training->setEnd($endTr);
+        $this->getDoctrine()->getManager()->persist($training);
+
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json($data);
     }
 }

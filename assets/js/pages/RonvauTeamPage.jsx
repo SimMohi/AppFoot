@@ -40,6 +40,8 @@ const RonvauTeamPage = props => {
         select: ""
     });
 
+    console.log(trainingDay);
+
     const fetchCompetition = async () => {
         try {
             const competitions = await RonvauTeamAPI.findCompetRonvau();
@@ -220,7 +222,7 @@ const RonvauTeamPage = props => {
             toast.error("L'heure de fin doit être supérieur à l'heure de début");
             return ;
         }
-        copySelectTraining["teamRonvau"] = "/api/team_ronvaus/"+id;
+        copySelectTraining["teamRonvau"] = id;
         try{
             await TrainingsAPI.createTrainingDay(copySelectTraining);
             toast.success("L'entraînement a été ajouté avec succès");
@@ -230,9 +232,16 @@ const RonvauTeamPage = props => {
         setReload(reload+1);
     }
 
-    const handleDeleteTrainingDay = async (id) => {
+    const handleDeleteTrainingDay = async (index) => {
+        let delTD = trainingDay[index];
+        let teamR = delTD.teamRonvau.replace("/api/team_ronvaus/", "");
+        let post = {
+            id: delTD.id,
+            day: delTD.day,
+            teamR: teamR
+        }
         try {
-            await TrainingsAPI.deleteTrainingDay(id);
+            await TrainingsAPI.deleteTrainingDay(post);
             toast.success("L'entraînement a bien été supprimé");
         } catch (e) {
             toast.error("L'entraînement n'a pas été supprimé");
@@ -293,7 +302,7 @@ const RonvauTeamPage = props => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {trainingDay.map(td =>
+                                            {trainingDay.map((td, index) =>
                                                 <tr className={"row"} key={td.id}>
                                                     <td className={"col-3"}>
                                                         {td.day}
@@ -309,7 +318,7 @@ const RonvauTeamPage = props => {
                                                         </Moment>
                                                     </td>
                                                     <td className={"col-3"}>
-                                                        <button type={"button"} onClick={() => handleDeleteTrainingDay(td.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                                        <button type={"button"} onClick={() => handleDeleteTrainingDay(index)} className="btn btn-sm btn-danger">Supprimer</button>
                                                     </td>
                                                 </tr>
                                             )}

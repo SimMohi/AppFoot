@@ -3,6 +3,7 @@
         "@babel/preset-react": "^7.8.0",
         "@symfony/webpack-encore": "^0.28.2",
         "core-js": "^3.0.0",
+        "html-react-parser": "^0.10.3",
         "regenerator-runtime": "^0.13.2",
         "webpack-notifier": "^1.6.0"
     },
@@ -21,6 +22,7 @@
         "moment": "^2.24.0",
         "moment-timezone": "^0.5.28",
         "react": "^16.8.6",
+        "react-big-calendar": "^0.24.5",
         "react-bootstrap": "^1.0.0",
         "react-date-picker": "^8.0.1",
         "react-datepicker": "^2.14.1",
