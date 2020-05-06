@@ -35,6 +35,7 @@ import RonvauTeamCalendar from "./pages/RonvauTeamCalendar";
 import EventsPage from "./pages/EventsPage";
 import UsersPage from "./pages/UsersPage";
 import jwtDecode from "jwt-decode";
+import ChatPage from "./pages/ChatPage";
 
 
 require("../css/app.css");
@@ -74,6 +75,7 @@ const App = () => {
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
                         <PrivateRoute path={"/club/:id"} component={ClubPage}/>
                         <PrivateRoute path={"/club"} component={ClubsPage}/>
+                        <PrivateRoute path={"/chat"} component={ChatPage}/>
                         <PrivateRoute path={"/match/:id/encode"} component={EncodeMatchPage}/>
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>

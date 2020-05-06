@@ -61,10 +61,16 @@ class UserTeam
      */
     private $playerTrainings;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="sender")
+     */
+    private $chats;
+
     public function __construct()
     {
         $this->playerMatches = new ArrayCollection();
         $this->playerTrainings = new ArrayCollection();
+        $this->chats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +182,37 @@ class UserTeam
             // set the owning side to null (unless already changed)
             if ($playerTraining->getIdUserTeam() === $this) {
                 $playerTraining->setIdUserTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Chat[]
+     */
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
+
+    public function addChat(Chat $chat): self
+    {
+        if (!$this->chats->contains($chat)) {
+            $this->chats[] = $chat;
+            $chat->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChat(Chat $chat): self
+    {
+        if ($this->chats->contains($chat)) {
+            $this->chats->removeElement($chat);
+            // set the owning side to null (unless already changed)
+            if ($chat->getSender() === $this) {
+                $chat->setSender(null);
             }
         }
 

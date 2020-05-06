@@ -77,6 +77,15 @@ function dateFormatFr (date){
     return day + " " + monthFr + " " + year
 }
 
+function dateFormatFrDM (date){
+    const d = new Date(date);
+    const month = d.getMonth();
+    const day = d.getDate();
+    let monthFr = getMonthFr(month);
+
+    return day + " " + monthFr
+}
+
 function getHoursHM(date) {
     const d = new Date(date);
     let hours = d.getHours();
@@ -92,5 +101,5 @@ function getHoursHM(date) {
 
 
 export default {
-    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM
+    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM
 }

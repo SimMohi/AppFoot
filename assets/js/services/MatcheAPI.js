@@ -50,6 +50,10 @@ function postEncodeMatch(data){
     return axios.post("http://localhost:8000/postEncodeMatch", data);
 }
 
+function editDateMatch(data){
+    return axios.post("http://localhost:8000/editDateMatch", data);
+}
+
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch
 }

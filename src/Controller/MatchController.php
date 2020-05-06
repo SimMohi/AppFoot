@@ -81,4 +81,27 @@ class MatchController extends AbstractController
 
         return $this->json($response);
     }
+
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/editDateMatch")
+     * @throws \Exception
+     */
+    public function editDateMatch(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $date = new \DateTime($data["date"]);
+        $start = explode(":", $data["hour"]);
+        $date->setTime($start[0], $start[1], 0);
+
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["id"]]);
+        $match->setDate($date);
+        $this->getDoctrine()->getManager()->persist($match);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("La date a bien été modifiée");
+    }
 }

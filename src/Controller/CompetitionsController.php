@@ -112,6 +112,7 @@ class CompetitionsController extends AbstractController
                 $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
                 $add["isOver"] = $matchA->getIsOver();
                 $add["matchDay"] = $matchA->getMatchDay();
+                $add["date"] = $matchA->getDate();
                 $response[] = $add;
             }
         }
@@ -125,6 +126,7 @@ class CompetitionsController extends AbstractController
                 $add["visitorTeamGoal"] = $matchB->getVisitorTeamGoal();
                 $add["isOver"] = $matchB->getIsOver();
                 $add["matchDay"] = $matchB->getMatchDay();
+                $add["date"] = $matchB->getDate();
                 $response[] = $add;
             }
         }

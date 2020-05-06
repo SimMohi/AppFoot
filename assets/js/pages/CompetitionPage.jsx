@@ -86,7 +86,7 @@ const CompetitionPage = props => {
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
                 <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet}
                        error={errors.matchDayNumber}></Field>
-                <div className="from-group">
+                <div className="from-group ">
                     <button type={"submit"} className="btn btn-success">Enregistrer</button>
                     <Link to={"/competition"} className={"btn btn-link"}>Retour à la liste</Link>
                 </div>

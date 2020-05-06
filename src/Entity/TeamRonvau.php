@@ -73,6 +73,7 @@ class TeamRonvau
      */
     private $trainingDays;
 
+
     public function __construct()
     {
         $this->userTeams = new ArrayCollection();

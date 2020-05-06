@@ -6,6 +6,9 @@ import PlayerMatchAPI from "../services/PlayerMatchAPI";
 const SelectPlayerMatchPage = props => {
 
     const {id} = props.match.params;
+    const [match, setMatch] = useState({
+        teams: "",
+    })
     const [notCall, setNotCall] = useState([]);
     const [call, setCall] = useState([]);
     const [reload, setReload] = useState(0);
@@ -16,8 +19,12 @@ const SelectPlayerMatchPage = props => {
 
     const fetchMatch = async () => {
         const responseMatch = await MatcheAPI.find(id);
+        console.log(responseMatch);
+        let matchRes ={
+            teams: responseMatch["homeTeam"]["club"]["name"]+" - " +  responseMatch["visitorTeam"]["club"]["name"]
+        }
         let newUsers = [];
-        if (!typeof responseMatch["homeTeam"]["teamRonvau"] == 'undefined'){
+        if (typeof responseMatch["homeTeam"]["teamRonvau"] !== 'undefined'){
             let idRT = responseMatch["homeTeam"]["teamRonvau"]["id"];
             const responseUser = await RonvauTeamAPI.find(idRT);
             newUsers = responseUser["userTeams"];
@@ -55,6 +62,7 @@ const SelectPlayerMatchPage = props => {
             }
             setAnswer(total);
         }
+        setMatch(matchRes);
         setCall(callArray);
         setNotCall(notCallArray);
     }
@@ -99,6 +107,7 @@ const SelectPlayerMatchPage = props => {
 
     return(
         <>
+            <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
             <div className="container">
                 <div className="row">
                     <div className="col-5">

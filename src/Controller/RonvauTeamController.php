@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\EventsTeam;
+use App\Entity\Matche;
 use App\Entity\PlayerTraining;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
@@ -229,12 +230,12 @@ class RonvauTeamController extends AbstractController
         $response =  [];
         foreach ($userTeams as $userTeam){
             $teamR = $userTeam->getTeamRonvauId();
+            $team = $teamR->getTeam();
             $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
 
             foreach ($trainings as $training){
                 $trainingRes = [];
                 if ($userTeam->getIsStaff() === true){
-                    $trainingRes["staff"] = true;
                     $absences = $this->getDoctrine()->getRepository(PlayerTraining::class)->findBy([ 'idTraining' => $training, 'isAbsent' => true]);
                     $absArr = [];
                     foreach ($absences as $absence){
@@ -258,6 +259,7 @@ class RonvauTeamController extends AbstractController
                 $trainingRes["date"] = $start;
                 $trainingRes["start"] = $start;
                 $trainingRes["end"] = $end;
+                $trainingRes["staff"] = $userTeam->getIsStaff();
                 $isAbs = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy([ 'idTraining' => $training, 'idUserTeam' => $userTeam]);
                 $trainingRes["abs"] = $isAbs->getIsAbsent();
                 $response[] = $trainingRes;
@@ -273,7 +275,31 @@ class RonvauTeamController extends AbstractController
                 $eventRes["start"] = $event->getDate();
                 $eventRes["end"] = $event->getDate();
                 $eventRes["description"] = $event->getDescription();
+                $eventRes["staff"] = $userTeam->getIsStaff();
                 $response[] = $eventRes;
+            }
+
+            $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
+            $matchesTeamN = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
+            foreach ($matchesTeamA as $home){
+                $matchRes = [];
+                $matchRes["type"] = "Match";
+                $matchRes["id"] = $home->getId();
+                $matchRes["title"] = $home->getHomeTeam()->getClub()->getName()."-".$home->getVisitorTeam()->getClub()->getName();
+                $matchRes["start"] = $home->getDate();
+                $matchRes["end"] = $home->getDate();
+                $matchRes["staff"] = $userTeam->getIsStaff();
+                $response[] = $matchRes;
+            }
+            foreach ($matchesTeamN as $visitor){
+                $matchRes = [];
+                $matchRes["type"] = "Match";
+                $matchRes["id"] = $visitor->getId();
+                $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName()."-".$visitor->getVisitorTeam()->getClub()->getName();
+                $matchRes["start"] = $visitor->getDate();
+                $matchRes["end"] = $visitor->getDate();
+                $matchRes["staff"] = $userTeam->getIsStaff();
+                $response[] = $matchRes;
             }
         }
 

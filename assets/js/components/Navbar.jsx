@@ -110,7 +110,7 @@ const Navbar = ({ history }) => {
             {/*</div>*/}
             <nav className="navbar navbar-expand-lg navbar-dark bg-danger">
                 <NavLink className="navbar-brand" to={"/"}>
-                    Navbar
+                    Mon Calendrier
                 </NavLink>
                 <button
                     className="navbar-toggler"
@@ -155,6 +155,11 @@ const Navbar = ({ history }) => {
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to={"/equipeRonvau"}>
                                         Gestion des équipes
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/chat"}>
+                                        Chat
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">

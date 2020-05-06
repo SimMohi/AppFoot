@@ -9,6 +9,8 @@ import Field from "../components/forms/Fields";
 import DateFunctions from "../services/DateFunctions";
 import TrainingsAPI from "../services/TrainingsAPI";
 import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
+import MatcheAPI from "../services/MatcheAPI";
 
 
 const HomePage = props => {
@@ -18,7 +20,7 @@ const HomePage = props => {
     const Localizer = momentLocalizer(moment);
     const allViews = ["month"];
 
-    const [show, setShow] = useState([false, false, false]);
+    const [show, setShow] = useState([false, false, false, false]);
     const handleShow = (i) => {
         let showCopy = [...show];
         showCopy[i] = true;
@@ -37,7 +39,7 @@ const HomePage = props => {
     const [selectedEvent, setSelectedEvent] = useState({
         title: "",
         infos: "",
-        button: "",
+        button: [],
         absences: [],
         staff: false
     });
@@ -52,6 +54,12 @@ const HomePage = props => {
         start: "",
         end: ""
     })
+
+    const [editMatch, setEditMatch] = useState({
+        id: "",
+        date: "",
+        hour: "",
+    });
 
     const find = async () => {
         const token = window.localStorage.getItem(("authToken"));
@@ -78,35 +86,54 @@ const HomePage = props => {
         setCalendarInfos(calendarArr);
     }
 
+    console.log(calendarInfos);
+
     const handleChange = ({ currentTarget }) => {
         const { value } = currentTarget;
         setAbsence(value);
     };
 
     const test = ( event ) => {
-        let button;
+        let buttons = [];
+        let obj={};
         if (event.type == "training"){
             if (event.abs == true){
-                 button =  <button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-success">Annuler mon absence</button>;
+                 buttons.push(<button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-success">Annuler mon absence</button>);
             } else {
-                 button = <button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>;
+                buttons.push(<button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>);
             }
-            let obj = {
+            if (event.staff == true){
+                buttons.push(<button onClick={() => findTraining(selectedEvent.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
+                buttons.push(<button onClick={modalEditTraining} className="btn btn-sm btn-secondary">Modifier l'entrainement </button>);
+            }
+            obj = {
                 id: event.id,
                 title: event.title,
                 day: event.start,
                 end: event.end,
-                button: button,
+                button: buttons,
                 absences: [],
                 staff: event.staff
             }
-            if (typeof event.absences != 'undefined'){
-                obj["absences"] = event.absences;
+            if (typeof event.absences != "undefined"){
+                obj.absences =  event.absences;
             }
-            setSelectedEvent(obj);
-        } else if (event.type == "event"){
-
+        } else if (event.type == "Match"){
+            if (event.staff == true){
+                buttons.push(<Link to={"/match/"+event.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>);
+                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
+            }
+            obj = {
+                id: event.id,
+                title: event.title,
+                day: event.start,
+                end: event.end,
+                button: buttons,
+                staff: event.staff,
+                absences: [],
+            }
         }
+        setSelectedEvent(obj);
     }
 
     const submitAbsence = async (idTraining) => {
@@ -191,10 +218,41 @@ const HomePage = props => {
         window.location.reload();
     }
 
+    const editMatchDate =  (match) => {
+        console.log(match);
+        let editMatchObj = {
+            id: match.id,
+            date: DateFunctions.dateFormatYMD(match.start),
+            hour:  DateFunctions.getHoursHM(match.start),
+        }
+        console.log(editMatchObj);
+        setEditMatch(editMatchObj);
+        handleShow(3);
+    }
+
+    const handleChangeDate = ({currentTarget}) => {
+        const { name, value } = currentTarget;
+        setEditMatch({...editMatch, [name]: value});
+    }
+
+    const submitDateMatch = async () =>{
+        if (editMatch.date == ""){
+            toast.error("Date non valide");
+            return ;
+        }
+        try{
+            await MatcheAPI.editDateMatch(editMatch);
+            toast.success("La date du match a bien été encodée");
+        }catch (e) {
+            toast.error("La date du match n'a pas pu être encodée");
+        }
+        handleClose(3);
+        setReload(reload+1);
+    }
+
     useEffect( () => {
         find();
     }, [reload]);
-
 
     return (
       <>
@@ -215,17 +273,12 @@ const HomePage = props => {
                       {selectedEvent.title != "" &&
                         <h6>{selectedEvent.title} du {DateFunctions.dateFormatFr(selectedEvent.day)}</h6>
                       }
-                      <p>{selectedEvent.button} {selectedEvent.staff &&
-                      <>
-                          <button onClick={() => findTraining(selectedEvent.id)}
-                                  className="btn btn-sm btn-primary">Encoder présences
-                          </button>
-                          <button onClick={modalEditTraining}
-                                  className="btn btn-sm btn-secondary">Modifier l'entrainement
-                          </button>
-                      </>
-                      }
-                      </p>
+                      <div>{selectedEvent.button.map((butt, index) =>
+                          <div key={index}>
+                              {butt}
+                          </div>
+                      )}
+                      </div>
                       <div>{selectedEvent.absences.map((ab, index) =>
                           <p key={index}>{ab.name+ " "+ ab.reason}</p>
                       )}</div>
@@ -270,6 +323,16 @@ const HomePage = props => {
                   <Field name={"start"} label={"Heure de début"} type={"time"} value={editTraining.start} onChange={handleChangeTraining} />
                   <Field name={"end"} label={"Heure de fin"} type={"time"} value={editTraining.end} onChange={handleChangeTraining} />
                   <button onClick={submitTraining} className="btn btn-success">Enregistrer</button>
+              </Modal.Body>
+          </Modal>
+          <Modal show={show[3]} onHide={() => handleClose(3)}>
+              <Modal.Header closeButton>
+                  Modifier la date et l'heure du match
+              </Modal.Header>
+              <Modal.Body className={""}>
+                  <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
+                  <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
+                  <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
               </Modal.Body>
           </Modal>
       </>
