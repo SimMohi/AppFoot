@@ -16,7 +16,7 @@ html, body {
 }
 
 #root {
-    height: 100%;
+    height: 750px;
 }
 
 .app {
@@ -129,6 +129,7 @@ html, body {
     margin: 15px 0;
 }
 
+
 .message .message-username {
     font-size: 11px;
     color: var(--main-text-color);
@@ -137,6 +138,14 @@ html, body {
 }
 .message .message-text {
     background: var(--main-color);
+    color: var(--secondary-color);
+    display: inline;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.message .myMessage {
+    background: #db5846;
     color: var(--secondary-color);
     display: inline;
     padding: 4px 8px;

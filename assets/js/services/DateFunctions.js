@@ -86,20 +86,37 @@ function dateFormatFrDM (date){
     return day + " " + monthFr
 }
 
+
+function dateFormatFrDMHM (date){
+    const d = new Date(date);
+    const month = d.getMonth();
+    const day = d.getDate();
+    let monthFr = getMonthFr(month);
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    if (hours < 10){
+        hours = "0"+hours;
+    }
+    if (minutes < 10){
+        minutes = "0"+minutes;
+    }
+    return day + " " + monthFr + " "+ hours + ":" + minutes;
+}
+
 function getHoursHM(date) {
     const d = new Date(date);
     let hours = d.getHours();
     let minutes = d.getMinutes();
     if (hours < 10){
-        hours = hours+"0";
+        hours = "0"+hours;
     }
     if (minutes < 10){
-        minutes = minutes+"0";
+        minutes = "0"+minutes;
     }
     return hours+":"+minutes;
 }
 
 
 export default {
-    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM
+    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM
 }

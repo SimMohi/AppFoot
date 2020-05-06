@@ -73,6 +73,11 @@ class TeamRonvau
      */
     private $trainingDays;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="channel")
+     */
+    private $chats;
+
 
     public function __construct()
     {
@@ -80,6 +85,7 @@ class TeamRonvau
         $this->trainings = new ArrayCollection();
         $this->eventsTeams = new ArrayCollection();
         $this->trainingDays = new ArrayCollection();
+        $this->chats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -253,6 +259,37 @@ class TeamRonvau
             // set the owning side to null (unless already changed)
             if ($trainingDay->getTeamRonvau() === $this) {
                 $trainingDay->setTeamRonvau(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Chat[]
+     */
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
+
+    public function addChat(Chat $chat): self
+    {
+        if (!$this->chats->contains($chat)) {
+            $this->chats[] = $chat;
+            $chat->setChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChat(Chat $chat): self
+    {
+        if ($this->chats->contains($chat)) {
+            $this->chats->removeElement($chat);
+            // set the owning side to null (unless already changed)
+            if ($chat->getChannel() === $this) {
+                $chat->setChannel(null);
             }
         }
 

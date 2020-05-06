@@ -228,6 +228,7 @@ class RonvauTeamController extends AbstractController
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $response =  [];
+        $doubleEvent = [];
         foreach ($userTeams as $userTeam){
             $teamR = $userTeam->getTeamRonvauId();
             $team = $teamR->getTeam();
@@ -267,8 +268,8 @@ class RonvauTeamController extends AbstractController
             $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
             foreach ($eventsTeams as $eventsTeam){
                 $eventRes = [];
-                $eventsTeamId = $eventsTeam->getIdEvents()->getId();
-                $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $eventsTeamId]);
+                $event = $eventsTeam->getIdEvents();
+                if (in_array($event->getId(), $doubleEvent)) continue;
                 $eventRes["id"] = $event->getId();
                 $eventRes["type"] = "Event";
                 $eventRes["title"] = $event->getName();
@@ -277,6 +278,7 @@ class RonvauTeamController extends AbstractController
                 $eventRes["description"] = $event->getDescription();
                 $eventRes["staff"] = $userTeam->getIsStaff();
                 $response[] = $eventRes;
+                $doubleEvent[] = $event->getId();
             }
 
             $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
