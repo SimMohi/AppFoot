@@ -20,7 +20,7 @@ const HomePage = props => {
     const Localizer = momentLocalizer(moment);
     const allViews = ["month"];
 
-    const [show, setShow] = useState([false, false, false, false]);
+    const [show, setShow] = useState([false, false, false, false, false]);
     const handleShow = (i) => {
         let showCopy = [...show];
         showCopy[i] = true;
@@ -37,6 +37,7 @@ const HomePage = props => {
     const [infos, setInfos] = useState([]);
     const [calendarInfos, setCalendarInfos] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState({
+        id: "",
         title: "",
         infos: "",
         button: [],
@@ -60,6 +61,7 @@ const HomePage = props => {
         date: "",
         hour: "",
     });
+    const [MOTM, setMOTM] = useState([]);
 
     const find = async () => {
         const token = window.localStorage.getItem(("authToken"));
@@ -74,10 +76,13 @@ const HomePage = props => {
                 type: response[i]["type"],
                 id: response[i]["id"],
                 abs: response[i]["abs"],
-                staff: response[i]["staff"]
+                staff: response[i]["staff"],
+                isOver: response[i]["isOver"],
+                players: response[i]["players"],
             }
             if (response[i]["staff"] == true){
                 obj["absences"] = response[i]["absences"];
+                obj["presences"] = response[i]["presences"];
             }
             calendarArr.push(obj);
         }
@@ -86,7 +91,6 @@ const HomePage = props => {
         setCalendarInfos(calendarArr);
     }
 
-    console.log(calendarInfos);
 
     const handleChange = ({ currentTarget }) => {
         const { value } = currentTarget;
@@ -103,7 +107,7 @@ const HomePage = props => {
                 buttons.push(<button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>);
             }
             if (event.staff == true){
-                buttons.push(<button onClick={() => findTraining(selectedEvent.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
+                buttons.push(<button onClick={() => findTraining(event.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
                 buttons.push(<button onClick={modalEditTraining} className="btn btn-sm btn-secondary">Modifier l'entrainement </button>);
             }
             obj = {
@@ -113,6 +117,7 @@ const HomePage = props => {
                 end: event.end,
                 button: buttons,
                 absences: [],
+                presences: event.presences,
                 staff: event.staff
             }
             if (typeof event.absences != "undefined"){
@@ -122,6 +127,10 @@ const HomePage = props => {
             if (event.staff == true){
                 buttons.push(<Link to={"/match/"+event.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>);
                 buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
+            } else {
+                if (event.isOver){
+                    buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
+                }
             }
             obj = {
                 id: event.id,
@@ -131,9 +140,44 @@ const HomePage = props => {
                 button: buttons,
                 staff: event.staff,
                 absences: [],
+                players: event.players,
+            }
+            let radioMOTM = [];
+            for (let i = 0; i < event.players.length; i++){
+                radioMOTM.push(false);
+            }
+            setMOTM(radioMOTM);
+        }
+        console.log(obj);
+        setSelectedEvent(obj);
+    }
+
+
+    const changeMOTM = (index) => {
+        let copy = JSON.parse(JSON.stringify(MOTM));
+        for(let i = 0; i < copy.length; i++){
+            if (i == index){
+                copy[i] = true;
+            } else {
+                copy[i] = false;
             }
         }
-        setSelectedEvent(obj);
+        setMOTM(copy);
+    }
+
+    const submitPlayerOfTheMatch = async () =>{
+        for (let i = 0; i < MOTM.length; i++){
+            if (MOTM[i]){
+                let vote = {
+                    idPlayerMatch: selectedEvent["players"][i]["player"]["id"],
+                    idUser: idUser
+                }
+                await MatcheAPI.voteMOTM(vote);
+                handleClose(4);
+                return ;
+            }
+        }
+        toast.warn("Sélectionnez un joueur");
     }
 
     const submitAbsence = async (idTraining) => {
@@ -225,7 +269,6 @@ const HomePage = props => {
             date: DateFunctions.dateFormatYMD(match.start),
             hour:  DateFunctions.getHoursHM(match.start),
         }
-        console.log(editMatchObj);
         setEditMatch(editMatchObj);
         handleShow(3);
     }
@@ -253,6 +296,8 @@ const HomePage = props => {
     useEffect( () => {
         find();
     }, [reload]);
+
+    console.log(selectedEvent);
 
     return (
       <>
@@ -333,6 +378,21 @@ const HomePage = props => {
                   <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                   <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
                   <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
+              </Modal.Body>
+          </Modal>
+          <Modal show={show[4]} onHide={() => handleClose(4)}>
+              <Modal.Header closeButton>
+                  Votez pour l'homme du match
+              </Modal.Header>
+              <Modal.Body className={""}>
+                  {typeof selectedEvent["players"] != 'undefined' && selectedEvent["players"].map((player, index) =>
+                      <div key={index} className="custom-control custom-radio">
+                          <input type="radio" id={"customRadio"+index} name="customRadio" className="custom-control-input"
+                                 disabled="" value={player["player"]["id"]} checked={MOTM["index"]} onChange={()=> changeMOTM(index)}/>
+                          <label className="custom-control-label" htmlFor={"customRadio"+index}>{player.name}</label>
+                      </div>
+                  )}
+                  <button onClick={submitPlayerOfTheMatch} className="btn btn-success mt-5">Valider</button>
               </Modal.Body>
           </Modal>
       </>

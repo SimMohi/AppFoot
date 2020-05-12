@@ -1,9 +1,19 @@
 import axios from 'axios';
+import Cache from "./cache";
 
-function findAll() {
+async function findAll() {
+
+    const cachedUsers = await Cache.get("users");
+
+    if (cachedUsers) return cachedUsers;
+
     return axios
         .get("http://localhost:8000/api/users")
-        .then(response => response.data["hydra:member"]);
+        .then(response => {
+            const users = response.data["hydra:member"];
+            Cache.set("users", users);
+            return users;
+        });
 }
 
 function findUnaccepted(){
@@ -23,7 +33,14 @@ function update(id, user){
 }
 
 function deleteUser(id){
-    return axios.delete("http://localhost:8000/api/users/" + id);
+    return axios.delete("http://localhost:8000/api/users/" + id)
+        .then(async response => {
+            const cachedUsers = await Cache.get("users")
+            if (cachedUsers){
+                Cache.set("users", cachedUsers.filter(c => c.id !== id));
+            }
+        });
+    //Cache.invalidate("users");
 }
 
 function profile(id) {

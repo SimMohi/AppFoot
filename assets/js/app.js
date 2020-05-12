@@ -40,8 +40,8 @@ import ChatPage from "./pages/ChatPage";
 
 require("../css/app.css");
 
-authAPI.setup();
 
+authAPI.setup();
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(

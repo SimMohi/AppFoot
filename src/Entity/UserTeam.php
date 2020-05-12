@@ -7,9 +7,15 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 Use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 
 /**
+ * @ORM\Table(name="user_team", uniqueConstraints={
+ *     @UniqueConstraint(name="user_team_unique",
+ *         columns={"user_id_id", "team_ronvau_id_id"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserTeamRepository")
  * @ApiResource(
  *     normalizationContext={"groups"={"user_team_read"}},

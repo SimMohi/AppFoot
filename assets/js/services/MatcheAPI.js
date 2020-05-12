@@ -54,6 +54,10 @@ function editDateMatch(data){
     return axios.post("http://localhost:8000/editDateMatch", data);
 }
 
+function voteMOTM (vote) {
+    return axios.post("http://localhost:8000/voteMOTM", vote)
+}
+
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch, voteMOTM
 }

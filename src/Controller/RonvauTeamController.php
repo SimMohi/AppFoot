@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\EventsTeam;
 use App\Entity\Matche;
+use App\Entity\PlayerMatch;
+use App\Entity\PlayerOfTheMatch;
 use App\Entity\PlayerTraining;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
@@ -237,17 +239,26 @@ class RonvauTeamController extends AbstractController
             foreach ($trainings as $training){
                 $trainingRes = [];
                 if ($userTeam->getIsStaff() === true){
-                    $absences = $this->getDoctrine()->getRepository(PlayerTraining::class)->findBy([ 'idTraining' => $training, 'isAbsent' => true]);
+                    $absences = $this->getDoctrine()->getRepository(PlayerTraining::class)->findBy([ 'idTraining' => $training]);
                     $absArr = [];
+                    $presArr = [];
                     foreach ($absences as $absence){
                         $absUser = [];
                         $userAbs = $absence->getIdUserTeam()->getUserId();
                         $userName = $userAbs->getLastName(). " " . $userAbs->getFirstName();
                         $absUser["name"] = $userName;
+                        $absUser["id"] = $absence->getId();
                         $absUser["reason"] = $absence->getAbsenceJustification();
-                        $absArr[] = $absUser;
+                        if ($absence->getIsAbsent()){
+                            $absArr[] = $absUser;
+                        } else{
+                            $presArr = $absUser;
+                        }
                     }
-                    $trainingRes["absences"] = $absArr;
+                    if ($userTeam->getIsStaff()){
+                        $trainingRes["absences"] = $absArr;
+                        $trainingRes["presences"] = $presArr;
+                    }
                 } else{
                     $trainingRes["staff"] = false;
                 }
@@ -282,7 +293,7 @@ class RonvauTeamController extends AbstractController
             }
 
             $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
-            $matchesTeamN = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
+            $matchesTeamV = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
             foreach ($matchesTeamA as $home){
                 $matchRes = [];
                 $matchRes["type"] = "Match";
@@ -291,9 +302,18 @@ class RonvauTeamController extends AbstractController
                 $matchRes["start"] = $home->getDate();
                 $matchRes["end"] = $home->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
+                if ($home->getIsOver()) {
+                    $matchRes["isOver"] = $home->getIsOver();
+                }
+                $players =  $home->getPlayerMatches();
+                foreach ($players as $player){
+                    if ($player->getPlayed()){
+                        $matchRes["players"][] = $player;
+                    }
+                }
                 $response[] = $matchRes;
             }
-            foreach ($matchesTeamN as $visitor){
+            foreach ($matchesTeamV as $visitor){
                 $matchRes = [];
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $visitor->getId();
@@ -301,6 +321,19 @@ class RonvauTeamController extends AbstractController
                 $matchRes["start"] = $visitor->getDate();
                 $matchRes["end"] = $visitor->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
+                if ($visitor->getIsOver()){
+                    $matchRes["isOver"] = $visitor->getIsOver();
+                }
+                $players =  $visitor->getPlayerMatches();
+                foreach ($players as $player){
+                    if ($player->getPlayed()){
+                        $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                        $newPlayer = [];
+                        $newPlayer["player"] = $player;
+                        $newPlayer["name"] = $name;
+                        $matchRes["players"][] = $newPlayer;
+                    }
+                }
                 $response[] = $matchRes;
             }
         }
@@ -451,5 +484,28 @@ class RonvauTeamController extends AbstractController
 
         $this->getDoctrine()->getManager()->flush();
         return $this->json($data);
+    }
+
+    /**
+     * @Route("/voteMOTM")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function voteMOTM (Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $playerMatch = $this->getDoctrine()->getRepository(PlayerMatch::class)->findOneBy(['id' => $data["idPlayerMatch"]]);
+        $teamRonvau = $playerMatch->getIdUserTeam()->getTeamRonvauId();
+
+        $userVote = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['teamRonvauId' => $teamRonvau, 'userId' => $data["idUser"]]);
+
+        $newVote = new PlayerOfTheMatch();
+        $newVote->setIdPlayerMatch($playerMatch);
+        $newVote->setIdUserTeam($userVote);
+        $this->getDoctrine()->getManager()->persist($newVote);
+
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("Vote enregistré");
     }
 }

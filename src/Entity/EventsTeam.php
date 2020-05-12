@@ -5,9 +5,15 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 Use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 
 /**
+ * @ORM\Table(name="events_team", uniqueConstraints={
+ *      @UniqueConstraint(name="event_team_unique",
+ *          columns={"id_team_ronvau_id", "id_events_id"})
+ *     }
+ *  )
  * @ORM\Entity(repositoryClass="App\Repository\EventsTeamRepository")
  * @ApiResource
  */

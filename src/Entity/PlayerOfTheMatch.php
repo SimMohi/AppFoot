@@ -3,9 +3,12 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerOfTheMatchRepository")
+ * @ApiResource
  */
 class PlayerOfTheMatch
 {
@@ -17,10 +20,10 @@ class PlayerOfTheMatch
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="playerOfTheMatches")
+     * @ORM\ManyToOne(targetEntity="App\Entity\UserTeam", inversedBy="playerOfTheMatches")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idUser;
+    private $userTeam;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\PlayerMatch", inversedBy="playerOfTheMatches")
@@ -32,14 +35,14 @@ class PlayerOfTheMatch
         return $this->id;
     }
 
-    public function getIdUser(): ?User
+    public function getIdUserTeam(): ?UserTeam
     {
-        return $this->idUser;
+        return $this->userTeam;
     }
 
-    public function setIdUser(?User $idUser): self
+    public function setIdUserTeam(?UserTeam $userTeam): self
     {
-        $this->idUser = $idUser;
+        $this->userTeam = $userTeam;
 
         return $this;
     }
