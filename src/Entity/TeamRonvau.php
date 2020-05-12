@@ -35,16 +35,10 @@ class TeamRonvau
     private $category;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity="App\Entity\Team", inversedBy="teamRonvau", cascade={"persist", "remove"})
      * @Groups({"team_ronvau_read"})
      */
-    private $coach;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"team_ronvau_read"})
-     */
-    private $coachPhone;
+    private $team;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="teamRonvauId")
@@ -62,11 +56,6 @@ class TeamRonvau
      */
     private $eventsTeams;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Team", inversedBy="teamRonvau", cascade={"persist", "remove"})
-     * @Groups({"team_ronvau_read"})
-     */
-    private $team;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TrainingDay", mappedBy="teamRonvau")
@@ -105,29 +94,6 @@ class TeamRonvau
         return $this;
     }
 
-    public function getCoach(): ?string
-    {
-        return $this->coach;
-    }
-
-    public function setCoach(?string $coach): self
-    {
-        $this->coach = $coach;
-
-        return $this;
-    }
-
-    public function getCoachPhone(): ?string
-    {
-        return $this->coachPhone;
-    }
-
-    public function setCoachPhone(?string $coachPhone): self
-    {
-        $this->coachPhone = $coachPhone;
-
-        return $this;
-    }
 
     /**
      * @return Collection|UserTeam[]
