@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cache from "./cache";
+import {USERS_API} from '../config'
 
 async function findAll() {
 
@@ -8,7 +9,7 @@ async function findAll() {
     if (cachedUsers) return cachedUsers;
 
     return axios
-        .get("http://localhost:8000/api/users")
+        .get(USERS_API)
         .then(response => {
             const users = response.data["hydra:member"];
             Cache.set("users", users);
@@ -18,24 +19,24 @@ async function findAll() {
 
 function findUnaccepted(){
     return axios
-        .get("http://localhost:8000/api/users?isAccepted=false")
+        .get(USERS_API+"?isAccepted=false")
         .then(response => response.data["hydra:member"]);
 }
 
 function create (user){
     return axios
-        .post("http://localhost:8000/api/users", user);
+        .post(USERS_API, user);
 }
 
 
 function update(id, user){
-    return axios.put("http://localhost:8000/api/users/" + id, user);
+    return axios.put(USERS_API + "/" + id, user);
 }
 
 function deleteUser(id){
-    return axios.delete("http://localhost:8000/api/users/" + id)
+    return axios.delete(USERS_API+ "/" + id)
         .then(async response => {
-            const cachedUsers = await Cache.get("users")
+            const cachedUsers = await Cache.get("users");
             if (cachedUsers){
                 Cache.set("users", cachedUsers.filter(c => c.id !== id));
             }
