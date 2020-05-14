@@ -21,7 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use App\lib;
 
 
 class RonvauTeamController extends AbstractController
@@ -282,7 +282,7 @@ class RonvauTeamController extends AbstractController
                 $event = $eventsTeam->getIdEvents();
                 if (in_array($event->getId(), $doubleEvent)) continue;
                 $eventRes["id"] = $event->getId();
-                $eventRes["type"] = "Event";
+                $eventRes["type"] = "event";
                 $eventRes["title"] = $event->getName();
                 $eventRes["start"] = $event->getDate();
                 $eventRes["end"] = $event->getDate();
@@ -506,6 +506,27 @@ class RonvauTeamController extends AbstractController
         $this->getDoctrine()->getManager()->persist($newVote);
 
         $this->getDoctrine()->getManager()->flush();
+        return $this->json("Vote enregistré");
+    }
+
+    /**
+     * @Route("/voteMOTM/{idMatch}")
+     * @param int $idMatch
+     * @return JsonResponse
+     */
+    public function getVoteMOTM (int $idMatch){
+
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $idMatch]);
+        $playerMatchs = $match->getPlayerMatches();
+
+        $response = [];
+        foreach ($playerMatchs as $playerMatch){
+            $motm = $this->getDoctrine()->getRepository(PlayerOfTheMatch::class)->findBy(['idPlayerMatch' => $playerMatch]);
+            $vote = [];
+            $vote["id"] = $playerMatch->getId();
+            $vote["number"] = count($motm);
+        }
+
         return $this->json("Vote enregistré");
     }
 }

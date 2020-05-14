@@ -1,33 +1,34 @@
 import axios from 'axios';
+import {COMPETITIONS_API} from "../config";
 
 function findAll() {
     return axios
-        .get("http://localhost:8000/api/competitions/")
+        .get(COMPETITIONS_API)
         .then(response => response.data["hydra:member"]);
 }
 
 function find(id){
     return axios
-        .get("http://localhost:8000/api/competitions/" + id)
+        .get(COMPETITIONS_API + "/" + id)
         .then(response => response.data);
 }
 
 function findTeam(id){
     return axios
-        .get("http://localhost:8000/api/competitions/" + id+"/teams?order[nbrPoints]=desc")
+        .get(COMPETITIONS_API + "/" + id+"/teams?order[nbrPoints]=desc")
         .then(response => response.data["hydra:member"]);
 }
 
 function create(competition){
-    return axios.post("http://localhost:8000/api/competitions", competition);
+    return axios.post(COMPETITIONS_API, competition);
 }
 
 function update(id, competition){
-    return axios.put("http://localhost:8000/api/competitions/" + id, competition);
+    return axios.put(COMPETITIONS_API + "/" + id, competition);
 }
 
 function deleteCompet(id){
-    return axios.delete("http://localhost:8000/api/competitions/" + id);
+    return axios.delete(COMPETITIONS_API + "/" + id);
 }
 
 export default {

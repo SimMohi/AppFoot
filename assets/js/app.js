@@ -51,7 +51,6 @@ const App = () => {
     const NavBarWIthRouter = withRouter(NavBar);
 
 
-
     return (
         <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
             <HashRouter>
@@ -62,6 +61,7 @@ const App = () => {
                             path="/login"
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
+                        <Route path={"/register"} component={RegisterPage}/>
                         <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
                         <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>
@@ -84,8 +84,7 @@ const App = () => {
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
                         <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
                         <PrivateRoute path={"/userAccess"} component={UsersPage}/>
-                        <Route path={"/register"} component={RegisterPage}/>
-                        <Route path="/" component={HomePage} />
+                        <PrivateRoute path="/" component={HomePage} />
                     </Switch>
                 </main>
             </HashRouter>

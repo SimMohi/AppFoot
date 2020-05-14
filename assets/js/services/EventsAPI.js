@@ -1,36 +1,37 @@
 import axios from 'axios';
+import {API_URL, EVENTS_API} from "../config";
 
 function findAll() {
     return axios
-        .get("http://localhost:8000/api/events/")
+        .get(EVENTS_API)
         .then(response => response.data["hydra:member"]);
 }
 
 function find(id){
     return axios
-        .get("http://localhost:8000/api/events/" + id)
+        .get(EVENTS_API + "/" + id)
         .then(response => response.data);
 }
 
 function create(club){
-    return axios.post("http://localhost:8000/api/events", club);
+    return axios.post(EVENTS_API, club);
 }
 
 function update(id, club){
-    return axios.put("http://localhost:8000/api/events/" + id, club);
+    return axios.put(EVENTS_API + "/" + id, club);
 }
 
 function deleteEvent(id){
-    return axios.delete("http://localhost:8000/api/events/" + id);
+    return axios.delete(EVENTS_API + "/" + id);
 }
 
 function addTeams(teams){
-    return axios.post("http://localhost:8000/postEventTeams", teams);
+    return axios.post(API_URL + "/postEventTeams", teams);
 }
 
 function getEventsTeam(eventId){
     return axios
-        .get("http://localhost:8000/api/events/" + eventId +"/events_teams")
+        .get(EVENTS_API + "/" + eventId +"/events_teams")
         .then(response => response.data);
 }
 

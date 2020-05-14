@@ -1,24 +1,25 @@
 import axios from "axios";
+import {PLAYER_MATCHES_API} from "../config";
 
 function findAll(){
     return axios
-        .get("http://localhost:8000/api/player_matches/")
+        .get(PLAYER_MATCHES_API)
         .then(response => response.data["hydra:member"]);
 }
 
 function findMatch(matchId){
     return axios
-        .get("http://localhost:8000/api/player_matches?idMatch=/api/matches/" + matchId)
+        .get(PLAYER_MATCHES_API + "?idMatch=/api/matches/" + matchId)
         .then(response => response.data["hydra:member"]);
 }
 
 function deletePlayerMatch(id){
-    return axios.delete("http://localhost:8000/api/player_matches/"+ id);
+    return axios.delete(PLAYER_MATCHES_API + "/"+ id);
 }
 
 
 function update(id, playerMatch){
-    return axios.put("http://localhost:8000/api/player_matches/" + id, playerMatch);
+    return axios.put(PLAYER_MATCHES_API+ "/" + id, playerMatch);
 }
 
 

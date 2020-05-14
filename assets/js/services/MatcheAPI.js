@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {API_URL, MATCHES_API} from "../config";
 
 function findAll() {
     return axios
@@ -20,42 +21,42 @@ function findMatchDay(matchDay){
 
 function findCompetMatchDay(compet, matchDay){
     return axios
-        .get("http://localhost:8000/getMatchCompetition/"+compet+"/"+matchDay)
+        .get(API_URL + "/getMatchCompetition/"+compet+"/"+matchDay)
         .then(response => response.data);
 }
 
 function getRonvauTeamMatch(idRTeam){
     return axios
-        .get("http://localhost:8000/getRonvauTeamMatch/"+idRTeam)
+        .get(API_URL + "/getRonvauTeamMatch/"+idRTeam)
         .then(response => response.data);
 }
 
 function create(matche){
-    return axios.post("http://localhost:8000/api/matches", matche);
+    return axios.post(MATCHES_API, matche);
 }
 
 function update(id, matche){
-    return axios.put("http://localhost:8000/api/matches/" + id, matche);
+    return axios.put(MATCHES_API + "/" + id, matche);
 }
 
 function deleteMatche(id){
-    return axios.delete("http://localhost:8000/api/matches/" + id);
+    return axios.delete(MATCHES_API + "/" + id);
 }
 
 function postCallMatch(data){
-    return axios.post("http://localhost:8000/postCallMatch", data);
+    return axios.post(API_URL + "/postCallMatch", data);
 }
 
 function postEncodeMatch(data){
-    return axios.post("http://localhost:8000/postEncodeMatch", data);
+    return axios.post(API_URL + "/postEncodeMatch", data);
 }
 
 function editDateMatch(data){
-    return axios.post("http://localhost:8000/editDateMatch", data);
+    return axios.post(API_URL + "/editDateMatch", data);
 }
 
 function voteMOTM (vote) {
-    return axios.post("http://localhost:8000/voteMOTM", vote)
+    return axios.post(API_URL + "/voteMOTM", vote)
 }
 
 export default {

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Field from "../components/forms/Fields";
 import ReactSearchBox from "react-search-box";
+import {API_URL, USERS_API} from "../config";
 
 const ProfilUserPage = props => {
 
@@ -18,8 +19,8 @@ const ProfilUserPage = props => {
 
     const fetchUser = async () => {
         axios.all([
-            axios.get("http://localhost:8000/profile/" + id),
-            axios.get("http://localhost:8000/api/users")
+            axios.get(API_URL + "/profile/" + id),
+            axios.get(USERS_API)
         ]).then(axios.spread( (...responses) => {
             const usersResponse = responses[1]["data"]["hydra:member"];
             console.log(usersResponse);

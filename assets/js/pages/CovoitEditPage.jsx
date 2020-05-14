@@ -3,6 +3,7 @@ import Field from "../components/forms/Fields";
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
 import axios from "axios";
+import {CARS_API, PASSENGERS_API} from "../config";
 
 
 const CovoitPage = props => {
@@ -79,8 +80,8 @@ const CovoitPage = props => {
         console.log(currentCar);
         try {
             axios.all([
-                axios.put("http://localhost:8000/api/car_passengers/" + currentCarPass.id, currentCarPass),
-                axios.put("http://localhost:8000/api/cars/"+ currentCar.id, currentCar),
+                axios.put(PASSENGERS_API + "/" + currentCarPass.id, currentCarPass),
+                axios.put(CARS_API + "/"+ currentCar.id, currentCar),
             ]);
             toast.success("La demande a bien été acceptée");
         } catch (error) {
@@ -98,8 +99,8 @@ const CovoitPage = props => {
         currentCar["userId"] = currentCar["userId"]["@id"];
         try {
             axios.all([
-                axios.put("http://localhost:8000/api/cars/" + currentCar.id, currentCar),
-                axios.delete("http://localhost:8000/api/car_passengers/"+ id),
+                axios.put(CARS_API + "/" + currentCar.id, currentCar),
+                axios.delete(PASSENGERS_API + "/" + id),
             ]);
             toast.success("La demande a bien été supprimée");
         } catch (error) {

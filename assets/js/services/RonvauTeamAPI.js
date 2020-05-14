@@ -1,42 +1,43 @@
 import axios from 'axios';
+import {API_URL, TEAM_RONVAUS_API} from "../config";
 
 function findAll() {
     return axios
-        .get("http://localhost:8000/api/team_ronvaus/")
+        .get(TEAM_RONVAUS_API)
         .then(response => response.data["hydra:member"]);
 }
 
 function find(id){
     return axios
-        .get("http://localhost:8000/api/team_ronvaus/" + id)
+        .get(TEAM_RONVAUS_API + "/" + id)
         .then(response => response.data);
 }
 
 function findCompetRonvau(){
     return axios
-        .get("http://localhost:8000/getCompetitionsRonvau/")
+        .get(API_URL + "/getCompetitionsRonvau/")
         .then(response => response.data);
 }
 
 function create(teamRonvau){
-    return axios.post("http://localhost:8000/api/team_ronvaus", teamRonvau);
+    return axios.post(TEAM_RONVAUS_API, teamRonvau);
 }
 
 function update(id, teamRonvau){
-    return axios.put("http://localhost:8000/api/team_ronvaus/" + id, teamRonvau);
+    return axios.put(TEAM_RONVAUS_API + "/" + id, teamRonvau);
 }
 
 function deleteTeamRonvau(id){
-    return axios.delete("http://localhost:8000/api/team_ronvaus/" + id);
+    return axios.delete(TEAM_RONVAUS_API +"/" + id);
 }
 
 function getCalendarInfo(teamId){
-    return axios.get("http://localhost:8000/getCalendarInfo/"+ teamId +"/"+"no")
+    return axios.get(API_URL +"/getCalendarInfo/"+ teamId +"/"+"no")
         .then(response => response.data);
 }
 
 function getPersonnalCalendarInfo(userId){
-    return axios.get("http://localhost:8000/getPersonnalCalendarInfo/"+ userId)
+    return axios.get(API_URL +"/getPersonnalCalendarInfo/"+ userId)
         .then(response => response.data);
 }
 

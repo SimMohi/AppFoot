@@ -5,6 +5,7 @@ import axios from "axios";
 
 import "react-datepicker/dist/react-datepicker.css";
 import RonvauTeamAPI from "../services/RonvauTeamAPI";
+import {API_URL} from "../config";
 
 const RonvauTeamCalendar = props => {
 
@@ -41,7 +42,7 @@ const RonvauTeamCalendar = props => {
             teamId: id,
         }
         //await axios.post("http://localhost:8000/postTrainingDay/", post);
-        await axios.get("http://localhost:8000/getCalendarInfo/"+ get.teamId+"/"+get.date);
+        await axios.get(API_URL + "/getCalendarInfo/"+ get.teamId+"/"+get.date);
     }
 
 

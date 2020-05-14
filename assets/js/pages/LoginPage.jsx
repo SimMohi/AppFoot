@@ -3,13 +3,14 @@ import authAPI from "../services/authAPI";
 import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Fields";
 import axios from 'axios';
+import {API_URL, USERS_API} from "../config";
 
 const LoginPage = ({ history}) => {
     const {setIsAuthenticated} = useContext(AuthContext);
 
     const [credentials, setCredentials] = useState({
         username: "simon.mohimont@hotmail.com",
-        password: "password",
+        password: "",
     });
 
     // Gestion des champs
@@ -25,13 +26,13 @@ const LoginPage = ({ history}) => {
         event.preventDefault();
         try{
             const firstResponse = await Promise.all([
-                    axios.post("http://localhost:8000/api/login_check", credentials),
+                    axios.post(API_URL + "/api/login_check", credentials),
                 ]
             )
             const token = firstResponse[0]["data"]["token"];
             window.localStorage.setItem("authToken", token);
             authAPI.setAxiosToken(token);
-            const secondResponse = await axios.get("http://localhost:8000/api/users?email="+ credentials["username"]);
+            const secondResponse = await axios.get(USERS_API +"?email="+ credentials["username"]);
             const isAccepted = secondResponse["data"]["hydra:member"][0]["isAccepted"];
             if (isAccepted == false){
                 setError("L'utilisateur n'a pas encore été accepté par un administrateur");

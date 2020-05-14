@@ -147,6 +147,16 @@ const HomePage = props => {
                 radioMOTM.push(false);
             }
             setMOTM(radioMOTM);
+        } else if (event.type == "event"){
+            obj = {
+                id: event.id,
+                title: event.title,
+                day: event.start,
+                end: event.end,
+                button: buttons,
+                absences: [],
+                presences: [],
+            }
         }
         console.log(obj);
         setSelectedEvent(obj);

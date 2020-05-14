@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import {Link} from "react-router-dom";
+import {COMPETITIONS_API} from "../config";
 
 const CompetitionsPage = props => {
     const [competitions, setCompetitions] = useState([]);
@@ -25,7 +26,7 @@ const CompetitionsPage = props => {
         setCompetitions(competitions.filter(competition => competition.id !== id));
 
         axios
-            .delete("http://localhost:8000/api/competitions/" + id)
+            .delete(COMPETITIONS_API + "/" + id)
             .catch(error => {
                 setCompetitions(originalCompetitions)
             });

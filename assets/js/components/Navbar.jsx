@@ -8,6 +8,7 @@ import jwtDecode from "jwt-decode";
 import usersAPI from "../services/usersAPI";
 import Modal from "react-bootstrap/Modal";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
+import {USERS_API} from "../config";
 
 
 const Navbar = ({ history }) => {
@@ -32,13 +33,13 @@ const Navbar = ({ history }) => {
         toast.info("Vous êtes désormais déconnecté");
     };
 
-    const fetchNotifications = async () =>{
+    const fetchNotifications = () =>{
         const token = window.localStorage.getItem(("authToken"));
         if (token) {
             const {username: user, roles} = jwtDecode(token);
             if (roles.includes("ROLE_ADMIN")) setAdmin(true);
             axios.all([
-                axios.get("http://localhost:8000/api/users?email=" + user),
+                axios.get(USERS_API +"?email=" + user),
             ]).then(axios.spread(async (...responses) => {
                 const id = responses[0]["data"]["hydra:member"][0].id;
                 const response = await usersAPI.getNotifications(id);
@@ -82,32 +83,6 @@ const Navbar = ({ history }) => {
 
     return (
         <>
-            {/*<div className="wrapper">*/}
-            {/*    <div className="sidebar bg-danger">*/}
-            {/*        <ul>*/}
-            {/*            <li><a href="#">*/}
-            {/*                <span className="icon"><i className="fas fa-book"></i></span>*/}
-            {/*                <span className="title">Books</span>*/}
-            {/*            </a></li>*/}
-            {/*            <li><a href="#">*/}
-            {/*                <span className="icon"><i className="fas fa-file-video"></i></span>*/}
-            {/*                <span className="title">Movies</span>*/}
-            {/*            </a></li>*/}
-            {/*            <li><a href="#">*/}
-            {/*                <span className="icon"><i className="fas fa-volleyball-ball"></i></span>*/}
-            {/*                <span className="title">Sports</span>*/}
-            {/*            </a></li>*/}
-            {/*            <li><a href="#" className="active">*/}
-            {/*                <span className="icon"><i className="fas fa-blog"></i></span>*/}
-            {/*                <span className="title">Blogs</span>*/}
-            {/*            </a></li>*/}
-            {/*            <li><a href="#">*/}
-            {/*                <span className="icon"><i className="fas fa-leaf"></i></span>*/}
-            {/*                <span className="title">Nature</span>*/}
-            {/*            </a></li>*/}
-            {/*        </ul>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <nav className="navbar navbar-expand-lg navbar-dark bg-danger">
                 <NavLink className="navbar-brand" to={"/"}>
                     Mon Calendrier

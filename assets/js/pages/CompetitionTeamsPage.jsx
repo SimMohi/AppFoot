@@ -3,6 +3,7 @@ import axios from "axios";
 import ReactSearchBox from "react-search-box";
 import TeamsAPI from "../services/TeamsAPI";
 import {toast} from "react-toastify";
+import {CLUBS_API, COMPETITIONS_API} from "../config";
 
 const CompetitionTeamsPage = props => {
 
@@ -15,8 +16,8 @@ const CompetitionTeamsPage = props => {
 
     const fetchClubs = async () => {
         axios.all([
-            axios.get("http://localhost:8000/api/competitions/" + id),
-            axios.get("http://localhost:8000/api/clubs/"),
+            axios.get(COMPETITIONS_API + "/" + id),
+            axios.get(CLUBS_API),
         ]).then(axios.spread((...responses) => {
             const competTeams = responses[0].data["teams"];
             for (let i = 0; i < competTeams.length; i++){

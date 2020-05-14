@@ -9,6 +9,7 @@ import {toast} from "react-toastify";
 import authAPI from "../services/authAPI";
 import axios from 'axios';
 import Field from "../components/forms/Fields";
+import {CARS_API, PASSENGERS_API} from "../config";
 
 const CovoitsPage = props => {
 
@@ -123,8 +124,8 @@ const CovoitsPage = props => {
 
         try {
             axios.all([
-                axios.put("http://localhost:8000/api/cars/" + copyCovoit["id"], copyCovoit),
-                axios.post("http://localhost:8000/api/car_passengers", newPassenger),
+                axios.put(CARS_API + "/" + copyCovoit["id"], copyCovoit),
+                axios.post(PASSENGERS_API, newPassenger),
             ])
             toast.success("Vous vous êtes bien inscrit au covoiturage");
         } catch (e) {
@@ -144,7 +145,7 @@ const CovoitsPage = props => {
         try {
             axios.all([
                 //axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
-                axios.delete("http://localhost:8000/api/car_passengers/"+ id),
+                axios.delete(PASSENGERS_API + "/"+ id),
                 ])
         } catch (e) {
             toast.error("La désinscription a échoué");

@@ -1,33 +1,28 @@
 import axios from 'axios';
+import {CLUBS_API} from "../config";
 
 function findAll() {
     return axios
-        .get("http://localhost:8000/api/clubs/")
+        .get(CLUBS_API)
         .then(response => response.data["hydra:member"]);
 }
 
 function find(id){
     return axios
-        .get("http://localhost:8000/api/clubs/" + id)
-        .then(response => response.data);
-}
-
-function findTeam(id){
-    return axios
-        .get("http://localhost:8000/api/clubs/" + id)
+        .get(CLUBS_API + "/" + id)
         .then(response => response.data);
 }
 
 function create(club){
-    return axios.post("http://localhost:8000/api/clubs", club);
+    return axios.post(CLUBS_API, club);
 }
 
 function update(id, club){
-    return axios.put("http://localhost:8000/api/clubs/" + id, club);
+    return axios.put(CLUBS_API + "/" + id, club);
 }
 
 function deleteClub(id){
-    return axios.delete("http://localhost:8000/api/clubs/" + id);
+    return axios.delete(CLUBS_API + "/" + id);
 }
 
 export default {

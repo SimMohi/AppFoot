@@ -5,6 +5,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import Field from "../components/forms/Fields";
 import ReactSearchBox from "react-search-box";
+import {USERS_API} from "../config";
 
 const ProfilPage = props => {
 
@@ -29,8 +30,8 @@ const ProfilPage = props => {
         if (token) {
             const {username: user} = jwtDecode(token);
             axios.all([
-                axios.get("http://localhost:8000/api/users?email=" + user),
-                axios.get("http://localhost:8000/api/users")
+                axios.get(USERS_API +"?email=" + user),
+                axios.get(USERS_API)
             ]).then(axios.spread(async (...responses) => {
                 const usersResponse = responses[1]["data"]["hydra:member"];
                 let allUsersArray = [];

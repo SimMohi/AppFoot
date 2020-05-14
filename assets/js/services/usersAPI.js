@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Cache from "./cache";
-import {USERS_API} from '../config'
+import {API_URL, USERS_API} from '../config'
 
 async function findAll() {
 
@@ -34,7 +34,7 @@ function update(id, user){
 }
 
 function deleteUser(id){
-    return axios.delete(USERS_API+ "/" + id)
+    return axios.delete(USERS_API + "/" + id)
         .then(async response => {
             const cachedUsers = await Cache.get("users");
             if (cachedUsers){
@@ -45,11 +45,11 @@ function deleteUser(id){
 }
 
 function profile(id) {
-    return axios.get("http://localhost:8000/profile/" + id);
+    return axios.get(API_URL + "/profile/" + id);
 }
 
 function getNotifications(id){
-    return axios.get("http://localhost:8000/getNotificationsUser/" + id)
+    return axios.get(API_URL + "/getNotificationsUser/" + id)
         .then(response => response.data);
 }
 
