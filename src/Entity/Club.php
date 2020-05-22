@@ -34,12 +34,7 @@ class Club
      * @Groups({"teams_read", "matchs_read", "clubs_read", "competitions_read"})
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"teams_read", "clubs_read"})
-     */
-    private $address;
+    
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -53,9 +48,21 @@ class Club
      */
     private $teams;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Address::class, inversedBy="club", cascade={"persist", "remove"})
+     * @Groups({"teams_read", "clubs_read"})
+     */
+    private $address;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UnOfficialMatch::class, mappedBy="opponent")
+     */
+    private $unOfficialMatches;
+
     public function __construct()
     {
         $this->teams = new ArrayCollection();
+        $this->unOfficialMatches = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,17 +82,6 @@ class Club
         return $this;
     }
 
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): self
-    {
-        $this->address = $address;
-
-        return $this;
-    }
 
     public function getLogo(): ?string
     {
@@ -129,4 +125,48 @@ class Club
 
         return $this;
     }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UnOfficialMatch[]
+     */
+    public function getUnOfficialMatches(): Collection
+    {
+        return $this->unOfficialMatches;
+    }
+
+    public function addUnOfficialMatch(UnOfficialMatch $unOfficialMatch): self
+    {
+        if (!$this->unOfficialMatches->contains($unOfficialMatch)) {
+            $this->unOfficialMatches[] = $unOfficialMatch;
+            $unOfficialMatch->setOpponent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUnOfficialMatch(UnOfficialMatch $unOfficialMatch): self
+    {
+        if ($this->unOfficialMatches->contains($unOfficialMatch)) {
+            $this->unOfficialMatches->removeElement($unOfficialMatch);
+            // set the owning side to null (unless already changed)
+            if ($unOfficialMatch->getOpponent() === $this) {
+                $unOfficialMatch->setOpponent(null);
+            }
+        }
+
+        return $this;
+    }
 }
+

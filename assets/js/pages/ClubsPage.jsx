@@ -37,7 +37,6 @@ const ClubsPage = props => {
             <tr>
                 <th>Identifiant</th>
                 <th>Nom</th>
-                <th>Adresse</th>
             </tr>
             </thead>
             <tbody>
@@ -45,7 +44,6 @@ const ClubsPage = props => {
                 <tr key={club.id}>
                     <td>{club.id}</td>
                     <td>{club.name}</td>
-                    <td>{club.address}</td>
                     <td>
                         <Link to={"/club/"+club.id} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>
                         <button onClick={() => handleDelete(club.id)} className="btn btn-sm btn-danger">Supprimer</button>

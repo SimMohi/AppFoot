@@ -21,3 +21,10 @@ export const TEAM_RONVAUS_API = API_URL +"/api/team_ronvaus";
 export const TEAMS_API = API_URL +"/api/teams";
 
 export const USER_TEAM_API = API_URL +"/api/user_teams";
+
+export const NAME_COMPETITIONS_API = API_URL + "/api/name_competitions";
+
+export const UNOFFICIAL_MATCH_API = API_URL +"/api/un_official_matches";
+
+export const USER_TEAM_EVENT_API = API_URL +"/api/user_team_events";
+

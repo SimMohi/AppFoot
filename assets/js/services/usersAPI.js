@@ -48,11 +48,15 @@ function profile(id) {
     return axios.get(API_URL + "/profile/" + id);
 }
 
+function postProfile(user) {
+    return axios.post(API_URL + "/postProfile", user);
+}
+
 function getNotifications(id){
     return axios.get(API_URL + "/getNotificationsUser/" + id)
         .then(response => response.data);
 }
 
 export default {
-    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications
+    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications, postProfile
 }

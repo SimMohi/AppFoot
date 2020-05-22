@@ -82,6 +82,11 @@ class PlayerMatch
      */
     private $playerOfTheMatches;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $refusedJustification;
+
     public function __construct()
     {
         $this->setPlayed(false);
@@ -218,6 +223,18 @@ class PlayerMatch
                 $playerOfTheMatch->setIdPlayerMatch(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRefusedJustification(): ?string
+    {
+        return $this->refusedJustification;
+    }
+
+    public function setRefusedJustification(?string $refusedJustification): self
+    {
+        $this->refusedJustification = $refusedJustification;
 
         return $this;
     }

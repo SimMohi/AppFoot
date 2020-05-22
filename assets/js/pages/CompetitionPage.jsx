@@ -10,27 +10,39 @@ const CompetitionPage = props => {
     const [editing, setEditing] = useState(false);
 
     const [competition, setCompetition] = useState({
-        name: "",
-        format: "",
         season: "",
         matchDayNumber: "",
     });
 
     const [errors, setErrors] = useState({
-        name: "",
-        format: "",
         season: "",
         matchDayNumber: ""
     });
 
+    const [names, setNames] = useState([]);
+    const [selectedName, setSelectedName] = useState({});
+
     const fetchCompetition = async id => {
         try{
-            const { name, format, season, matchDayNumber} = await CompetitionsAPI.find(id);
-            setCompetition({ name, format, season, matchDayNumber});
+            const {season, matchDayNumber, name} = await CompetitionsAPI.find(id);
+            setSelectedName(name);
+            setCompetition({season, matchDayNumber});
         } catch (e) {
             console.log(e.response);
         }
     };
+
+    const fetchNameCompetition = async () => {
+        try{
+            const data = await CompetitionsAPI.findAllName();
+            setNames(data);
+            if (id ==  "new"){
+                setSelectedName(data[0]);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const handleChangeCompet = ({ currentTarget }) => {
         const { name, value } = currentTarget;
@@ -39,12 +51,14 @@ const CompetitionPage = props => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let copy = JSON.parse(JSON.stringify(competition));
+        copy["name"] = "/api/name_competitions/" + selectedName.id;
         try {
             if (editing){
-                await CompetitionsAPI.update(id, competition);
+                await CompetitionsAPI.update(id, copy);
                 toast.success("La compétition a bien été modifiée");
             } else {
-                await CompetitionsAPI.create(competition);
+                await CompetitionsAPI.create(copy);
                 toast.success("La compétition a bien été créée");
                 props.history.replace("/competition");
             }
@@ -61,12 +75,19 @@ const CompetitionPage = props => {
         }
     };
 
+    const selectName = ({currentTarget}) => {
+        let { value } = currentTarget;
+        let current = names.find(n => n.id == value);
+        setSelectedName(current);
+    }
+
 
     useEffect(() => {
         if (id !== "new") {
             setEditing(true);
             fetchCompetition(id);
         }
+        fetchNameCompetition();
     }, [id]);
 
     return  (
@@ -81,8 +102,16 @@ const CompetitionPage = props => {
                 </div>
             </div>}
             <form onSubmit={handleSubmit}>
-                <Field name={"name"} label={"Nom de la Compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet} error={errors.name}/>
-                <Field name={"format"} label={"Format de la Compétition"} type={"text"} value={competition.format} onChange={handleChangeCompet} error={errors.format}/>
+                <div className="form-group">
+                    <label htmlFor="exampleSelect1">Championnat</label>
+                    <select className="form-control" id="exampleSelect1" onChange={selectName} value={selectedName["id"]}>
+                        {names.map(name =>
+                        <option key={name.id} value={name.id}>
+                            {name.name}
+                        </option>
+                        )}
+                    </select>
+                </div>
                 <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
                 <Field name={"matchDayNumber"} label={"Nombre de journées de championnat"} type={"number"} min={"1"} value={competition.matchDayNumber} onChange={handleChangeCompet}
                        error={errors.matchDayNumber}></Field>

@@ -9,16 +9,23 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Validator\Constraints as Assert; // Symfony's built-in constraints
 Use Symfony\Component\Serializer\Annotation\Groups;
-
+use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 
 /**
+ * @ORM\Table(name="competition", uniqueConstraints={
+ *      @UniqueConstraint(name="competition_unique",
+ *          columns={"season", "name_id"})
+ *     }
+ *  )
  * @ORM\Entity(repositoryClass="App\Repository\CompetitionRepository")
  * @ApiResource(
  *     normalizationContext={"groups"={"competitions_read"}},
  *     denormalizationContext={"disable_type_enforcement"=true}
  *)
+ * @UniqueEntity(fields={"season", "name"}, message="Ce championnat se déroule déjà dans cette saison ci")
  */
 
 class Competition
@@ -33,23 +40,9 @@ class Competition
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le nom de la compéttion est obligatoire")
-     * @Assert\Length(min=2, minMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères", max=255, maxMessage="Le nom de la compéttion doit faire entre 2 et 255 caractères")
-     * @Groups({"teams_read", "team_ronvau_read", "competitions_read"})
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
      * @Groups({"teams_read", "competitions_read"})
      */
     private $season;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"teams_read", "competitions_read"})
-     */
-    private $format;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="competition", orphanRemoval=true)
@@ -64,6 +57,13 @@ class Competition
      */
     private $matchDayNumber;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=NameCompetition::class, inversedBy="competitions")
+     * @Groups({"competitions_read"})
+     */
+    private $name;
+
+
 
     public function __construct()
     {
@@ -74,19 +74,7 @@ class Competition
     {
         return $this->id;
     }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
+    
     public function getSeason(): ?string
     {
         return $this->season;
@@ -99,17 +87,6 @@ class Competition
         return $this;
     }
 
-    public function getFormat(): ?string
-    {
-        return $this->format;
-    }
-
-    public function setFormat(string $format): self
-    {
-        $this->format = $format;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Team[]
@@ -150,6 +127,18 @@ class Competition
     public function setMatchDayNumber(int $matchDayNumber): self
     {
         $this->matchDayNumber = $matchDayNumber;
+
+        return $this;
+    }
+
+    public function getName(): ?NameCompetition
+    {
+        return $this->name;
+    }
+
+    public function setName(?NameCompetition $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

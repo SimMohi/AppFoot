@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 
+use App\Entity\Address;
+use App\Entity\Chat;
 use App\Entity\Matche;
 use App\Entity\PlayerMatch;
 use App\Entity\Team;
@@ -12,6 +14,7 @@ use App\Entity\UserTeam;
 use phpDocumentor\Reflection\Types\Object_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,8 +30,16 @@ class ProfilController extends AbstractController
     public function getInfoUser(int $id){
 
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $address = $user->getAddress();
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $return = array();
+        $return["address"]["id"] = $address->getId();
+        $return["address"]["street"] = $address->getStreet();
+        $return["address"]["code"] = $address->getCode();
+        $return["address"]["city"] = $address->getCity();
+        $return["address"]["number"] = $address->getNumber();
+        $return["address"]["box"] = $address->getBox();
+
         foreach ($userTeams as $userTeam){
             $category = $userTeam->getTeamRonvauId()->getCategory();
             $userMatchs = $this->getDoctrine()->getRepository(PlayerMatch::class)->findBy(['idUserTeam' => $userTeam]);
@@ -39,7 +50,7 @@ class ProfilController extends AbstractController
                 $response["redCard"] += $userMatch->getRedCard();
                 $response["played"] += $userMatch->getPlayed();
             }
-            $return[] = $response;
+            $return["infos"][] = $response;
         }
 
         return $this->json($return);

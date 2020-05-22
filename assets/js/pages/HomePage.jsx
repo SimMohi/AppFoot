@@ -11,6 +11,7 @@ import TrainingsAPI from "../services/TrainingsAPI";
 import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import MatcheAPI from "../services/MatcheAPI";
+import EventsAPI from "../services/EventsAPI";
 
 
 const HomePage = props => {
@@ -63,32 +64,50 @@ const HomePage = props => {
     });
     const [MOTM, setMOTM] = useState([]);
 
+    const resetselectedEvent = () => {
+        setSelectedEvent({
+            id: "",
+            title: "",
+            infos: "",
+            button: [],
+            absences: [],
+            staff: false})
+    }
+
     const find = async () => {
         const token = window.localStorage.getItem(("authToken"));
         const {id} = jwtDecode(token);
-        const response = await RonvauTeamAPI.getPersonnalCalendarInfo(id);
-        let calendarArr = [];
-        for (let i = 0; i < response.length; i++){
-            let obj = {
-                title: response[i]["title"],
-                start: response[i]["start"],
-                end: response[i]["end"],
-                type: response[i]["type"],
-                id: response[i]["id"],
-                abs: response[i]["abs"],
-                staff: response[i]["staff"],
-                isOver: response[i]["isOver"],
-                players: response[i]["players"],
+        try {
+            const response = await RonvauTeamAPI.getPersonnalCalendarInfo(id);
+            let calendarArr = [];
+            for (let i = 0; i < response.length; i++){
+                let obj = {
+                    title: response[i]["title"],
+                    start: response[i]["start"],
+                    end: response[i]["end"],
+                    type: response[i]["type"],
+                    id: response[i]["id"],
+                    abs: response[i]["abs"],
+                    staff: response[i]["staff"],
+                    isOver: response[i]["isOver"],
+                    players: response[i]["players"],
+                    team: response[i]["teamCat"],
+                    teamId: response[i]["teamId"],
+                    eventTeamId: response[i]["eventTeamId"],
+                    sub: response[i]["sub"]
+                }
+                if (response[i]["staff"] == true){
+                    obj["absences"] = response[i]["absences"];
+                    obj["presences"] = response[i]["presences"];
+                }
+                calendarArr.push(obj);
             }
-            if (response[i]["staff"] == true){
-                obj["absences"] = response[i]["absences"];
-                obj["presences"] = response[i]["presences"];
-            }
-            calendarArr.push(obj);
+            setIdUser(id);
+            setInfos(response);
+            setCalendarInfos(calendarArr);
+        } catch (e) {
+            toast.error("Erreur");
         }
-        setIdUser(id);
-        setInfos(response);
-        setCalendarInfos(calendarArr);
     }
 
 
@@ -150,18 +169,51 @@ const HomePage = props => {
         } else if (event.type == "event"){
             obj = {
                 id: event.id,
-                title: event.title,
+                title: event.title + " pour " + event.team,
                 day: event.start,
                 end: event.end,
                 button: buttons,
                 absences: [],
                 presences: [],
             }
+            if (event.sub === false){
+                buttons.push(<button onClick={() => subscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-primary mr-3"}>S'inscrire</button>);
+            } else {
+                buttons.push(<button onClick={() => unSubscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-danger mr-3"}>Se désinscrire</button>);
+            }
         }
-        console.log(obj);
         setSelectedEvent(obj);
     }
 
+    const subscribeEvent = async (idEventTeam) => {
+        const data = {
+            user: idUser,
+            eventTeam: idEventTeam,
+        }
+        try {
+            await EventsAPI.createUTE(data);
+            toast.success("Vous êtes inscrits à l'évenement");
+        } catch (e) {
+            toast.error("Erreur lors de l'inscription");
+        }
+        setReload(reload+1);
+        resetselectedEvent();
+    }
+
+    const unSubscribeEvent = async (idEventTeam) => {
+        const data = {
+            user: idUser,
+            eventTeam: idEventTeam,
+        }
+        try {
+            await EventsAPI.unSubUTE(data);
+            toast.success("désinscription réussie");
+        } catch (e) {
+            toast.error("Erreur lors de la désinscription");
+        }
+        setReload(reload+1);
+        resetselectedEvent();
+    }
 
     const changeMOTM = (index) => {
         let copy = JSON.parse(JSON.stringify(MOTM));
@@ -273,7 +325,6 @@ const HomePage = props => {
     }
 
     const editMatchDate =  (match) => {
-        console.log(match);
         let editMatchObj = {
             id: match.id,
             date: DateFunctions.dateFormatYMD(match.start),
@@ -306,8 +357,6 @@ const HomePage = props => {
     useEffect( () => {
         find();
     }, [reload]);
-
-    console.log(selectedEvent);
 
     return (
       <>

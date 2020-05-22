@@ -16,6 +16,7 @@ use App\Entity\Training;
 use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\UserTeam;
+use App\Entity\UserTeamEvent;
 use App\Repository\TrainingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -230,7 +231,6 @@ class RonvauTeamController extends AbstractController
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $response =  [];
-        $doubleEvent = [];
         foreach ($userTeams as $userTeam){
             $teamR = $userTeam->getTeamRonvauId();
             $team = $teamR->getTeam();
@@ -272,6 +272,8 @@ class RonvauTeamController extends AbstractController
                 $trainingRes["start"] = $start;
                 $trainingRes["end"] = $end;
                 $trainingRes["staff"] = $userTeam->getIsStaff();
+                $trainingRes["teamId"] = $teamR->getId();
+                $trainingRes["teamCat"] = $teamR->getCategory();
                 $isAbs = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy([ 'idTraining' => $training, 'idUserTeam' => $userTeam]);
                 $trainingRes["abs"] = $isAbs->getIsAbsent();
                 $response[] = $trainingRes;
@@ -280,7 +282,6 @@ class RonvauTeamController extends AbstractController
             foreach ($eventsTeams as $eventsTeam){
                 $eventRes = [];
                 $event = $eventsTeam->getIdEvents();
-                if (in_array($event->getId(), $doubleEvent)) continue;
                 $eventRes["id"] = $event->getId();
                 $eventRes["type"] = "event";
                 $eventRes["title"] = $event->getName();
@@ -288,8 +289,14 @@ class RonvauTeamController extends AbstractController
                 $eventRes["end"] = $event->getDate();
                 $eventRes["description"] = $event->getDescription();
                 $eventRes["staff"] = $userTeam->getIsStaff();
+                $eventRes["teamId"] = $teamR->getId();
+                $eventRes["teamCat"] = $teamR->getCategory();
+                $eventRes["eventTeamId"] = $eventsTeam->getId();
+                $userTeamEvent = $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['userTeam' => $userTeam, 'eventTeam' => $eventsTeam]);
+                if ($userTeamEvent === null){
+                    $eventRes["sub"] = false;
+                }
                 $response[] = $eventRes;
-                $doubleEvent[] = $event->getId();
             }
 
             $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
@@ -302,6 +309,8 @@ class RonvauTeamController extends AbstractController
                 $matchRes["start"] = $home->getDate();
                 $matchRes["end"] = $home->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
+                $matchRes["teamId"] = $teamR->getId();
+                $matchRes["teamCat"] = $teamR->getCategory();
                 if ($home->getIsOver()) {
                     $matchRes["isOver"] = $home->getIsOver();
                 }
@@ -321,6 +330,8 @@ class RonvauTeamController extends AbstractController
                 $matchRes["start"] = $visitor->getDate();
                 $matchRes["end"] = $visitor->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
+                $matchRes["teamId"] = $teamR->getId();
+                $matchRes["teamCat"] = $teamR->getCategory();
                 if ($visitor->getIsOver()){
                     $matchRes["isOver"] = $visitor->getIsOver();
                 }

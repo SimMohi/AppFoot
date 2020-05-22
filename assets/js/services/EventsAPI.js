@@ -1,5 +1,6 @@
+
 import axios from 'axios';
-import {API_URL, EVENTS_API} from "../config";
+import {API_URL, CLUBS_API, EVENTS_API, USER_TEAM_EVENT_API} from "../config";
 
 function findAll() {
     return axios
@@ -35,6 +36,14 @@ function getEventsTeam(eventId){
         .then(response => response.data);
 }
 
+function createUTE(data){
+    return axios.post(API_URL + "/subscribeUTE", data);
+}
+
+function unSubUTE(data){
+    return axios.post(API_URL + "/unSubscribeUTE", data);
+}
+
 export default {
-    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam
+    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam, createUTE, unSubUTE
 }

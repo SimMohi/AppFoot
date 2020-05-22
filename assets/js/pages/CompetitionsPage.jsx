@@ -46,8 +46,7 @@ const CompetitionsPage = props => {
             {competitions.map(competition =>
                 <tr key={competition.id}>
                     <td>{competition.id}</td>
-                    <td>{competition.name}</td>
-                    <td>{competition.format}</td>
+                    <td>{competition.name.name}</td>
                     <td>{competition.season}</td>
                     <td>
                         <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>

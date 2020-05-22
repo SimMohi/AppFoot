@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -111,6 +112,13 @@ class User implements UserInterface
      * @Groups({"users_read"})
      */
     private $isAccepted;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="users")
+     * @Groups({"users_read"})
+     */
+    private $address;
+
 
     public function __construct()
     {
@@ -379,6 +387,18 @@ class User implements UserInterface
     public function setIsAccepted(bool $isAccepted): self
     {
         $this->isAccepted = $isAccepted;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }

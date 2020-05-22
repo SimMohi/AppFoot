@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {CLUBS_API} from "../config";
+import {API_URL, CLUBS_API} from "../config";
 
 function findAll() {
     return axios
@@ -25,6 +25,10 @@ function deleteClub(id){
     return axios.delete(CLUBS_API + "/" + id);
 }
 
+function postClubAddress(address) {
+    return axios.post(API_URL +"/postClubAddress", address)
+}
+
 export default {
-    findAll, find, create, update, deleteClub
+    findAll, find, create, update, deleteClub, postClubAddress
 }

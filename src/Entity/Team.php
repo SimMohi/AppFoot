@@ -47,23 +47,6 @@ class Team
      */
     private $competition;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
-     * @Groups({"teams_read","matchs_read"})
-     */
-    private $won;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true,options={"default" : 0})
-     * @Groups({"teams_read", "matchs_read"})
-     */
-    private $drawn;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true, options={"default" : 0})
-     * @Groups({"teams_read", "matchs_read"})
-     */
-    private $lost;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="homeTeam")
@@ -129,58 +112,6 @@ class Team
         return $this;
     }
 
-    public function getWon(): ?int
-    {
-        return $this->won;
-    }
-
-    public function setWon(int $won): self
-    {
-        $this->won = $won;
-
-        return $this;
-    }
-
-    public function getDrawn(): ?int
-    {
-        return $this->drawn;
-    }
-
-    public function setDrawn(int $drawn): self
-    {
-        $this->drawn = $drawn;
-
-        return $this;
-    }
-
-    public function getLost(): ?int
-    {
-        return $this->lost;
-    }
-
-    public function setLost(int $lost): self
-    {
-        $this->lost = $lost;
-
-        return $this;
-    }
-
-
-    /**
-    * @Groups({"teams_read",})
-    * @return integer
-    */
-     public function getNbrMatchs(){
-        return $this->won + $this->drawn + $this->lost;
-    }
-
-    /**
-     * @Groups({"teams_read",})
-     * @return integer
-     */
-    public function getNbrPoints(){
-        return $this->won * 3 + $this->drawn;
-    }
 
     /**
      * @return Collection|Matc[]
@@ -284,5 +215,4 @@ class Team
 
         return $this;
     }
-
 }

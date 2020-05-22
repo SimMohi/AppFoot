@@ -68,11 +68,9 @@ const UsersPage = () => {
         }
     }
 
-
     useEffect( () => {
         findUsers();
     }, [reload]);
-
 
     return(
         <>
@@ -98,7 +96,7 @@ const UsersPage = () => {
                                 <td>{user.firstName}</td>
                                 <td className="text-center">{user.email}</td>
                                 <td className="text-center">{user.isAccepted && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                <td className="custom-control custom-checkbox">
+                                <td className="custom-control custom-checkbox text-center">
                                     <input type="checkbox" className="custom-control-input" checked={checkbox[index]} onChange={() => changeRole(index)} id={"adminCheck"+index}/>
                                     <label className="custom-control-label" htmlFor={"adminCheck"+index}></label>
                                 </td>

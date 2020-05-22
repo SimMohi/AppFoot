@@ -25,6 +25,12 @@ function dateFormatYMD(date){
     return newDate;
 }
 
+function newDateDWH(date, time){
+    const d = new Date(date);
+    let timeArr = time.split(":");
+
+}
+
 function getMonthFr(month){
     let monthFr = "";
     switch (month) {

@@ -56,7 +56,6 @@ class TeamRonvau
      */
     private $eventsTeams;
 
-
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TrainingDay", mappedBy="teamRonvau")
      */
@@ -67,6 +66,11 @@ class TeamRonvau
      */
     private $chats;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UnOfficialMatch::class, mappedBy="teamRonvau")
+     */
+    private $unOfficialMatches;
+
 
     public function __construct()
     {
@@ -75,6 +79,7 @@ class TeamRonvau
         $this->eventsTeams = new ArrayCollection();
         $this->trainingDays = new ArrayCollection();
         $this->chats = new ArrayCollection();
+        $this->unOfficialMatches = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -256,6 +261,37 @@ class TeamRonvau
             // set the owning side to null (unless already changed)
             if ($chat->getChannel() === $this) {
                 $chat->setChannel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UnOfficialMatch[]
+     */
+    public function getUnOfficialMatches(): Collection
+    {
+        return $this->unOfficialMatches;
+    }
+
+    public function addUnOfficialMatch(UnOfficialMatch $unOfficialMatch): self
+    {
+        if (!$this->unOfficialMatches->contains($unOfficialMatch)) {
+            $this->unOfficialMatches[] = $unOfficialMatch;
+            $unOfficialMatch->setTeamRonvau($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUnOfficialMatch(UnOfficialMatch $unOfficialMatch): self
+    {
+        if ($this->unOfficialMatches->contains($unOfficialMatch)) {
+            $this->unOfficialMatches->removeElement($unOfficialMatch);
+            // set the owning side to null (unless already changed)
+            if ($unOfficialMatch->getTeamRonvau() === $this) {
+                $unOfficialMatch->setTeamRonvau(null);
             }
         }
 

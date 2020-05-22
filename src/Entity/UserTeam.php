@@ -72,11 +72,23 @@ class UserTeam
      */
     private $chats;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PlayerUnofficialMatch::class, mappedBy="userTeam")
+     */
+    private $playerUnofficialMatches;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UserTeamEvent::class, mappedBy="userTeam")
+     */
+    private $userTeamEvents;
+
     public function __construct()
     {
         $this->playerMatches = new ArrayCollection();
         $this->playerTrainings = new ArrayCollection();
         $this->chats = new ArrayCollection();
+        $this->playerUnofficialMatches = new ArrayCollection();
+        $this->userTeamEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -219,6 +231,68 @@ class UserTeam
             // set the owning side to null (unless already changed)
             if ($chat->getSender() === $this) {
                 $chat->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PlayerUnofficialMatch[]
+     */
+    public function getPlayerUnofficialMatches(): Collection
+    {
+        return $this->playerUnofficialMatches;
+    }
+
+    public function addPlayerUnofficialMatch(PlayerUnofficialMatch $playerUnofficialMatch): self
+    {
+        if (!$this->playerUnofficialMatches->contains($playerUnofficialMatch)) {
+            $this->playerUnofficialMatches[] = $playerUnofficialMatch;
+            $playerUnofficialMatch->setUserTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlayerUnofficialMatch(PlayerUnofficialMatch $playerUnofficialMatch): self
+    {
+        if ($this->playerUnofficialMatches->contains($playerUnofficialMatch)) {
+            $this->playerUnofficialMatches->removeElement($playerUnofficialMatch);
+            // set the owning side to null (unless already changed)
+            if ($playerUnofficialMatch->getUserTeam() === $this) {
+                $playerUnofficialMatch->setUserTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserTeamEvent[]
+     */
+    public function getUserTeamEvents(): Collection
+    {
+        return $this->userTeamEvents;
+    }
+
+    public function addUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if (!$this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents[] = $userTeamEvent;
+            $userTeamEvent->setUserTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if ($this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents->removeElement($userTeamEvent);
+            // set the owning side to null (unless already changed)
+            if ($userTeamEvent->getUserTeam() === $this) {
+                $userTeamEvent->setUserTeam(null);
             }
         }
 

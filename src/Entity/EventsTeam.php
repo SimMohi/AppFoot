@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 Use Symfony\Component\Serializer\Annotation\Groups;
@@ -39,6 +41,16 @@ class EventsTeam
      */
     private $idEvents;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserTeamEvent::class, mappedBy="eventTeam")
+     */
+    private $userTeamEvents;
+
+    public function __construct()
+    {
+        $this->userTeamEvents = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,6 +76,37 @@ class EventsTeam
     public function setIdEvents(?Event $idEvents): self
     {
         $this->idEvents = $idEvents;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserTeamEvent[]
+     */
+    public function getUserTeamEvents(): Collection
+    {
+        return $this->userTeamEvents;
+    }
+
+    public function addUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if (!$this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents[] = $userTeamEvent;
+            $userTeamEvent->setEventTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if ($this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents->removeElement($userTeamEvent);
+            // set the owning side to null (unless already changed)
+            if ($userTeamEvent->getEventTeam() === $this) {
+                $userTeamEvent->setEventTeam(null);
+            }
+        }
 
         return $this;
     }

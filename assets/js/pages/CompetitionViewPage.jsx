@@ -12,9 +12,7 @@ const  CompetitionViewPage = props => {
 
     const getTeams = async () => {
         try{
-            const teamsCompet = await CompetitionsAPI.findTeam(id);
-            teamsCompet.forEach(function (teamcompet) {
-            })
+            const teamsCompet = await CompetitionsAPI.getRanking(id);
             setTeams(teamsCompet);
         } catch (error) {
             console.log(error.response);
@@ -27,8 +25,8 @@ const  CompetitionViewPage = props => {
 
     function orderByPoints(a, b) {
         // Use toUpperCase() to ignore character casing
-        const bandA = a.nbrPoints;
-        const bandB = b.nbrPoints;
+        const bandA = a.points;
+        const bandB = b.points;
 
         let comparison = 0;
         if (bandA < bandB) {
@@ -41,13 +39,11 @@ const  CompetitionViewPage = props => {
     const orderTeams = [...teams];
     orderTeams.sort(orderByPoints);
 
-    console.log(teams);
     return (
       <>
           <table className="table table-hover text-">
               <thead>
               <tr>
-                  <th>Identifiant</th>
                   <th>Nom</th>
                   <th>Jouer</th>
                   <th>Gagner</th>
@@ -59,13 +55,12 @@ const  CompetitionViewPage = props => {
               <tbody>
               {orderTeams.map(team =>
                   <tr key={team.id}>
-                      <td>{team.id}</td>
-                      <td>{team.club.name}</td>
-                      <td>{team.nbrMatchs}</td>
-                      <td>{team.won || 0} </td>
-                      <td>{team.drawn || 0}</td>
-                      <td>{team.lost || 0}</td>
-                      <td>{team.nbrPoints || 0}</td>
+                      <td>{team.name}</td>
+                      <td>{team.played}</td>
+                      <td>{team.won} </td>
+                      <td>{team.drawn}</td>
+                      <td>{team.lost}</td>
+                      <td>{team.points}</td>
                   </tr>
               )}
               </tbody>

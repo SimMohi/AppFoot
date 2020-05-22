@@ -88,6 +88,52 @@ class CompetitionsController extends AbstractController
     }
 
     /**
+     * Get Ranking for one competition
+     * @Route("/getRankingCompetition/{idCompet}")
+     * @param int $idCompet
+     * @return JsonResponse
+     */
+    public function getRankingCompetition(int $idCompet){
+
+        $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
+
+        $teams = $competition->getTeams();
+        $response = array();
+        foreach ($teams as $team){
+            $teamRes = array();
+            $teamRes["id"] = $team->getId();
+            $teamRes["name"] = $team->getClub()->getName();
+            $teamRes["won"] = 0;
+            $teamRes["drawn"] = 0;
+            $teamRes["lost"] = 0;
+            $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
+            $matchBs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
+            foreach ($matchAs as $matchA){
+                if ($matchA->getHomeTeamGoal() > $matchA->getVisitorTeamGoal()){
+                    $teamRes["won"] = $teamRes["won"] +1;
+                } elseif ($matchA->getHomeTeamGoal() < $matchA->getVisitorTeamGoal()){
+                    $teamRes["lost"] = $teamRes["lost"] +1;
+                } elseif ($matchA->getHomeTeamGoal() == $matchA->getVisitorTeamGoal()){
+                    $teamRes["drawn"] = $teamRes["drawn"] +1;
+                }
+            }
+            foreach ($matchBs as $matchB){
+                if ($matchB->getHomeTeamGoal() < $matchB->getVisitorTeamGoal()){
+                    $teamRes["won"] = $teamRes["won"] +1;
+                } elseif ($matchB->getHomeTeamGoal() > $matchB->getVisitorTeamGoal()){
+                    $teamRes["lost"] = $teamRes["lost"] +1;
+                } elseif ($matchB->getHomeTeamGoal() == $matchB->getVisitorTeamGoal()){
+                    $teamRes["drawn"] = $teamRes["drawn"] +1;
+                }
+            }
+            $teamRes["points"] = $teamRes["won"] *3 + $teamRes["drawn"];
+            $teamRes["played"] = $teamRes["won"] + $teamRes["drawn"] + $teamRes["lost"];
+            $response[] = $teamRes;
+        }
+        return $this->json($response);
+    }
+
+    /**
      * Get the matches for the ronvauTeam
      * @Route("/getRonvauTeamMatch/{idRTeam}")
      * @param int $idRTeam

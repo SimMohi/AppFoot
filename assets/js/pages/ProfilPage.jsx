@@ -14,14 +14,28 @@ const ProfilPage = props => {
         lastName: "",
         firstName: "",
         email: "",
-        gsm: ""
+        gsm: "",
     });
+
+    const [address, setAddress] = useState({
+        city: "",
+        code: "",
+        street: "",
+        box: "",
+        number : "",
+    })
+
     const [info, setInfo] = useState([]);
     const [errors, setErrors] = useState({
         lastName: "",
         firstName: "",
         email: "",
-        gsm: ""
+        gsm: "",
+        city: "",
+        code: "",
+        street: "",
+        box: "",
+        number : "",
     });
     const [allUsers, setAllUSers] = useState([]);
 
@@ -37,10 +51,13 @@ const ProfilPage = props => {
                 let allUsersArray = [];
                 for (let i = 0; i < usersResponse.length; i++){
                     if (usersResponse[i].email == user){
-                        const { id, lastName, firstName, email, gsm} = usersResponse[i];
+                        const { id, lastName, firstName, email, gsm, address} = usersResponse[i];
+                        if (typeof address == 'undefined'){
+                        }
                         setUser({ id, lastName, firstName, email, gsm});
                         const response = await usersAPI.profile(id);
-                        setInfo(response["data"]);
+                        setAddress(response["data"]["address"]);
+                        setInfo(response["data"]["infos"]);
                     } else {
                         let user =  {
                             "key": usersResponse[i].id,
@@ -50,7 +67,6 @@ const ProfilPage = props => {
                     }
                 }
                 setAllUSers(allUsersArray);
-
             })).catch(errors => {
                 console.log(errors.response);
             })
@@ -62,9 +78,13 @@ const ProfilPage = props => {
         setUser({...user, [name]: value});
     };
 
+    const handleChangeAdd = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        setAddress({...address, [name]: value});
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(user.gsm/0);
         let intGsm = parseInt(user.gsm);
         if (user.gsm/0 != 'Infinity'){
             let error = {};
@@ -73,8 +93,11 @@ const ProfilPage = props => {
             setErrors(error);
             return ;
         }
+        let copyAdd = JSON.parse(JSON.stringify(address));
+        copyAdd["userId"] = user.id;
         try {
             await usersAPI.update(user.id, user);
+            await usersAPI.postProfile(copyAdd);
             toast.success("Profil modifié avec Succès");
             setErrors({});
         }catch (error) {
@@ -100,7 +123,7 @@ const ProfilPage = props => {
 
     return(
         <>
-            <h1 className={"text-center"}>Profil</h1>
+            <h1 className={"text-center"}>Mon Profil</h1>
             <div className="container">
                 <div className="row">
                     <div className="col-8">
@@ -113,14 +136,41 @@ const ProfilPage = props => {
                                     <Field name={"firstName"} label={"Prénom"} type={"text"} value={user.firstName} onChange={handleChange} error={errors.firstName}/>
                                 </div>
                             </div>
-                            <Field name={"email"} label={"Email"} type={"text"} value={user.email} onChange={handleChange} error={errors.email}/>
-                            <div className="form-group">
-                                <input placeholder={"Ajoutez un numéro de gsm. Format: 04XXXXXXXX"} className={"form-control " + (errors.gsm &&  "is-invalid")} type="tel" id="gsm" name="gsm"
-                                       value={user.gsm || ""} onChange={handleChange}/>
-                                { errors.gsm && <p className={"invalid-feedback"}>{errors.gsm}</p>}
+                            <div className="row">
+                                <div className="col-6">
+                                    <Field name={"email"} label={"Email"} type={"email"} value={user.email} onChange={handleChange} error={errors.email}/>
+                                </div>
+                                <div className="col-6">
+                                    <div className="form-group">
+                                        <label htmlFor={"gsm"}>Gsm</label>
+                                        <input placeholder={"Ajoutez un numéro de gsm. Format: 04XXXXXXXX"} className={"form-control " + (errors.gsm &&  "is-invalid")} type="tel" id="gsm" name="gsm"
+                                               value={user.gsm || ""} onChange={handleChange}/>
+                                        { errors.gsm && <p className={"invalid-feedback"}>{errors.gsm}</p>}
+                                    </div>
+                                </div>
                             </div>
+                            <div className="row">
+                                <div className="col-8">
+                                    <Field name={"street"} label={"Rue"} type={"text"} value={address.street} onChange={handleChangeAdd} error={errors.street}/>
+                                </div>
+                                <div className="col-4">
+                                    <Field name={"city"} label={"Ville"} type={"text"} value={address.city} onChange={handleChangeAdd} error={errors.city}/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-4">
+                                    <Field name={"number"} label={"Numéro"} type={"number"} value={address.number} onChange={handleChangeAdd} error={errors.number}/>
+                                </div>
+                                <div className="col-4">
+                                    <Field name={"box"} label={"Boîte"} type={"text"} value={address.box} onChange={handleChangeAdd} error={errors.box}/>
+                                </div>
+                                <div className="col-4">
+                                    <Field name={"code"} label={"Code postal"} type={"text"} value={address.code} onChange={handleChangeAdd} error={errors.code}/>
+                                </div>
+                            </div>
+
                             <div className="from-group">
-                                <button type={"submit"} className="btn btn-success">Enregistrer</button>
+                                <button type={"submit"} className="btn btn-success ml-auto">Enregistrer</button>
                             </div>
                         </form>
                     </div>
