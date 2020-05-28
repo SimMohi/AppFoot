@@ -33,7 +33,7 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "cars_read"})
      */
     private $id;
 
@@ -115,7 +115,7 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="users")
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "cars_read"})
      */
     private $address;
 

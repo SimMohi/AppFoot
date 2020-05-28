@@ -5,26 +5,28 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 Use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 
 /**
+ * @ORM\Table(name="car_passenger", uniqueConstraints={
+ *     @UniqueConstraint(name="car_passenger_unique",
+ *         columns={"user_id", "car_id"})
+ *     }
+ * )
+ *
  * @ORM\Entity(repositoryClass="App\Repository\CarPassengerRepository")
  * @ApiResource(
  *   denormalizationContext={"disable_type_enforcement"=true}
  * )
+ * @UniqueEntity(fields={"user", "car"}, message="Vous avez déjà fait une demande pour ce covoiturage")
  */
 class CarPassenger
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"cars_read"})
-     */
-    private $id;
 
     /**
+     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="carPassengers")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"cars_read"})
@@ -32,6 +34,7 @@ class CarPassenger
     private $user;
 
     /**
+     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="App\Entity\Car", inversedBy="carPassengers")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -61,10 +64,10 @@ class CarPassenger
      */
     private $answer;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="carPassengers")
+     */
+    private $address;
 
     public function getUser(): ?User
     {
@@ -134,6 +137,18 @@ class CarPassenger
     public function setAnswer(?string $answer): self
     {
         $this->answer = $answer;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }

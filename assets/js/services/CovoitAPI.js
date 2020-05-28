@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {CARS_API, PASSENGERS_API} from "../config";
+import {API_URL, CARS_API, PASSENGERS_API} from "../config";
 
 function findAll() {
     return axios
@@ -14,11 +14,15 @@ function find(id){
 }
 
 function create(car){
-    return axios.post(CARS_API, car);
+    return axios.post(API_URL + "/createCar", car);
 }
 
+// function addPassenger(carPass){
+//     return axios.post(PASSENGERS_API, carPass);
+// }
+
 function addPassenger(carPass){
-    return axios.post(PASSENGERS_API, carPass);
+    return axios.post(API_URL+ "/addPassenger", carPass);
 }
 
 function delPassenger(id) {

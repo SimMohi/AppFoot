@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 Use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -37,6 +39,7 @@ class Car
     /**
      * @ORM\Column(type="integer")
      * @Groups({"cars_read"})
+     *
      */
     private $placeRemaining;
 
@@ -46,17 +49,27 @@ class Car
      */
     private $date;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"cars_read"})
-     */
-    private $departurePlace;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="car", orphanRemoval=true)
      * @Groups({"cars_read"})
+     *
      */
     private $carPassengers;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Address::class, inversedBy="cars")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"cars_read"})
+     */
+    private $departureAddress;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=3, minMessage="Le titre doit faire au mininum 3 caractères", max=255, maxMessage="Entre 3 et 255")
+     * @Groups({"cars_read"})
+     */
+    private $title;
 
     public function __construct()
     {
@@ -103,18 +116,7 @@ class Car
 
         return $this;
     }
-
-    public function getDeparturePlace(): ?string
-    {
-        return $this->departurePlace;
-    }
-
-    public function setDeparturePlace(string $departurePlace): self
-    {
-        $this->departurePlace = $departurePlace;
-
-        return $this;
-    }
+    
 
     /**
      * @return Collection|CarPassenger[]
@@ -143,6 +145,30 @@ class Car
                 $carPassenger->setCar(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDepartureAddress(): ?Address
+    {
+        return $this->departureAddress;
+    }
+
+    public function setDepartureAddress(?Address $departureAddress): self
+    {
+        $this->departureAddress = $departureAddress;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 Use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping\UniqueConstraint;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
@@ -17,6 +18,7 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
  *     }
  *  )
  * @ORM\Entity(repositoryClass="App\Repository\EventsTeamRepository")
+ * @UniqueEntity(fields={"idTeamRonvau", "idEvents"}, message="Cette équipe est déjà inscrite à cet événement")
  * @ApiResource
  */
 class EventsTeam

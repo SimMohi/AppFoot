@@ -10,6 +10,7 @@ import authAPI from "../services/authAPI";
 import axios from 'axios';
 import Field from "../components/forms/Fields";
 import {CARS_API, PASSENGERS_API} from "../config";
+import DateFunctions from "../services/DateFunctions";
 
 const CovoitsPage = props => {
 
@@ -24,8 +25,21 @@ const CovoitsPage = props => {
         user: "",
         car: "",
         comment: "",
+        numberPassenger:"1",
+        isAccepted: "",
+        fromHome: true,
+        street: "",
+        code: "",
+        city: "",
+        number: ""
+    })
+
+    const [errors, setErrors] = useState({
+        street: "",
+        code: "",
+        city: "",
+        number: "",
         numberPassenger:"",
-        isAccepted: ""
     })
 
     const handleShow = (id, index) => {
@@ -44,15 +58,22 @@ const CovoitsPage = props => {
     const findCovoits = async () => {
         try {
             const data = await CovoitAPI.findAll();
+            data.sort(DateFunctions.orderByDate);
             setCovoits(data);
         } catch (error) {
             console.log(error.response);
         }
     }
 
+
     const handleChange = ({ currentTarget }) => {
         const { name, value } = currentTarget;
-        setNewPassengers({...newPassengers, [name]: value});
+        if (name == "fromHome"){
+            const homeVal = !newPassengers.fromHome
+            setNewPassengers({...newPassengers, [name]: homeVal});
+        } else {
+            setNewPassengers({...newPassengers, [name]: value});
+        }
     };
 
     const handleDelete = async id => {
@@ -73,7 +94,7 @@ const CovoitsPage = props => {
 
         for(var i = 0; i < passengers.length; i++){
             if (passengers[i]["user"]["@id"] == userConnected["@id"]){
-                return <button onClick={() => unSubscribe(passengers[i]["id"], covoit)} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
+                return <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
             }
         }
         if (placeRemaining == 0){
@@ -99,16 +120,32 @@ const CovoitsPage = props => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         let copyNewPass = JSON.parse(JSON.stringify(newPassengers));
-        copyNewPass["user"] = userConnected["@id"];
-        copyNewPass["car"] = modalParam["@id"];
+        copyNewPass["user"] = userConnected["id"];
+        copyNewPass["car"] = modalParam["id"];
         copyNewPass["isAccepted"] = false;
+        console.log(copyNewPass);
         try{
-            await CovoitAPI.addPassenger(copyNewPass);
+            const response = await CovoitAPI.addPassenger(copyNewPass);
+            if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
+                const apiErrors = {};
+                response.data.violations.forEach(violation => {
+                    apiErrors[violation.propertyPath] = violation.title;
+                });
+                setErrors(apiErrors);
+                return ;
+            }
+            if (response.data.status == 500){
+                toast.error(response.data.message);
+                return ;
+            }
             toast.success("Votre demande pour le covoiturage est enregistrée");
         } catch (e) {
             toast.error("Votre demande a échouée");
         }
         setReload(reload+1);
+        let copyShow = JSON.parse(JSON.stringify(show));
+        copyShow[1] = false;
+        setShow(copyShow);
     }
 
     const subscribe =  (covoit) => {
@@ -135,6 +172,7 @@ const CovoitsPage = props => {
     }
 
     const unSubscribe =  (id, covoit) => {
+        id = id.replace("/api/car_passengers/", "");
         let copyCovoit = JSON.parse(JSON.stringify(covoit));
         const idCovoit = copyCovoit["id"];
         copyCovoit["placeRemaining"] += 1;
@@ -153,6 +191,12 @@ const CovoitsPage = props => {
         setReload(reload+1);
     }
 
+    const adresseFormat = (address) => {
+        address.street = address.street.toLowerCase();
+        address.street = address.street.replace("rue", "");
+        return "rue " + address.street + " " + address.number + ", " + address.code + " " + address.city
+    }
+
 
     useEffect( () => {
         findCovoits();
@@ -165,27 +209,26 @@ const CovoitsPage = props => {
             <Button className="btn btn-primary float-right mb-3" onClick={() => handleShow("new",0)}>
                 Nouveau covoiturage
             </Button>
-            <table className="table table-hover">
+            <table className="table table-hover text-center">
                 <thead>
-                <tr>
-                    <th>Conducteur</th>
-                    <th>Lieu de départ</th>
-                    <th>Date et heure</th>
-                    <th>places restantes</th>
+                <tr className={"row"}>
+                    <th className={"col-2"}>Conducteur</th>
+                    <th className={"col-2"}>Titre</th>
+                    <th className={"col-2"}>Date et heure</th>
+                    <th className={"col-1"}>places restantes</th>
+                    <th className={"col-3"}>Adresse de départ</th>
+                    <th className={"col-2"}></th>
                 </tr>
                 </thead>
                 <tbody>
                 {covoits.map((covoit, index) =>
-                    <tr key={index}>
-                        <td>{covoit.userId["firstName"]+" "+covoit.userId["lastName"]}</td>
-                        <td>{covoit.departurePlace}</td>
-                        <td>
-                            <Moment format="YYYY-MM-DD HH:mm">
-                                {covoit.date}
-                            </Moment>
-                        </td>
-                        <td>{covoit.placeRemaining}</td>
-                        <td>
+                    <tr key={index} className={"row"}>
+                        <td className={"col-2"}>{covoit.userId["firstName"]+" "+covoit.userId["lastName"]}</td>
+                        <td className={"col-2"}>{covoit.title}</td>
+                        <td className={"col-2"}>{DateFunctions.dateFormatFrDMHM(covoit.date)}</td>
+                        <td className={"col-1"}>{covoit.placeRemaining}</td>
+                        <td className={"col-3"}>{adresseFormat(covoit.departureAddress)}</td>
+                        <td className={"col-2"}>
                             {chooseButton(covoit)}
                             <button onClick={() => handleDelete(covoit.id)} className="btn btn-sm btn-danger">Supprimer</button>
                         </td>
@@ -205,8 +248,32 @@ const CovoitsPage = props => {
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleSubmit}>
+                        <div className={"custom-control custom-checkbox mb-4"}>
+                            <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={newPassengers.fromHome} onChange={handleChange}/>
+                            <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
+                        </div>
+                        {!newPassengers.fromHome &&
+                        <>
+                            <div className="row">
+                                <div className="col-9">
+                                    <Field name={"street"} label={"Rue"} type={"text"} value={newPassengers.street} onChange={handleChange} error={errors.street}/>
+                                </div>
+                                <div className="col-3">
+                                    <Field name={"number"} label={"Numéro"} type={"number"} value={newPassengers.number} onChange={handleChange} error={errors.number}/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7">
+                                    <Field name={"city"} label={"Ville"} type={"text"} value={newPassengers.city} onChange={handleChange}/>
+                                </div>
+                                <div className="col-5">
+                                    <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={newPassengers.code} onChange={handleChange} />
+                                </div>
+                            </div>
+                        </>
+                        }
                         <Field type={"text"} placeholder={"Commentaire pour le conducteur"} name={"comment"} value={newPassengers["comment"]} onChange={handleChange}/>
-                        <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numberPassenger"} min={0} max={modalParam.placeRemaining}
+                        <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numberPassenger"} min={1} max={modalParam.placeRemaining}
                                onChange={handleChange} value={newPassengers["numberPassenger"]}/>
                         <div className="from-group">
                             <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>

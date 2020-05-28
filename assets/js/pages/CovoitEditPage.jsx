@@ -3,7 +3,8 @@ import Field from "../components/forms/Fields";
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
 import axios from "axios";
-import {CARS_API, PASSENGERS_API} from "../config";
+import {API_URL, CARS_API, PASSENGERS_API} from "../config";
+import DateFunctions from "../services/DateFunctions";
 
 
 const CovoitPage = props => {
@@ -23,6 +24,19 @@ const CovoitPage = props => {
     const fetchCar = async id => {
         try {
             const response = await CovoitAPI.find(id);
+            const datetime = DateFunctions.dateFormatYMDHMArr(response["date"]);
+            response["date"] = datetime[0];
+            response["time"] = datetime[1];
+            if (response["userId"].address == response["departureAddress"]){
+                response["fromHome"] = true
+            } else {
+                response["fromHome"] = false;
+            }
+            response["street"] = response["departureAddress"]["street"];
+            response["code"] = response["departureAddress"]["code"];
+            response["number"] = response["departureAddress"]["number"];
+            response["city"] = response["departureAddress"]["city"];
+            response["user"] = response["userId"]["id"];
             setCar(response);
             setCarPass(response.carPassengers);
         } catch (error) {
@@ -31,9 +45,15 @@ const CovoitPage = props => {
     };
 
 
+
     const handleChangeCar = ({ currentTarget }) => {
         const { name, value } = currentTarget;
-        setCar({...car, [name]: value});
+        if (name == "fromHome"){
+            const homeVal = !car.fromHome
+            setCar({...car, [name]: homeVal});
+        } else {
+            setCar({...car, [name]: value});
+        }
     }
 
     const handleChangePass = ({ currentTarget }) => {
@@ -50,7 +70,19 @@ const CovoitPage = props => {
             copyCar["carPassengers"][i] =  car["carPassengers"][i]["@id"];
         }
         try {
-            const response = await CovoitAPI.update(id, copyCar);
+            const response = await CovoitAPI.create(copyCar);
+            if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
+                const apiErrors = {};
+                response.data.violations.forEach(violation => {
+                    apiErrors[violation.propertyPath] = violation.title;
+                });
+                setErrors(apiErrors);
+                return ;
+            }
+            if (response.data.status == 500){
+                toast.error(response.data.message);
+                return ;
+            }
             toast.success("Le covoiturage a bien été modifié");
             setErrors({});
         } catch (error) {
@@ -68,7 +100,6 @@ const CovoitPage = props => {
     const accept = ({currentTarget}) =>{
         const { id } = currentTarget;
         let currentCar = JSON.parse(JSON.stringify(car));
-        console.log(currentCar);
         for (let i = 0; i < currentCar["carPassengers"].length; i++){
             currentCar["carPassengers"][i] = currentCar["carPassengers"][i]["@id"];
         }
@@ -77,10 +108,10 @@ const CovoitPage = props => {
         currentCar["userId"] = currentCar["userId"]["@id"];
         currentCarPass["user"] = currentCarPass["user"]["@id"];
         currentCarPass["isAccepted"] = true;
-        console.log(currentCar);
+        return;
         try {
             axios.all([
-                axios.put(PASSENGERS_API + "/" + currentCarPass.id, currentCarPass),
+                axios.put(API_URL + currentCarPass["@id"], currentCarPass),
                 axios.put(CARS_API + "/"+ currentCar.id, currentCar),
             ]);
             toast.success("La demande a bien été acceptée");
@@ -94,13 +125,17 @@ const CovoitPage = props => {
         let currentCar = JSON.parse(JSON.stringify(car));
         for (let i = 0; i < currentCar["carPassengers"].length; i++){
             currentCar["carPassengers"][i] = currentCar["carPassengers"][i]["@id"];
+            if (currentCar["carPassengers"][i]== id){
+                console.log(currentCar["carPassengers"][i]);
+            }
         }
+        return;
         currentCar["placeRemaining"] += numberPassenger;
         currentCar["userId"] = currentCar["userId"]["@id"];
         try {
             axios.all([
                 axios.put(CARS_API + "/" + currentCar.id, currentCar),
-                axios.delete(PASSENGERS_API + "/" + id),
+                axios.delete(API_URL + id),
             ]);
             toast.success("La demande a bien été supprimée");
         } catch (error) {
@@ -114,12 +149,49 @@ const CovoitPage = props => {
     }, [id, reload]);
 
 
+
     return(
         <>
             <form onSubmit={handleSubmit}>
-                <div className={"w-50"}>
-                    <Field name={"departurePlace"} label={"Lieu de départ"} type={"text"} onChange={handleChangeCar} error={errors.departurePlace} value={car.departurePlace || ""}/>
-                    <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                <div className="row">
+                    <div className={"col-6"}>
+                        <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
+                        <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                        <div className="row">
+                            <div className="col">
+                                <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
+                            </div>
+                            <div className="col">
+                                <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"col-6"}>
+                        <div className={"custom-control custom-checkbox mb-3"}>
+                            <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
+                            <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
+                        </div>
+                        {!car.fromHome &&
+                        <>
+                            <div className="row">
+                                <div className="col-9">
+                                    <Field name={"street"} label={"Rue"} type={"text"} value={car.street} onChange={handleChangeCar} error={errors.street}/>
+                                </div>
+                                <div className="col-3">
+                                    <Field name={"number"} label={"Numéro"} type={"number"} value={car.number} onChange={handleChangeCar} error={errors.number}/>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7">
+                                    <Field name={"city"} label={"Ville"} type={"text"} value={car.city} onChange={handleChangeCar}/>
+                                </div>
+                                <div className="col-5">
+                                    <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={car.code} onChange={handleChangeCar} />
+                                </div>
+                            </div>
+                        </>
+                        }
+                    </div>
                 </div>
                 <h3 className={"m-4"}>Demandes</h3>
                 <table className="table table-hover text-center">
@@ -135,7 +207,7 @@ const CovoitPage = props => {
                     </thead>
                     <tbody>
                         {carPass.map((pass, index) =>
-                            <tr key={pass.id}>
+                            <tr key={index}>
                                 <td>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
                                 <td>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
                                 <td>{pass["comment"]}</td>
@@ -143,7 +215,7 @@ const CovoitPage = props => {
                                 <td><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
                                 <td>
                                     {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-success mr-3">Accepter</button>}
-                                    <button type={"button"} onClick={() => handleDelete(pass.id, pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
+                                    <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
                                 </td>
                             </tr>
                         )}

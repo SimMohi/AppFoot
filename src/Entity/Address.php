@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -34,27 +35,29 @@ class Address
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"clubs_read"})
-     *
+     * @Assert\Length(min=3, minMessage="La rue doit faire au mininum 3 caractères", max=255, maxMessage="Entre 3 et 255")
+     * @Groups({"cars_read"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"clubs_read"})
+     * @Groups({"clubs_read", "cars_read"})
      *
      */
     private $code;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"clubs_read"})
+     * @Groups({"clubs_read", "cars_read"})
+     * @Assert\Positive(message="Cette valeur doit être strictement positive")
      *
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"clubs_read"})
+     * @Groups({"clubs_read", "cars_read"})
      *
      */
     private $city;
@@ -75,9 +78,21 @@ class Address
      */
     private $club;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Car::class, mappedBy="departureAddress")
+     */
+    private $cars;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CarPassenger::class, mappedBy="address")
+     */
+    private $carPassengers;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->cars = new ArrayCollection();
+        $this->carPassengers = new ArrayCollection();
     }
 
 
@@ -190,6 +205,68 @@ class Address
         $newAddress = null === $club ? null : $this;
         if ($club->getAddress() !== $newAddress) {
             $club->setAddress($newAddress);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Car[]
+     */
+    public function getCars(): Collection
+    {
+        return $this->cars;
+    }
+
+    public function addCar(Car $car): self
+    {
+        if (!$this->cars->contains($car)) {
+            $this->cars[] = $car;
+            $car->setDepartureAddress($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCar(Car $car): self
+    {
+        if ($this->cars->contains($car)) {
+            $this->cars->removeElement($car);
+            // set the owning side to null (unless already changed)
+            if ($car->getDepartureAddress() === $this) {
+                $car->setDepartureAddress(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CarPassenger[]
+     */
+    public function getCarPassengers(): Collection
+    {
+        return $this->carPassengers;
+    }
+
+    public function addCarPassenger(CarPassenger $carPassenger): self
+    {
+        if (!$this->carPassengers->contains($carPassenger)) {
+            $this->carPassengers[] = $carPassenger;
+            $carPassenger->setAddress($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCarPassenger(CarPassenger $carPassenger): self
+    {
+        if ($this->carPassengers->contains($carPassenger)) {
+            $this->carPassengers->removeElement($carPassenger);
+            // set the owning side to null (unless already changed)
+            if ($carPassenger->getAddress() === $this) {
+                $carPassenger->setAddress(null);
+            }
         }
 
         return $this;

@@ -92,9 +92,21 @@ function dateFormatFrDM (date){
     return day + " " + monthFr
 }
 
+function orderByDate(a, b) {
+    a = a.date;
+    b = b.date;
+    let comparison = 0;
+    if (a > b) {
+        comparison = 1;
+    } else if (a < b) {
+        comparison = -1;
+    }
+    return comparison;
+}
 
 function dateFormatFrDMHM (date){
-    const d = new Date(date);
+    let d = new Date(date);
+    d = convertUTCDateToLocalDate(d);
     const month = d.getMonth();
     const day = d.getDate();
     let monthFr = getMonthFr(month);
@@ -107,6 +119,26 @@ function dateFormatFrDMHM (date){
         minutes = "0"+minutes;
     }
     return day + " " + monthFr + " "+ hours + ":" + minutes;
+}
+
+function dateFormatYMDHMArr (date){
+    let d = new Date(date);
+    d = convertUTCDateToLocalDate(d);
+    const year = d.getFullYear();
+    let month = d.getMonth()+1;
+    const day = d.getDate();
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    if (month < 10){
+        month = "0"+month;
+    }
+    if (hours < 10){
+        hours = "0"+hours;
+    }
+    if (minutes < 10){
+        minutes = "0"+minutes;
+    }
+    return [ year+"-"+month + "-"+day, hours +  ":" + minutes];
 }
 
 function getHoursHM(date) {
@@ -122,7 +154,18 @@ function getHoursHM(date) {
     return hours+":"+minutes;
 }
 
+function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+
+    return newDate;
+}
+
 
 export default {
-    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM
+    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM, dateFormatYMDHMArr, convertUTCDateToLocalDate, orderByDate
 }

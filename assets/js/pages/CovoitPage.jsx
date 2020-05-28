@@ -3,27 +3,38 @@ import Field from "../components/forms/Fields";
 import DateTimePicker from 'react-datetime-picker'
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
+import Modal from "react-bootstrap/Modal";
+import DateFunctions from "../services/DateFunctions";
 
 
 const CovoitPage = props => {
 
     const id = props.id;
-    const userId = props.user["@id"];
-
+    const userId = props.user.id;
     const [editing, setEditing] = useState(false);
 
     const [car, setCar] = useState({
-        departurePlace: "",
-        date: new Date(),
-        placeRemaining: "",
+        title: "",
+        fromHome: true,
+        date: DateFunctions.todayFormatYMD(),
+        time: "19:00",
+        placeRemaining: 1,
         userId: userId,
-        carPassengers: []
+        carPassengers: [],
+        street: '',
+        city: "",
+        number: "",
+        code : "",
     });
 
     const [errors, setErrors] = useState({
-        departurePlace: "",
+        title: "",
         date: "",
         placeRemaining: "",
+        street: "",
+        city: "",
+        number: "",
+        code: ""
     });
 
     const fetchCar = async id => {
@@ -37,21 +48,40 @@ const CovoitPage = props => {
     };
 
 
-    const onChangeHour = date => setCar({...car, ["date"]: date });
-
     const handleChangeCar = ({ currentTarget }) => {
         const { name, value } = currentTarget;
-        setCar({...car, [name]: value});
+        if (name == "fromHome"){
+            const homeVal = !car.fromHome
+            setCar({...car, [name]: homeVal});
+        } else {
+            setCar({...car, [name]: value});
+        }
     }
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let copy = JSON.parse(JSON.stringify(car));
+        copy["date"] = new Date(car.date + " " + car.time);
+        delete copy.time;
         try {
             if(editing){
                 const response = await CovoitAPI.update(id, car);
                 toast.success("Le covoiturage a bien été modifié");
             } else {
-                const response = await CovoitAPI.create(car);
+                const response = await CovoitAPI.create(copy);
+                if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
+                    const apiErrors = {};
+                    response.data.violations.forEach(violation => {
+                        apiErrors[violation.propertyPath] = violation.title;
+                    });
+                    setErrors(apiErrors);
+                    return ;
+                }
+                if (response.data.status == 500){
+                    toast.error(response.data.message);
+                    return ;
+                }
                 toast.success("Le covoiturage a bien été créé");
             }
             setErrors({});
@@ -67,6 +97,7 @@ const CovoitPage = props => {
         }
     }
 
+
     useEffect(() => {
         if (id !== "new") {
             fetchCar(id);
@@ -76,13 +107,34 @@ const CovoitPage = props => {
 
     return(
         <>
-            <h3>Choissisez une heure</h3>
-            <DateTimePicker
-                onChange={onChangeHour}
-                value={car.date}
-            />
             <form onSubmit={handleSubmit}>
-                <Field name={"departurePlace"} label={"Lieu de départ"} type={"text"} onChange={handleChangeCar} error={errors.departurePlace} value={car.departurePlace}/>
+                <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} error={errors.title}/>
+                <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
+                <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
+                <div className={"custom-control custom-checkbox mb-3"}>
+                    <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
+                    <label className="custom-control-label" htmlFor={"home"}>Départ de mon domcicile</label>
+                </div>
+                {!car.fromHome &&
+                    <>
+                        <div className="row">
+                            <div className="col-7">
+                                <Field name={"street"} label={"Rue"} type={"text"} value={car.street} onChange={handleChangeCar}/>
+                            </div>
+                            <div className="col-5">
+                                <Field name={"city"} label={"Ville"} type={"text"} value={car.city} onChange={handleChangeCar}/>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-6">
+                                <Field name={"number"} label={"Numéro"} type={"number"} value={car.number} onChange={handleChangeCar} error={errors.number}/>
+                            </div>
+                            <div className="col-6">
+                                <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={car.code} onChange={handleChangeCar} />
+                            </div>
+                        </div>
+                    </>
+                }
                 <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining}/>
                 <div className="from-group">
                     <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
