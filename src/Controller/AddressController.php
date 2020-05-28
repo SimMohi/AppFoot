@@ -33,17 +33,14 @@ class AddressController extends AbstractController
         if ($address === null){
             $address = new Address();
         }
-        $address->setBox($data["box"]);
-        $address->setStreet($data["street"]);
-        $address->setCity($data["city"]);
-        $address->setCode($data["code"]);
-        if (is_int($data["number"])){
-            $address->setNumber($data["number"]);
-        } else {
-            $address->setNumber(null);
-        }
-
+        if (isset($data["box"])) $address->setBox($data["box"]);
+        if (isset($data["street"]))$address->setStreet($data["street"]);
+        if (isset($data["city"])) $address->setCity($data["city"]);
+        if (isset($data["code"])) $address->setCode($data["code"]);
+        if (isset($data["number"])) $address->setNumber($data["number"]);
+        $user->setAddress($address);
         $this->getDoctrine()->getManager()->persist($address);
+        $this->getDoctrine()->getManager()->persist($user);
         $this->getDoctrine()->getManager()->flush();
         return $this->json($data);
     }

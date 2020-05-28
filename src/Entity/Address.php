@@ -36,20 +36,20 @@ class Address
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"clubs_read"})
      * @Assert\Length(min=3, minMessage="La rue doit faire au mininum 3 caractères", max=255, maxMessage="Entre 3 et 255")
-     * @Groups({"cars_read"})
+     * @Groups({"cars_read", "users_read"})
      */
     private $street;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"clubs_read", "cars_read"})
+     * @Groups({"clubs_read", "cars_read", "users_read"})
      *
      */
     private $code;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"clubs_read", "cars_read"})
+     * @Groups({"clubs_read", "cars_read", "users_read"})
      * @Assert\Positive(message="Cette valeur doit être strictement positive")
      *
      */
@@ -57,14 +57,14 @@ class Address
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"clubs_read", "cars_read"})
+     * @Groups({"clubs_read", "cars_read", "users_read"})
      *
      */
     private $city;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *
+     * @Groups({"users_read"})
      */
     private $box;
 

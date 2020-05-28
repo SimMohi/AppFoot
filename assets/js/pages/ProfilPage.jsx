@@ -15,6 +15,7 @@ const ProfilPage = props => {
         firstName: "",
         email: "",
         gsm: "",
+        address: {}
     });
 
     const [address, setAddress] = useState({
@@ -52,11 +53,11 @@ const ProfilPage = props => {
                 for (let i = 0; i < usersResponse.length; i++){
                     if (usersResponse[i].email == user){
                         const { id, lastName, firstName, email, gsm, address} = usersResponse[i];
-                        if (typeof address == 'undefined'){
+                        if (typeof address !== 'undefined'){
+                            setAddress(address);
                         }
                         setUser({ id, lastName, firstName, email, gsm});
                         const response = await usersAPI.profile(id);
-                        setAddress(response["data"]["address"]);
                         setInfo(response["data"]["infos"]);
                     } else {
                         let user =  {
@@ -85,18 +86,18 @@ const ProfilPage = props => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        let intGsm = parseInt(user.gsm);
-        if (user.gsm/0 != 'Infinity'){
+        if (user.gsm/0 != 'Infinity' && typeof user.gsm != "undefined"){
             let error = {};
             error["gsm"] = "Numéro de gsm non-valide";
-            console.log(error);
             setErrors(error);
             return ;
         }
         let copyAdd = JSON.parse(JSON.stringify(address));
+        let copyUser = JSON.parse(JSON.stringify(user));
+        delete copyUser.address;
         copyAdd["userId"] = user.id;
         try {
-            await usersAPI.update(user.id, user);
+            await usersAPI.update(user.id, copyUser);
             await usersAPI.postProfile(copyAdd);
             toast.success("Profil modifié avec Succès");
             setErrors({});
@@ -112,6 +113,7 @@ const ProfilPage = props => {
             }
         }
     }
+
 
     const goToProfile = (id) => {
         props.history.replace("/profil/" + id);

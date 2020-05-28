@@ -97,7 +97,7 @@ const RonvauTeamSelectPage = props => {
                         />
                     </div>
                     <Field name={"date"} label={"Jour du match"} type={"date"} value={newMatch.date} onChange={handleChangeNewMatch}/>
-                    <Field name={"time"} label={"Jour de l'entrainement"} type={"time"} value={newMatch.time} onChange={handleChangeNewMatch}/>
+                    <Field name={"time"} label={"heure du match"} type={"time"} value={newMatch.time} onChange={handleChangeNewMatch}/>
                     <div className={"custom-control custom-checkbox mb-3 mt-3"}>
                         <input type="checkbox" className="custom-control-input" name={"isHome"} id={"isHome"} checked={newMatch.isHome} onChange={handleChangeNewMatch}/>
                         <label className="custom-control-label" htmlFor={"isHome"}>Se joue à domicile</label>

@@ -33,12 +33,16 @@ class ProfilController extends AbstractController
         $address = $user->getAddress();
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $return = array();
-        $return["address"]["id"] = $address->getId();
-        $return["address"]["street"] = $address->getStreet();
-        $return["address"]["code"] = $address->getCode();
-        $return["address"]["city"] = $address->getCity();
-        $return["address"]["number"] = $address->getNumber();
-        $return["address"]["box"] = $address->getBox();
+        if ($address !== null){
+            $return["address"]["id"] = $address->getId();
+            $return["address"]["street"] = $address->getStreet();
+            $return["address"]["code"] = $address->getCode();
+            $return["address"]["city"] = $address->getCity();
+            $return["address"]["number"] = $address->getNumber();
+            $return["address"]["box"] = $address->getBox();
+        } else {
+            $return["address"] = array();
+        }
 
         foreach ($userTeams as $userTeam){
             $category = $userTeam->getTeamRonvauId()->getCategory();

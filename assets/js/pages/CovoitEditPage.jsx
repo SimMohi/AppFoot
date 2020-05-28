@@ -27,7 +27,7 @@ const CovoitPage = props => {
             const datetime = DateFunctions.dateFormatYMDHMArr(response["date"]);
             response["date"] = datetime[0];
             response["time"] = datetime[1];
-            if (response["userId"].address == response["departureAddress"]){
+            if (response["userId"].address['@id'] == response["departureAddress"]["@id"]){
                 response["fromHome"] = true
             } else {
                 response["fromHome"] = false;
@@ -155,8 +155,14 @@ const CovoitPage = props => {
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     <div className={"col-6"}>
-                        <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
-                        <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                        <div className="row">
+                            <div className="col-8">
+                                <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
+                            </div>
+                            <div className="col-4">
+                                <Field name={"placeRemaining"} label={"Places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col">
                                 <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
