@@ -36,6 +36,11 @@ function getEventsTeam(eventId){
         .then(response => response.data);
 }
 
+function getEventUser(id){
+    return axios.get(API_URL+ "/getEventUser/" + id)
+        .then(response => response.data);
+}
+
 function createUTE(data){
     return axios.post(API_URL + "/subscribeUTE", data);
 }
@@ -45,5 +50,5 @@ function unSubUTE(data){
 }
 
 export default {
-    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam, createUTE, unSubUTE
+    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam, createUTE, unSubUTE, getEventUser
 }

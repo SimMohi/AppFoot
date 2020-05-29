@@ -43,6 +43,30 @@ function getUserInfo(){
     }
 }
 
+function getIsAdmin(){
+    const token = window.localStorage.getItem(("authToken"));
+
+    if (token) {
+        const {roles} = jwtDecode(token);
+        if (roles.includes("ROLE_ADMIN")){
+            return true
+        } else {
+            return false
+        }
+    }
+    return false
+}
+
+function getId(){
+    const token = window.localStorage.getItem(("authToken"));
+
+    if (token) {
+        const {id} = jwtDecode(token);
+        return id;
+    }
+    return false
+}
+
 function isAuthenticated(){
     const token = window.localStorage.getItem(("authToken"));
 
@@ -57,5 +81,5 @@ function isAuthenticated(){
 }
 
 export default {
-    authenticate, getUserInfo, logout, setup, isAuthenticated, setAxiosToken
+    authenticate, getUserInfo, logout, setup, isAuthenticated, setAxiosToken, getIsAdmin, getId
 };

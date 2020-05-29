@@ -62,4 +62,33 @@ class EventController extends AbstractController
 
         return $this->json("Désinscription réussie");
     }
+
+    /**
+     * @Route("/getEventUser/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getEventUser(int $id){
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $userTeams = $user->getUserTeams();
+
+        $response = array();
+        foreach ($userTeams as $userTeam){
+            $teamArr = array();
+            $teamArr["name"] = $userTeam->getTeamRonvauId()->getCategory();
+            $eventsTeam = $userTeam->getTeamRonvauId()->getEventsTeams();
+            foreach ($eventsTeam as $eventTeam){
+                $userTeamEvent = $eventTeam->getUserTeamEvents();
+                $event = $eventTeam->getIdEvents();
+                $eventsArr = array();
+                $eventsArr["id"] = $event->getId();
+                $eventsArr["name"] = $event->getName();
+                $eventsArr["date"] = $event->getDate();
+                $eventsArr["description"] = $event->getDescription();
+                $teamArr["events"][] = $eventsArr;
+            }
+            $response[] = $teamArr;
+        }
+        return $this->json($response);
+    }
 }

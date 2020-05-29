@@ -25,6 +25,11 @@ function findTeam(id){
         .then(response => response.data["hydra:member"]);
 }
 
+function getMatchCompet (id){
+    return axios.get(API_URL + "/getMatchCompet/" + id)
+        .then(response => response.data);
+}
+
 function create(competition){
     return axios.post(COMPETITIONS_API, competition);
 }
@@ -43,5 +48,5 @@ function getRanking (id){
 }
 
 export default {
-    findAll, find, findTeam, create, update, deleteCompet, findAllName, getRanking
+    findAll, find, findTeam, create, update, deleteCompet, findAllName, getRanking, getMatchCompet
 }

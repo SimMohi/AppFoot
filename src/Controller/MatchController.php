@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Competition;
 use App\Entity\Matche;
 use App\Entity\PlayerMatch;
 use App\Entity\UserTeam;
@@ -103,5 +104,26 @@ class MatchController extends AbstractController
         $this->getDoctrine()->getManager()->flush();
 
         return $this->json("La date a bien été modifiée");
+    }
+
+    /**
+     * @param int $competId
+     * @return JsonResponse
+     * @Route ("/getMatchCompet/{competId}")
+     */
+    public function getMatchCompet(int $competId)
+    {
+        $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $competId]);
+        $teams = $competition->getTeams();
+
+        $response = array();
+        foreach ($teams as $team){
+            $matchAs = $team->getMatchA();
+            foreach ($matchAs as $matchA){
+                $response[$matchA->getMatchDay()][] = $matchA;
+            }
+        }
+
+        return $this->json($response);
     }
 }

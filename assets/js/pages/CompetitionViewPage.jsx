@@ -3,10 +3,12 @@ import ClubsAPI from "../services/ClubsAPI";
 import TeamsAPI from "../services/TeamsAPI";
 import {Link} from "react-router-dom";
 import CompetitionsAPI from "../services/CompetitionsAPI";
+import authAPI from "../services/authAPI";
 
 const  CompetitionViewPage = props => {
 
     const {id} = props.match.params;
+    const isAdmin = authAPI.getIsAdmin();
 
     const [teams, setTeams] = useState([]);
 
@@ -65,8 +67,9 @@ const  CompetitionViewPage = props => {
               )}
               </tbody>
           </table>
-
-          <Link to={"/competition/"+id+"/matchs"} className={"btn btn-info float-right"}>Ajouter des matchs</Link>
+          {!isAdmin &&
+              <Link to={"/competition/" + id + "/matchs"} className={"btn btn-info float-right"}>Ajouter des matchs</Link>
+          }
       </>
     );
 }

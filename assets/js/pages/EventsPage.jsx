@@ -4,6 +4,7 @@ import EventsAPI from "../services/EventsAPI";
 import EventPage from "./EventPage";
 import Header from "../components/Header";
 import DateFunctions from "../services/DateFunctions";
+import authAPI from "../services/authAPI";
 
 const EventsPage = props => {
     const [events, setEvents] = useState([]);
