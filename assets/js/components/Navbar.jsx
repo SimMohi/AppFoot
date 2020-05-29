@@ -37,7 +37,7 @@ const Navbar = ({ history }) => {
         const token = window.localStorage.getItem(("authToken"));
         if (token) {
             const {username: user, roles} = jwtDecode(token);
-            if (roles.includes("ROLE_ADMIN")) setAdmin(true);
+            if (roles.includes("ROLE_ADMIN")) setAdmin(false);
             axios.all([
                 axios.get(USERS_API +"?email=" + user),
             ]).then(axios.spread(async (...responses) => {
@@ -103,33 +103,39 @@ const Navbar = ({ history }) => {
                     <ul className="navbar-nav mr-auto">
                         {isAuthenticated &&
                             <>
-                                {admin &&
-                                    <>
-                                        <li className="nav-item active">
-                                            <NavLink className="nav-link" to={"/competition"}>
-                                                Competitions
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink className="nav-link" to={"/club"}>
-                                                Clubs
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink className="nav-link" to={"/events"}>
-                                                Events
-                                            </NavLink>
-                                        </li>
-                                    </>
-                                }
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/covoit"}>
-                                        Covoiturage
+                                <li className="nav-item active">
+                                    <NavLink className="nav-link" to={"/competition"}>
+                                        Competitions
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                        Gestion des équipes
+                                    <NavLink className="nav-link" to={"/club"}>
+                                        Clubs
+                                    </NavLink>
+                                </li>
+                                {admin &&
+                                    <>
+                                        <li className="nav-item">
+                                            <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                                Gestion des équipes
+                                            </NavLink>
+                                        </li>
+                                    </>
+                                    ||
+                                    <li className="nav-item">
+                                        <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                            Mes équipes
+                                        </NavLink>
+                                    </li>
+                                }
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/events"}>
+                                        Evenements
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to={"/covoit"}>
+                                        Covoiturage
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">

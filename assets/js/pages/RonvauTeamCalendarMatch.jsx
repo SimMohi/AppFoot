@@ -6,30 +6,40 @@ import Modal from "react-bootstrap/Modal";
 import DateFunctions from "../services/DateFunctions";
 import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
+import authAPI from "../services/authAPI";
 
 const RonvauTeamCalendarMatch = props => {
 
     const {id} = props.match.params;
+    const isAdmin = authAPI.getIsAdmin();
     const [matchTeamRonvau, setMatchTeamRonvau] = useState([]);
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState([false, false]);
     const [editMatch, setEditMatch] = useState({
         id: "",
         date: "",
         hour: "20:00",
     });
+    const [name, setName] = useState("");
 
-    const handleShow = () => {
-        setShow(true);
+    const [players, setPlayers] = useState([]);
+
+    const handleShow = (i) => {
+        let copy = JSON.parse(JSON.stringify(show));
+        copy[i] = true;
+        setShow(copy);
     }
 
-    const handleClose = () => {
-        setShow(false);
+    const handleClose = (i) => {
+        let copy = JSON.parse(JSON.stringify(show));
+        copy[i] = false;
+        setShow(copy);
     }
 
     const fetchMatch = async () => {
         const response = await MatcheAPI.getRonvauTeamMatch(id);
-        response.sort(orderByMatchDay);
-        setMatchTeamRonvau(response);
+        setName(response["cat"]);
+        response["matchs"].sort(orderByMatchDay);
+        setMatchTeamRonvau(response['matchs']);
     }
 
     const editMatchDate =  (match) => {
@@ -40,7 +50,7 @@ const RonvauTeamCalendarMatch = props => {
             copy["hour"] = DateFunctions.getHoursHM(match.date);
         }
         setEditMatch(copy);
-        handleShow();
+        handleShow(0);
     }
 
     const handleChangeDate = ({currentTarget}) => {
@@ -77,6 +87,18 @@ const RonvauTeamCalendarMatch = props => {
         return comparison;
     }
 
+    const detailsMatch =  async (a) => {
+        try {
+            const respponse = await MatcheAPI.getMatchDetails(a.id);
+            setPlayers(respponse);
+            console.log(a);
+            console.log(respponse);
+        }catch (e) {
+            console.log(e);
+        }
+        handleShow(1);
+    }
+
 
     useEffect( () => {
         fetchMatch();
@@ -84,6 +106,7 @@ const RonvauTeamCalendarMatch = props => {
 
     return(
         <>
+            <h3 className={"text-center"}>{name}</h3>
             <table className="mt-5 table table-hover text-center container">
                 <thead className={""}>
                     <tr className={"row"}>
@@ -112,22 +135,35 @@ const RonvauTeamCalendarMatch = props => {
                         <td className={"col-3"}>{mtr.homeTeam.club.name}</td>
                         <td className={"col-3"}>{mtr.visitorTeam.club.name}</td>
                         <td className={"col-2"}>{mtr.isOver && (mtr.homeTeamGoal+"-"+mtr.visitorTeamGoal)
-                        ||
+                        || isAdmin &&
                             <>
                                 <button onClick={() => editMatchDate(mtr)}
                                         className="btn btn-sm btn-success">Date du match
                                 </button>
                                 <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
                             </>
-                        }</td>
-                        <td className={"col-2"}>
-                            <Link to={"/match/"+mtr.id+"/encode"} className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                            ||
+                            ""
+                        }
                         </td>
+                        {isAdmin &&
+                            <td className={"col-2"}>
+                                <Link to={"/match/" + mtr.id + "/encode"}
+                                      className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                            </td>
+                            ||
+                            !mtr.isOver &&
+                            <td className={"col-2"}>
+                                <button onClick={() => detailsMatch(mtr)}
+                                        className="btn btn-sm btn-secondary">Détails
+                                </button>
+                            </td>
+                        }
                     </tr>
                 )}
                 </tbody>
             </table>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show[0]} onHide={() => handleClose(1)}>
                 <Modal.Header closeButton>
                     Encoder la date et l'heure du match
                 </Modal.Header>
@@ -135,6 +171,40 @@ const RonvauTeamCalendarMatch = props => {
                     <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                     <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
                     <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
+                </Modal.Body>
+            </Modal>
+            <Modal show={show[1]} onHide={() => handleClose(1)}>
+                <Modal.Header closeButton>
+                    Détails du match
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <div className="row">
+                        <div className={"col-6"}>
+                            <h6>Joueurs</h6>
+                            {players.map((play, index) =>
+                                <div key={index}>{play.name}</div>
+                            )}
+                        </div>
+                        <div className="col-6">
+                            <h6>Goals</h6>
+                            {players.map((play, index) =>
+                                play["goal"] > 0 &&
+                                <div key={index}>{play.name}</div>
+                            )}
+                            <h6 className={"mt-3"}>Cartons Jaunes</h6>
+                            {players.map((play, index) =>
+                                play["yellow"] > 0 &&
+                                <div key={index}>{play.name}</div>
+                            )}
+                            <h6 className={"mt-3"}>Cartons Rouges</h6>
+                            {players.map((play, index) =>
+                                play["red"] > 0 &&
+                                <div key={index}>{play.name}</div>
+                            )}
+                        </div>
+                    </div>
+
+
                 </Modal.Body>
             </Modal>
         </>

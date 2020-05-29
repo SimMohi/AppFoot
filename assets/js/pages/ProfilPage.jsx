@@ -40,6 +40,7 @@ const ProfilPage = props => {
     });
     const [allUsers, setAllUSers] = useState([]);
 
+
     const getUserConnected =  async () => {
         const token = window.localStorage.getItem(("authToken"));
         if (token) {
@@ -192,7 +193,7 @@ const ProfilPage = props => {
                     </div>
                 </div>
             </div>
-            <h5 className={"mt-5"}>Vos statistiques pour cette saison</h5>
+            <h5 className={"mt-5"}>Vos statistiques</h5>
             <table className="table table-hover mt-5 text-center container">
                 <thead>
                 <tr className={"row"}>

@@ -140,6 +140,7 @@ class CompetitionsController extends AbstractController
      */
     public function getRonvauTeamMatch(int $idRTeam){
         $ronvauTeam = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $idRTeam]);
+        $category = $ronvauTeam->getCategory();
         $team = $ronvauTeam->getTeam();
         $competition = $team->getCompetition();
         $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['name' => "F.C. Ronvau Chaumont"]);
@@ -148,6 +149,7 @@ class CompetitionsController extends AbstractController
         $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
         $matchBs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
         $response = array();
+        $response["cat"] = $category;
         if (count($matchAs) > 0){
             foreach ($matchAs as $matchA){
                 $add = array();
@@ -159,7 +161,7 @@ class CompetitionsController extends AbstractController
                 $add["isOver"] = $matchA->getIsOver();
                 $add["matchDay"] = $matchA->getMatchDay();
                 $add["date"] = $matchA->getDate();
-                $response[] = $add;
+                $response["matchs"][] = $add;
             }
         }
         if (count($matchBs) > 0){
@@ -173,7 +175,7 @@ class CompetitionsController extends AbstractController
                 $add["isOver"] = $matchB->getIsOver();
                 $add["matchDay"] = $matchB->getMatchDay();
                 $add["date"] = $matchB->getDate();
-                $response[] = $add;
+                $response["matchs"][] = $add;
             }
         }
         return $this->json($response);

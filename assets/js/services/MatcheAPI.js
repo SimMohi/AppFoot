@@ -59,6 +59,11 @@ function voteMOTM (vote) {
     return axios.post(API_URL + "/voteMOTM", vote)
 }
 
+function getMatchDetails (id){
+    return axios.get(API_URL + "/getMatchDetails/" + id )
+        .then(response => response.data);
+}
+
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch, voteMOTM
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch, voteMOTM, getMatchDetails
 }

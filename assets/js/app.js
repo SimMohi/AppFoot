@@ -25,6 +25,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ProfilPage from "./pages/ProfilPage";
 import RegisterPage from "./pages/RegisterPage";
 import RonvauTeamsPage from "./pages/RonvauTeamsPage";
+import RonvauTeamsPageUser from "./pages/RonvauTeamsPageUser";
 import RonvauTeamPage from "./pages/RonvauTeamPage";
 import UserAcceptPage from "./pages/UserAcceptPage";
 import RonvauTeamCalendarMatch from "./pages/RonvauTeamCalendarMatch";
@@ -52,6 +53,7 @@ const App = () => {
 
     const isAdmin = authAPI.getIsAdmin();
 
+    // const isAdmin = false;
 
     const NavBarWIthRouter = withRouter(NavBar);
 
@@ -66,29 +68,18 @@ const App = () => {
                             path="/login"
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
-
                         <Route path={"/register"} component={RegisterPage}/>
                         <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
-                        {isAdmin &&
-                        <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>
-                        ||
-                        <PrivateRoute path={"/competition/:id/matchs"} component={MatchPagesUser}/>
-                        }
+                        {isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>}
+                        {!isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchPagesUser}/>}                        }
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id/équipes"} component={CompetitionTeamsPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
-                        {!isAdmin &&
-                            <>
-                                <PrivateRoute path={"/competition"} component={CompetitionsPage}/>
-                                <PrivateRoute path={"/events"} component={EventsPage}/>
-                            </>
-                            ||
-                            <>
-                                <PrivateRoute path={"/competition"} component={CompetitionsPageUser}/>
-                                <PrivateRoute path={"/events"} component={EventsUser}/>
-                            </>
-                        }
+                        {isAdmin && <PrivateRoute path={"/competition"} component={CompetitionsPage}/>}
+                        {!isAdmin && <PrivateRoute path={"/competition"} component={CompetitionsPageUser}/>}
+                        {isAdmin && <PrivateRoute path={"/events"} component={EventsPage}/>}
+                        {!isAdmin && <PrivateRoute path={"/events"} component={EventsUser}/>}
                         <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>
                         <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
@@ -103,8 +94,9 @@ const App = () => {
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>
                         <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
-                        <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
-                        <PrivateRoute path={"/userAccess"} component={UsersPage}/>
+                        {isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>}
+                        {!isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPageUser}/>}
+                        {isAdmin && <PrivateRoute path={"/userAccess"} component={UsersPage}/>}
                         <PrivateRoute path="/" component={HomePage} />
                     </Switch>
                 </main>

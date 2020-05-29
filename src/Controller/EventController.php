@@ -76,12 +76,23 @@ class EventController extends AbstractController
         foreach ($userTeams as $userTeam){
             $teamArr = array();
             $teamArr["name"] = $userTeam->getTeamRonvauId()->getCategory();
+            $userTeamId =  $userTeam->getId();
+            $teamArr["idUserTeam"] = $userTeamId;
             $eventsTeam = $userTeam->getTeamRonvauId()->getEventsTeams();
             foreach ($eventsTeam as $eventTeam){
-                $userTeamEvent = $eventTeam->getUserTeamEvents();
                 $event = $eventTeam->getIdEvents();
                 $eventsArr = array();
-                $eventsArr["id"] = $event->getId();
+                $userTeamEvents =  $eventTeam->getUserTeamEvents();
+                $userTeamArr = array();
+                foreach ($userTeamEvents as $userTeamEvent){
+                    $userTeamArr[] = $userTeamEvent->getUserTeam()->getId();
+                }
+                if (in_array($userTeamId, $userTeamArr)){
+                    $eventsArr["subsc"] = true;
+                } else {
+                    $eventsArr["subsc"] = false;
+                }
+                $eventsArr["id"] = $eventTeam->getId();
                 $eventsArr["name"] = $event->getName();
                 $eventsArr["date"] = $event->getDate();
                 $eventsArr["description"] = $event->getDescription();

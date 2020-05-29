@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import EventsAPI from "../services/EventsAPI";
 import authAPI from "../services/authAPI";
 import DateFunctions from "../services/DateFunctions";
+import {toast} from "react-toastify";
 
 const EventsUser = props => {
     const idUser = authAPI.getId();
     const [events, setEvents] = useState([]);
+    const [reload, setReload] = useState(0);
 
     const FindEvents = async () => {
         try {
@@ -18,9 +20,36 @@ const EventsUser = props => {
 
     useEffect( () => {
         FindEvents();
-    }, []);
+    }, [reload]);
 
-    console.log(events);
+    const subscribe = async (eventTeam) => {
+        const data = {
+            user: idUser,
+            eventTeam: eventTeam
+        }
+        try{
+            await EventsAPI.createUTE(data);
+            toast.success("Vous avez été inscrit avec succès");
+        }catch (e) {
+            toast.error("Erreur lors de l'inscription");
+        }
+        setReload(reload+1);
+    }
+
+    const unSubscribe = async (eventTeam) => {
+        const data = {
+            user: idUser,
+            eventTeam: eventTeam
+        }
+        try{
+            await EventsAPI.unSubUTE(data);
+            toast.success("Vous avez été désinscrit avec succès");
+        }catch (e) {
+            toast.error("Erreur lors de la désinscription");
+        }
+        setReload(reload+1);
+    }
+
 
     return (
         <>
@@ -33,17 +62,23 @@ const EventsUser = props => {
                             {index == 0 && index2 ==0 &&
                                 <thead className={"bgGrey"}>
                                     <tr className={"row"}>
-                                        <td className={"col-4"}>Nom</td>
-                                        <td className={"col-6"}>Description</td>
+                                        <td className={"col-3"}>Nom</td>
+                                        <td className={"col-5"}>Description</td>
                                         <td className={"col-2"}>Date</td>
+                                        <td className={"col-2"}></td>
                                     </tr>
                                 </thead>
                             }
                             <tbody>
                                 <tr className="row">
-                                    <td className={"col-4"}>{eve.name}</td>
-                                    <td className={"col-6"}>{eve.description}</td>
+                                    <td className={"col-3"}>{eve.name}</td>
+                                    <td className={"col-5"}>{eve.description}</td>
                                     <td className={"col-2"}>{DateFunctions.dateFormatFrDMHM(eve.date)}</td>
+                                    <td className={"col-2"}>{eve["subsc"] &&
+                                        <button onClick={() => unSubscribe(eve.id)} className={"btn btn-danger"}>Se désinscrire</button>
+                                        ||
+                                        <button onClick={() => subscribe(eve.id)} className={"btn btn-primary"}>S'inscire</button>
+                                    }</td>
                                 </tr>
                             </tbody>
                         </table>

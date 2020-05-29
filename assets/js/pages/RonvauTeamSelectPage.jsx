@@ -9,9 +9,11 @@ import DateFunctions from "../services/DateFunctions";
 import {toast} from "react-toastify";
 import {UNOFFICIAL_MATCH_API} from "../config";
 import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
+import authAPI from "../services/authAPI";
 
 const RonvauTeamSelectPage = props => {
     const {id} = props.match.params;
+    const isAdmin = authAPI.getIsAdmin();
     const [clubs, setClubs] = useState([]);
     const [show, setShow] = useState(false);
     const [selectClub, setSelectClub] = useState({});
@@ -74,9 +76,8 @@ const RonvauTeamSelectPage = props => {
 
     return(
         <>
-            <Link to={"/equipeRonvau/"+id+"/calendar"} className={"btn btn-sm btn-warning mr-3"}>Calendrier</Link>
             <Link to={"/equipeRonvau/"+id+"/matchCalendar"} className={"btn btn-sm btn-warning mr-3"}>Calendrier des matchs</Link>
-            <button onClick={() => addNonOffMatch()} className="btn btn-sm btn-primary">Ajouter un match hors Championnat</button>
+            {isAdmin &&<button onClick={() => addNonOffMatch()} className="btn btn-sm btn-primary">Ajouter un match hors Championnat</button>}
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>
                     Programmer un match

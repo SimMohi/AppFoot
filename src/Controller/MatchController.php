@@ -126,4 +126,29 @@ class MatchController extends AbstractController
 
         return $this->json($response);
     }
+
+    /**
+     * @param int $matchId
+     * @return JsonResponse
+     * @Route ("/getMatchDetails/{matchId}")
+     */
+    public function getMatchDetails(int $matchId)
+    {
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $matchId]);
+        $players = $match->getPlayerMatches();
+        $return = array();
+        foreach ($players as $player){
+            $playerArr = array();
+            if ($player->getPlayed()){
+                $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName(). " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+                $playerArr["yellow"] = $player->getYellowCard();
+                $playerArr["red"] = $player->getRedCard();
+                $playerArr["goal"] = $player->getGoal();
+                $return[] = $playerArr;
+            }
+        }
+
+        return $this->json($return);
+    }
+
 }

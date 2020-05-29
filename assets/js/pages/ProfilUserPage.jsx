@@ -16,6 +16,7 @@ const ProfilUserPage = props => {
     const [allUsers, setAllUSers] = useState([]);
     const [info, setInfo] = useState([]);
 
+    console.log(info);
 
     const fetchUser = async () => {
         axios.all([
@@ -23,7 +24,6 @@ const ProfilUserPage = props => {
             axios.get(USERS_API)
         ]).then(axios.spread( (...responses) => {
             const usersResponse = responses[1]["data"]["hydra:member"];
-            console.log(usersResponse);
             let allUsersArray = [];
             for (let i = 0; i < usersResponse.length; i++){
                 if (usersResponse[i].id == id){
@@ -38,7 +38,10 @@ const ProfilUserPage = props => {
                 }
             }
             setAllUSers(allUsersArray);
-            setInfo(responses[0]["data"]);
+            console.log(responses[0]);
+            if (typeof  responses[0]["data"]["infos"] != 'undefined'){
+                setInfo(responses[0]["data"]["infos"]);
+            }
         })).catch(errors => {
             console.log(errors.response);
         })
@@ -52,8 +55,6 @@ const ProfilUserPage = props => {
         fetchUser();
     }, [id]);
 
-
-    console.log(info);
 
     return(
         <>
