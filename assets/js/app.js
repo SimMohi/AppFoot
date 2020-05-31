@@ -40,6 +40,8 @@ import UsersPage from "./pages/UsersPage";
 import jwtDecode from "jwt-decode";
 import ChatPage from "./pages/ChatPage";
 import EventsUser from "./pages/EventsUser";
+import RonvauTeamMemberUser from "./pages/RonvauTeamMemberUser";
+import RonvauTeamCalendarUnOffPage from "./pages/RonvauTeamCalendarUnOFFPage";
 
 require("../css/app.css");
 
@@ -90,9 +92,11 @@ const App = () => {
                         <PrivateRoute path={"/chat"} component={ChatPage}/>
                         <PrivateRoute path={"/match/:id/encode"} component={EncodeMatchPage}/>
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
+                        <PrivateRoute path={"/equipeRonvau/:id/user"} component={RonvauTeamMemberUser}/>
                         <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>
                         <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
+                        <PrivateRoute path={"/equipeRonvau/:id/unOffMatchCalendar"} component={RonvauTeamCalendarUnOffPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
                         {isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>}
                         {!isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPageUser}/>}

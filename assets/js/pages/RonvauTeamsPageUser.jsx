@@ -22,7 +22,6 @@ const RonvauTeamsPage = () => {
 
     return ( <>
         <h1>Liste des equipes</h1>
-        <Link to={"/equipeRonvau/new/"} className={"btn btn-info float-right"}>Nouvelle équipe</Link>
         <table className="table table-hover text-center">
             <thead>
             <tr>

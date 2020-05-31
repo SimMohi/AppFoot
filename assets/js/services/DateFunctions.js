@@ -84,7 +84,8 @@ function dateFormatFr (date){
 }
 
 function dateFormatFrDM (date){
-    const d = new Date(date);
+    let d = new Date(date);
+    d = convertUTCDateToLocalDate(d);
     const month = d.getMonth();
     const day = d.getDate();
     let monthFr = getMonthFr(month);

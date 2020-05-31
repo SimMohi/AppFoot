@@ -59,9 +59,15 @@ class UnOfficialMatch
      */
     private $playerUnofficialMatches;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isOver;
+
     public function __construct()
     {
         $this->playerUnofficialMatches = new ArrayCollection();
+        $this->isOver = false;
     }
 
     public function getId(): ?int
@@ -168,6 +174,18 @@ class UnOfficialMatch
                 $playerUnofficialMatch->setUnOfficialMatch(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsOver(): ?bool
+    {
+        return $this->isOver;
+    }
+
+    public function setIsOver(bool $isOver): self
+    {
+        $this->isOver = $isOver;
 
         return $this;
     }

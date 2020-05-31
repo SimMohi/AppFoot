@@ -77,6 +77,7 @@ const RonvauTeamSelectPage = props => {
     return(
         <>
             <Link to={"/equipeRonvau/"+id+"/matchCalendar"} className={"btn btn-sm btn-warning mr-3"}>Calendrier des matchs</Link>
+            <Link to={"/equipeRonvau/"+id+"/user"} className={"btn btn-sm btn-warning mr-3"}>Membres de l'équipe</Link>
             {isAdmin &&<button onClick={() => addNonOffMatch()} className="btn btn-sm btn-primary">Ajouter un match hors Championnat</button>}
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Header closeButton>

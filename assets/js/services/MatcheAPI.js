@@ -64,6 +64,16 @@ function getMatchDetails (id){
         .then(response => response.data);
 }
 
+function getUnOfMatchDetails (id){
+    return axios.get(API_URL + "/getUnOfMatchDetails/" + id )
+        .then(response => response.data);
+}
+
+function getUnOfMatchCompet(idTeamR){
+    return axios.get(API_URL + "/getUnOfMatchCompet/" + idTeamR )
+        .then(response => response.data);}
+
 export default {
-    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch, editDateMatch, voteMOTM, getMatchDetails
+    findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch,
+    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails
 }

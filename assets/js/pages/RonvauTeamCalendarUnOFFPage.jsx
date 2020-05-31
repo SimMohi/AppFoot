@@ -8,10 +8,11 @@ import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
 import authAPI from "../services/authAPI";
 
-const RonvauTeamCalendarMatch = props => {
+const RonvauTeamCalendarUnOffPage = props => {
 
     const {id} = props.match.params;
-    const isAdmin = authAPI.getIsAdmin();
+    // const isAdmin = authAPI.getIsAdmin();
+    const isAdmin = false;
     const [matchTeamRonvau, setMatchTeamRonvau] = useState([]);
     const [show, setShow] = useState([false, false]);
     const [editMatch, setEditMatch] = useState({
@@ -36,9 +37,8 @@ const RonvauTeamCalendarMatch = props => {
     }
 
     const fetchMatch = async () => {
-        const response = await MatcheAPI.getRonvauTeamMatch(id);
+        const response = await MatcheAPI.getUnOfMatchCompet(id);
         setName(response["cat"]);
-        response["matchs"].sort(orderByMatchDay);
         setMatchTeamRonvau(response['matchs']);
     }
 
@@ -73,26 +73,11 @@ const RonvauTeamCalendarMatch = props => {
         fetchMatch();
     }
 
-    function orderByMatchDay(a, b) {
-        // Use toUpperCase() to ignore character casing
-        const bandA = a.matchDay;
-        const bandB = b.matchDay;
-
-        let comparison = 0;
-        if (bandA < bandB) {
-            comparison = -1;
-        } else if (bandA > bandB) {
-            comparison = 1;
-        }
-        return comparison;
-    }
 
     const detailsMatch =  async (a) => {
         try {
-            const respponse = await MatcheAPI.getMatchDetails(a.id);
+            const respponse = await MatcheAPI.getUnOfMatchDetails(a.id);
             setPlayers(respponse);
-            console.log(a);
-            console.log(respponse);
         }catch (e) {
             console.log(e);
         }
@@ -107,58 +92,55 @@ const RonvauTeamCalendarMatch = props => {
     return(
         <>
             <h3 className={"text-center"}>{name}</h3>
-            <Link to={"/equipeRonvau/"+id+"/unOffMatchCalendar"} className={"btn btn-primary float-right mb-3"}>Voir matchs non offciels</Link>
-            <table className="mt-5 table table-hover text-center">
+            <table className="mt-5 table table-hover text-center container">
                 <thead className={""}>
-                    <tr className={"row"}>
-                        <th className={"col-1"}>Journée</th>
-                        <th className={"col-1"}>Date</th>
-                        <th className={"col-3"}>Domicile</th>
-                        <th className={"col-3"}>Extérieur</th>
-                        <th className={"col-2"}>Score</th>
-                        <th className={"col-2"}></th>
-                    </tr>
+                <tr className={"row"}>
+                    <th className={"col-2"}>Date</th>
+                    <th className={"col-3"}>Domicile</th>
+                    <th className={"col-3"}>Extérieur</th>
+                    <th className={"col-2"}>Score</th>
+                    <th className={"col-2"}></th>
+                </tr>
                 </thead>
                 <tbody>
-                {matchTeamRonvau.map(mtr =>
-                    <tr key={mtr.id} className={"row"}>
-                        <td className={"col-1"}>{mtr.matchDay}</td>
+                {matchTeamRonvau.map((mtr, index) =>
+                    <tr key={index} className={"row"}>
                         {mtr.date != null &&
-                            <td className={"col-1"}>{DateFunctions.dateFormatFrDM(mtr.date)} &nbsp;
-                                {mtr.date != null &&
-                                <Moment format="HH:mm">
-                                    {mtr.date}
-                                </Moment>
-                                }
-                            </td>
+                        <td className={"col-2"}>{DateFunctions.dateFormatFrDM(mtr.date)} &nbsp;
+                            {mtr.date != null &&
+                            <Moment format="HH:mm">
+                                {mtr.date}
+                            </Moment>
+                            }
+                        </td>
                         || <td className={'col-1'}>Non défini</td>
                         }
-                        <td className={"col-3"}>{mtr.homeTeam.club.name}</td>
-                        <td className={"col-3"}>{mtr.visitorTeam.club.name}</td>
-                        <td className={"col-2"}>{mtr.isOver && (mtr.homeTeamGoal+"-"+mtr.visitorTeamGoal)
+                        <td className={"col-3"}>{mtr["teamA"]}</td>
+                        <td className={"col-3"}>{mtr["teamB"]}</td>
+                        <td className={"col-2"}>{mtr.isOver && (mtr["teamAGoal"]+"-"+mtr["teamBGoal"])
                         || isAdmin &&
-                            <>
-                                <button onClick={() => editMatchDate(mtr)}
-                                        className="btn btn-sm btn-success">Date du match
-                                </button>
-                                <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
-                            </>
-                            ||
-                            ""
+                        <>
+                            <button onClick={() => editMatchDate(mtr)}
+                                    className="btn btn-sm btn-success">Date du match
+                            </button>
+                            <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
+                        </>
+                        ||
+                        ""
                         }
                         </td>
                         {isAdmin &&
-                            <td className={"col-2"}>
-                                <Link to={"/match/" + mtr.id + "/encode"}
-                                      className={"btn btn-sm btn-secondary"}>Encodage</Link>
-                            </td>
-                            ||
-                            !mtr.isOver &&
-                            <td className={"col-2"}>
-                                <button onClick={() => detailsMatch(mtr)}
-                                        className="btn btn-sm btn-secondary">Détails
-                                </button>
-                            </td>
+                        <td className={"col-2"}>
+                            <Link to={"/match/" + mtr.id + "/encode"}
+                                  className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                        </td>
+                        ||
+                        !mtr.isOver &&
+                        <td className={"col-2"}>
+                            <button onClick={() => detailsMatch(mtr)}
+                                    className="btn btn-sm btn-secondary">Détails
+                            </button>
+                        </td>
                         }
                     </tr>
                 )}
@@ -212,4 +194,4 @@ const RonvauTeamCalendarMatch = props => {
     )
 }
 
-export default RonvauTeamCalendarMatch;
+export default RonvauTeamCalendarUnOffPage;

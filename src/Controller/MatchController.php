@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Entity\Competition;
 use App\Entity\Matche;
 use App\Entity\PlayerMatch;
+use App\Entity\TeamRonvau;
+use App\Entity\UnOfficialMatch;
 use App\Entity\UserTeam;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -137,10 +139,10 @@ class MatchController extends AbstractController
         $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $matchId]);
         $players = $match->getPlayerMatches();
         $return = array();
-        foreach ($players as $player){
+        foreach ($players as $player) {
             $playerArr = array();
-            if ($player->getPlayed()){
-                $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName(). " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+            if ($player->getPlayed()) {
+                $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName() . " " . $player->getIdUserTeam()->getUserId()->getFirstName();
                 $playerArr["yellow"] = $player->getYellowCard();
                 $playerArr["red"] = $player->getRedCard();
                 $playerArr["goal"] = $player->getGoal();
@@ -151,4 +153,61 @@ class MatchController extends AbstractController
         return $this->json($return);
     }
 
+
+    /**
+     * @param int $teamId
+     * @return JsonResponse
+     * @Route ("/getUnOfMatchCompet/{teamId}")
+     */
+    public function getUnOfMatchCompet(int $teamId){
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
+        $unOffMatchs = $teamR->getUnOfficialMatches();
+
+        $response = array();
+        $response["name"] = $teamR->getCategory();
+        foreach ($unOffMatchs as $unOffMatch){
+            $matchArr = array();
+            $matchArr["id"] = $unOffMatch->getId();
+            if ($unOffMatch->getIsHome()){
+                $matchArr["teamA"] = $unOffMatch->getTeamRonvau()->getTeam()->getClub()->getName();
+                $matchArr["teamB"] = $unOffMatch->getOpponent()->getName();
+                $matchArr["teamAGoal"] = $unOffMatch->getRonvauTeamGoal();
+                $matchArr["teamBGoal"] = $unOffMatch->getOpponentGoal();
+
+            } else{
+                $matchArr["teamA"] = $unOffMatch->getOpponent()->getName();
+                $matchArr["teamB"] = $unOffMatch->getTeamRonvau()->getCategory();
+                $matchArr["teamAGoal"] = $unOffMatch->getOpponentGoal();
+                $matchArr["teamBGoal"] = $unOffMatch->getRonvauTeamGoal();
+            }
+            $matchArr["date"] = $unOffMatch->getDate();
+            $matchArr["isOver"] = $unOffMatch->getIsOver();
+            $response["matchs"][] = $matchArr;
+        }
+
+        return $this->json($response);
+    }
+
+    /**
+     * @param int $matchId
+     * @return JsonResponse
+     * @Route ("/getUnOfMatchDetails/{matchId}")
+     */
+    public function getUnOfMatchDetails(int $matchId){
+        $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(['id' => $matchId]);
+        $players = $match->getPlayerUnofficialMatches();
+        $return = array();
+        foreach ($players as $player) {
+            $playerArr = array();
+            if ($player->getPlayed()) {
+                $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName() . " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+                $playerArr["yellow"] = $player->getYellowCard();
+                $playerArr["red"] = $player->getRedCard();
+                $playerArr["goal"] = $player->getGoal();
+                $return[] = $playerArr;
+            }
+        }
+
+        return $this->json($return);
+    }
 }

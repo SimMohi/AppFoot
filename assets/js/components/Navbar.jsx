@@ -16,7 +16,7 @@ const Navbar = ({ history }) => {
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
     const [notifications, setNotifications] = useState([]);
     const [show, setShow] = useState(false);
-    const [admin, setAdmin] = useState(false);
+    const admin = authAPI.getIsAdmin();
     const [reload, setReload] = useState(0);
 
     const handleShow = () => {
@@ -36,8 +36,7 @@ const Navbar = ({ history }) => {
     const fetchNotifications = () =>{
         const token = window.localStorage.getItem(("authToken"));
         if (token) {
-            const {username: user, roles} = jwtDecode(token);
-            if (roles.includes("ROLE_ADMIN")) setAdmin(false);
+            const {username: user} = jwtDecode(token);
             axios.all([
                 axios.get(USERS_API +"?email=" + user),
             ]).then(axios.spread(async (...responses) => {
@@ -120,6 +119,11 @@ const Navbar = ({ history }) => {
                                                 Gestion des équipes
                                             </NavLink>
                                         </li>
+                                        <li className="nav-item">
+                                            <NavLink className="nav-link" to={"/userAccess"}>
+                                                Gestion des accès
+                                            </NavLink>
+                                        </li>
                                     </>
                                     ||
                                     <li className="nav-item">
@@ -143,11 +147,7 @@ const Navbar = ({ history }) => {
                                         Chat
                                     </NavLink>
                                 </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/userAccess"}>
-                                        Gestion des accès
-                                    </NavLink>
-                                </li>
+
                             </>
                         }
                     </ul>

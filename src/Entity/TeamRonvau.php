@@ -29,7 +29,7 @@ class TeamRonvau
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="La catégorie est obligatoire")
-     * @Assert\Length(min=2, minMessage="La catégorie doit faire entre 2 et 255 caractères", max=255, maxMessage="La catégorie doit faire entre 2 et 255 caractères")
+     * @Assert\Length(min=2, minMessage="La catégorie doit faire au moins 2 caractères", max=255, maxMessage="La catégorie doit faire entre 2 et 255 caractères")
      * @Groups({"team_ronvau_read"})
      */
     private $category;
@@ -71,6 +71,12 @@ class TeamRonvau
      */
     private $unOfficialMatches;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"team_ronvau_read"})
+     */
+    private $visible;
+
 
     public function __construct()
     {
@@ -80,6 +86,7 @@ class TeamRonvau
         $this->trainingDays = new ArrayCollection();
         $this->chats = new ArrayCollection();
         $this->unOfficialMatches = new ArrayCollection();
+        $this->visible = true;
     }
 
     public function getId(): ?int
@@ -294,6 +301,18 @@ class TeamRonvau
                 $unOfficialMatch->setTeamRonvau(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }
