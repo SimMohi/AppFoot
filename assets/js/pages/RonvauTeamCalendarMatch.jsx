@@ -153,7 +153,7 @@ const RonvauTeamCalendarMatch = props => {
                                       className={"btn btn-sm btn-secondary"}>Encodage</Link>
                             </td>
                             ||
-                            !mtr.isOver &&
+                            mtr.isOver &&
                             <td className={"col-2"}>
                                 <button onClick={() => detailsMatch(mtr)}
                                         className="btn btn-sm btn-secondary">Détails

@@ -13,8 +13,11 @@ function todayFormatYMD(){
     return d.toISOString().slice(0,10);
 }
 
-function dateFormatYMD(date){
-    const d = new Date(date);
+function dateFormatYMD(date, convert = 0){
+    let d = new Date(date);
+    if (convert == 1){
+        d = convertUTCDateToLocalDate(d);
+    }
     let year = d.getFullYear();
     let month = d.getMonth()+1;
     let day = d.getDate();
@@ -105,9 +108,11 @@ function orderByDate(a, b) {
     return comparison;
 }
 
-function dateFormatFrDMHM (date){
+function dateFormatFrDMHM (date, convert = 0){
     let d = new Date(date);
-    d = convertUTCDateToLocalDate(d);
+    if (convert == 1){
+        d = convertUTCDateToLocalDate(d);
+    }
     const month = d.getMonth();
     const day = d.getDate();
     let monthFr = getMonthFr(month);
@@ -119,7 +124,7 @@ function dateFormatFrDMHM (date){
     if (minutes < 10){
         minutes = "0"+minutes;
     }
-    return day + " " + monthFr + " "+ hours + ":" + minutes;
+    return day + " " + monthFr + " "+ hours + "h" + minutes;
 }
 
 function dateFormatYMDHMArr (date){
@@ -142,8 +147,11 @@ function dateFormatYMDHMArr (date){
     return [ year+"-"+month + "-"+day, hours +  ":" + minutes];
 }
 
-function getHoursHM(date) {
-    const d = new Date(date);
+function getHoursHM(date, convert = 0) {
+    let d = new Date(date);
+    if (convert == 1){
+        d = convertUTCDateToLocalDate(d);
+    }
     let hours = d.getHours();
     let minutes = d.getMinutes();
     if (hours < 10){
@@ -153,6 +161,27 @@ function getHoursHM(date) {
         minutes = "0"+minutes;
     }
     return hours+":"+minutes;
+}
+
+function getHoursFRHM(date) {
+    let d = new Date(date);
+    d = convertUTCDateToLocalDate(d);
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    if (hours < 10){
+        hours = "0"+hours;
+    }
+    if (minutes == 0){
+        minutes = ""
+    } else if (minutes < 10){
+        minutes = "0"+minutes;
+    }
+    return hours+"h"+minutes;
+}
+
+function hourWh(date){
+    const arr = date.split(":");
+    return arr[0] + "h"+ arr[1];
 }
 
 function convertUTCDateToLocalDate(date) {
@@ -168,5 +197,5 @@ function convertUTCDateToLocalDate(date) {
 
 
 export default {
-    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM, dateFormatYMDHMArr, convertUTCDateToLocalDate, orderByDate
+    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM, dateFormatYMDHMArr, convertUTCDateToLocalDate, orderByDate, getHoursFRHM, hourWh
 }

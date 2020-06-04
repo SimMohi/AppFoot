@@ -66,9 +66,20 @@ class ProfilController extends AbstractController
      * @return JsonResponse
      */
     public function getNotificationsUser(int $id){
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
-        $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $return = array();
+        $return["notif"] = array();
+        $return["convocations"] = array();
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $notifications = $user->getNotifications();
+        foreach ($notifications as $notification){
+            if ($notification->getHasSeen() == false){
+                $notif = array();
+                $notif["id"] = $notification->getId();
+                $notif["message"] = $notification->getMessage();
+                $return["notif"][] = $notif;
+            }
+        }
+        $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         foreach ($userTeams as $userTeam){
             $ronvauTeam = $userTeam->getTeamRonvauId();
             $playerMatches = $this->getDoctrine()->getRepository(PlayerMatch::class)->findBy(['idUserTeam' => $userTeam]);
@@ -79,7 +90,7 @@ class ProfilController extends AbstractController
                     $matches["name"] = $ronvauTeam->getCategory();
                     $matches["match"] = $match->getHomeTeam()->getClub()->getName()." - ". $match->getVisitorTeam()->getClub()->getName();
                     $matches["joueur"] = $playerMatch;
-                    $return[] = $matches;
+                    $return["convocations"][] = $matches;
                 }
             }
         }

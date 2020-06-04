@@ -9,12 +9,17 @@ import usersAPI from "../services/usersAPI";
 import Modal from "react-bootstrap/Modal";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
 import {USERS_API} from "../config";
+import NotificationAPI from "../services/NotificationAPI";
 
 
 const Navbar = ({ history }) => {
 
     const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-    const [notifications, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState({
+        convocations: [],
+        notif: []
+    });
+    console.log(notifications);
     const [show, setShow] = useState(false);
     const admin = authAPI.getIsAdmin();
     const [reload, setReload] = useState(0);
@@ -42,6 +47,10 @@ const Navbar = ({ history }) => {
             ]).then(axios.spread(async (...responses) => {
                 const id = responses[0]["data"]["hydra:member"][0].id;
                 const response = await usersAPI.getNotifications(id);
+                const newNotifs = {
+                    convocations: response.convocations,
+                    notif: response.notif
+                }
                 setNotifications(response);
             })).catch(errors => {
                 console.log(errors.response);
@@ -71,6 +80,14 @@ const Navbar = ({ history }) => {
         try {
             await PlayerMatchAPI.update(player.id, player);
             toast.error("Vous avez refusé la convocation");
+        } catch (e) {
+        }
+        setReload(reload+1);
+    }
+
+    const seenNotif = async (notifId) => {
+        try {
+            await NotificationAPI.seenNotif({id: notifId});
         } catch (e) {
         }
         setReload(reload+1);
@@ -168,7 +185,7 @@ const Navbar = ({ history }) => {
                                 <li className="nav-item">
                                     <img src="img/flag-regular.svg" alt=""/>
                                     <button type={"button"} onClick={handleShow}>
-                                        {notifications.length}
+                                        {notifications.convocations.length+notifications.notif.length}
                                     </button>
                                 </li>
                                 <li className="nav-item">
@@ -186,10 +203,10 @@ const Navbar = ({ history }) => {
             </nav>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    Convocations
+                    Notifications
                 </Modal.Header>
                 <Modal.Body className={""}>
-                    {notifications.map((not, index) =>
+                    {notifications["convocations"].map((not, index) =>
                         <div key={index} className={"container"}>
                             <h5>{not.name}</h5>
                             <div className="row">
@@ -201,6 +218,20 @@ const Navbar = ({ history }) => {
                                     <img id={"redCross"} src="img/red_cross.png" alt="" onClick={() => deleteNotif(not["joueur"])}/>
                                 </div>
                             </div>
+                            <hr/>
+                        </div>
+                    )}
+                    {notifications["notif"].map((not, index) =>
+                        <div key={index} className={"container"}>
+                            <div className="row">
+                                <div className="col-9">
+                                    {not.message}
+                                </div>
+                                <div className="col-3">
+                                    <button onClick={() => seenNotif(not.id)} className="btn btn-sm btn-primary">D'accord</button>
+                                </div>
+                            </div>
+                            <hr/>
                         </div>
                     )}
                 </Modal.Body>

@@ -38,7 +38,7 @@ const RonvauTeamCalendarUnOffPage = props => {
 
     const fetchMatch = async () => {
         const response = await MatcheAPI.getUnOfMatchCompet(id);
-        setName(response["cat"]);
+        setName(response["name"]);
         setMatchTeamRonvau(response['matchs']);
     }
 

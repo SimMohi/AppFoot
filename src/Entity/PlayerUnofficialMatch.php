@@ -3,27 +3,32 @@
 namespace App\Entity;
 
 use App\Repository\PlayerUnofficialMatchRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
+ * @ORM\Table(name="player_unofficial_match", uniqueConstraints={
+ *     @UniqueConstraint(name="un_official_match_unique",
+ *         columns={"user_team_id", "un_official_match_id"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=PlayerUnofficialMatchRepository::class)
+ * @UniqueEntity(fields={"userTeam", "unOfficialMatch"}, message="Ce joueur participe déjà à ce match")
  */
 class PlayerUnofficialMatch
 {
     /**
+     *
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity=UserTeam::class, inversedBy="playerUnofficialMatches")
      * @ORM\JoinColumn(nullable=false)
      */
     private $userTeam;
 
     /**
+     * @ORM\Id()
      * @ORM\ManyToOne(targetEntity=UnOfficialMatch::class, inversedBy="playerUnofficialMatches")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -64,9 +69,10 @@ class PlayerUnofficialMatch
      */
     private $refusedJustification;
 
-    public function getId(): ?int
+    public function __construct()
     {
-        return $this->id;
+        $this->hasRefused = false;
+        $this->hasConfirmed = false;
     }
 
     public function getUserTeam(): ?UserTeam

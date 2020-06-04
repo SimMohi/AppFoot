@@ -7,6 +7,7 @@ import EventsAPI from "../services/EventsAPI";
 import DateFunctions from "../services/DateFunctions";
 import ReactSearchBox from "react-search-box";
 import RonvauTeamAPI from "../services/RonvauTeamAPI";
+import Modal from "react-bootstrap/Modal";
 
 const EventPage = props => {
 
@@ -22,6 +23,9 @@ const EventPage = props => {
         name: "",
         description: "",
         date: DateFunctions.todayFormatYMD(),
+        endDate:  DateFunctions.todayFormatYMD(),
+        start : "00:00",
+        end: "00:00",
         eventsTeams: [],
     });
 
@@ -35,8 +39,13 @@ const EventPage = props => {
     const fetch = async () => {
         try {
             const data = await RonvauTeamAPI.findAll();
-            let { name, description, date, eventsTeams} = await EventsAPI.find(id);
+            let { name, description, date, eventsTeams, endDate} = await EventsAPI.find(id);
+            console.log(endDate);
+            const end = DateFunctions.getHoursHM(endDate, 1);
+            const start = DateFunctions.getHoursHM(date, 1);
             date = DateFunctions.dateFormatYMD(date);
+            endDate = DateFunctions.dateFormatYMD(endDate);
+            console.log(end);
             let teams = [];
             for (let i = 0; i < eventsTeams.length; i++){
                 setOriginalEventsTeam(true);
@@ -52,7 +61,7 @@ const EventPage = props => {
             }
             setSelectRt(selectArray);
             setRonvauTeams(data);
-            setEvent({ name, description, date, eventsTeams});
+            setEvent({ name, description, date, eventsTeams, endDate, start, end});
         } catch (error) {
             console.log(error.response);
         }
@@ -106,7 +115,11 @@ const EventPage = props => {
         }
         try {
             if (editing){
-                await EventsAPI.update(id, event);
+                let copy = JSON.parse(JSON.stringify(event));
+                copy["date"] = new Date(copy["date"]+" "+ copy["start"]);
+                copy["endDate"] = new Date(copy["endDate"]+" "+ copy["end"]);
+                delete copy["eventsTeams"];
+                await EventsAPI.update(id, copy);
             } else {
                 if (event.date < DateFunctions.todayFormatYMD()){
                     const apiErrors = {};
@@ -127,6 +140,7 @@ const EventPage = props => {
                 setErrors(apiErrors);
             }
         }
+        return ;
         window.location.reload();
     };
 
@@ -138,7 +152,6 @@ const EventPage = props => {
         }
     }, [id]);
 
-    console.log(selectRt);
 
     return  (
         <>
@@ -155,7 +168,22 @@ const EventPage = props => {
                             <div className={"mb-5 col-6"}>
                                 <Field name={"name"} label={"Nom de l'événement"} type={"text"} value={event.name} onChange={handleChange} error={errors.name}/>
                                 <Field name={"description"} label={"Description de l'événement"} type={"text"} value={event.description} onChange={handleChange} error={errors.description}/>
-                                <Field name={"date"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Jour de l'événement"} type={"date"} value={event.date} onChange={handleChange} error={errors.date}/>
+                                <div className="row">
+                                    <div className="col-6">
+                                        <Field name={"date"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Jour de début l'événement"} type={"date"} value={event.date} onChange={handleChange} error={errors.date}/>
+                                    </div>
+                                    <div className="col-6">
+                                        <Field name={"start"} label={"Heure de début"} type={"time"} value={event.start} onChange={handleChange} />
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-6">
+                                        <Field name={"endDate"} label={"Jour de fin de l'événement"} type={"date"} value={event.endDate} onChange={handleChange} />
+                                    </div>
+                                    <div className="col-6">
+                                        <Field name={"end"} label={"Heure de fin"} type={"time"} value={event.end} onChange={handleChange} />
+                                    </div>
+                                </div>
                                 <div className="from-group">
                                     <button type={"button"} onClick={handleSubmit} className="btn btn-success">Enregistrer</button>
                                 </div>

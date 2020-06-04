@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {UNOFFICIAL_MATCH_API} from "../config";
+import {API_URL, UNOFFICIAL_MATCH_API} from "../config";
 
 function findAll() {
     return axios
@@ -9,7 +9,7 @@ function findAll() {
 
 function find(id){
     return axios
-        .get(UNOFFICIAL_MATCH_API + "/" + id)
+        .get(API_URL + "/unOffMatch/" + id)
         .then(response => response.data);
 }
 
@@ -25,7 +25,15 @@ function deleteUnOffMatch(id){
     return axios.delete(UNOFFICIAL_MATCH_API + "/" + id);
 }
 
+function selectUnoff(data) {
+    return axios.post(API_URL + "/selectUnoff", data);
+}
+
+function delUnOffPl(data){
+    return axios.post(API_URL + "/delUnOffPl", data);
+}
+
 
 export default {
-    findAll, find, create, update, deleteUnOffMatch,
+    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl
 }

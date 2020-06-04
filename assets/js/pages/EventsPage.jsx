@@ -23,9 +23,6 @@ const EventsPage = props => {
         }
     }
 
-    const changeShow = () => {
-
-    }
 
     useEffect( () => {
         FindEvents();

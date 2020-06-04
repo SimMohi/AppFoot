@@ -28,3 +28,6 @@ export const UNOFFICIAL_MATCH_API = API_URL +"/api/un_official_matches";
 
 export const USER_TEAM_EVENT_API = API_URL +"/api/user_team_events";
 
+export const NOTIFICATIONS_API = API_URL + "/api/notifications";
+
+

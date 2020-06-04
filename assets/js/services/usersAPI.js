@@ -2,19 +2,10 @@ import axios from 'axios';
 import Cache from "./cache";
 import {API_URL, USERS_API} from '../config'
 
-async function findAll() {
-
-    const cachedUsers = await Cache.get("users");
-
-    if (cachedUsers) return cachedUsers;
-
+function findAll() {
     return axios
         .get(USERS_API)
-        .then(response => {
-            const users = response.data["hydra:member"];
-            Cache.set("users", users);
-            return users;
-        });
+        .then(response => response.data["hydra:member"]);
 }
 
 function findUnaccepted(){

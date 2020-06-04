@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\EventsTeam;
 use App\Entity\User;
 use App\Entity\UserTeam;

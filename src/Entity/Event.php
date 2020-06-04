@@ -53,6 +53,12 @@ class Event
      */
     private $eventsTeams;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"events_read"})
+     */
+    private $endDate;
+
     public function __construct()
     {
         $this->eventsTeams = new ArrayCollection();
@@ -126,6 +132,18 @@ class Event
                 $eventsTeam->setIdEvents(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
 
         return $this;
     }

@@ -3,11 +3,18 @@ import MatcheAPI from "../services/MatcheAPI";
 import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import {toast} from "react-toastify";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
-const SelectPlayerMatchPage = props => {
+import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
+
+const SelectPlayerUnOffMatchPage = props => {
 
     const {id} = props.match.params;
     const [match, setMatch] = useState({
-        teams: "",
+        name: "",
+        date: "",
+        teamUser: [],
+        cat: "",
+        accepted: 0,
+        total: 0
     })
     const [notCall, setNotCall] = useState([]);
     const [call, setCall] = useState([]);
@@ -18,53 +25,13 @@ const SelectPlayerMatchPage = props => {
     })
 
     const fetchMatch = async () => {
-        const responseMatch = await MatcheAPI.find(id);
-        let matchRes ={
-            teams: responseMatch["homeTeam"]["club"]["name"]+" - " +  responseMatch["visitorTeam"]["club"]["name"]
-        }
-        let newUsers = [];
-        if (typeof responseMatch["homeTeam"]["teamRonvau"] !== 'undefined'){
-            let idRT = responseMatch["homeTeam"]["teamRonvau"]["id"];
-            const responseUser = await RonvauTeamAPI.find(idRT);
-            newUsers = responseUser["userTeams"];
-        } else {
-            let idRT = responseMatch["visitorTeam"]["teamRonvau"]["id"];
-            const responseUser = await RonvauTeamAPI.find(idRT);
-            newUsers = responseUser["userTeams"];
-        }
-        let copyNewUsers = JSON.parse(JSON.stringify(newUsers));
-        let callArray = [];
-        let notCallArray = [];
-        for (let i = 0; i < copyNewUsers.length; i++){
-            let inArray = 0;
-            let total = {
-                accepted: 0,
-                total: 0
-            };
-            for (let j = 0; j < responseMatch["playerMatches"].length; j++){
-                if (responseMatch["playerMatches"][j]["hasConfirmed"] == true){
-                    total["accepted"] += 1;
-                }
-                total["total"] += 1;
-                if (copyNewUsers[i]["@id"] == responseMatch["playerMatches"][j]["idUserTeam"]["@id"]){
-                    let response = responseMatch["playerMatches"][j];
-                    response["userId"] = copyNewUsers[i]["userId"];
-                    response["called"] = false;
-                    callArray.push(response);
-                    inArray = 1;
-                }
-            }
-
-            if(inArray == 0){
-                copyNewUsers[i]["called"] = false;
-                notCallArray.push(copyNewUsers[i]);
-            }
-            setAnswer(total);
-        }
-        setMatch(matchRes);
-        setCall(callArray);
-        setNotCall(notCallArray);
+        const responseMatch = await UnOfficialMatchAPI.find(id);
+        console.log(responseMatch);
+        setMatch(responseMatch);
+        setNotCall(responseMatch["notCalled"]);
+        setCall(responseMatch["called"]);
     }
+
 
     const changeCheckBoxNotCall = ({ currentTarget }) => {
         const {id} = currentTarget;
@@ -84,21 +51,26 @@ const SelectPlayerMatchPage = props => {
                 call: notCall,
                 match: id
             }
-            await MatcheAPI.postCallMatch(post);
+            await UnOfficialMatchAPI.selectUnoff(post);
         }catch (e) {
             toast.error("Les joueurs n'ont pas réussi à être convoqués");
         }
         setReload(reload+1);
     }
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (user) => {
+        let data = {
+            idMatch: id,
+            idUserTeam: user.idUserTeam
+        }
         try {
-            await PlayerMatchAPI.deletePlayerMatch(id)
+            await UnOfficialMatchAPI.delUnOffPl(data);
         } catch (e) {
             toast.error("L'entraînement n'a pas été supprimé");
         }
         setReload(reload+1);
     }
+
 
     useEffect( () => {
         fetchMatch();
@@ -106,7 +78,7 @@ const SelectPlayerMatchPage = props => {
 
     return(
         <>
-            <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
+            <h3 className={"mb-5"}>Convocations pour le macth {match.name}</h3>
             <div className="container">
                 <div className="row">
                     <div className="col-5">
@@ -120,7 +92,7 @@ const SelectPlayerMatchPage = props => {
                             <tbody>
                             {notCall.map((user, index) =>
                                 <tr className={"row"} key={user.id}>
-                                    <td className="col-6">{user.userId.lastName + " " + user.userId.firstName}</td>
+                                    <td className="col-6">{user.name}</td>
                                     <td className="custom-control custom-checkbox col-6">
                                         <input type="checkbox" className="custom-control-input" id={"notCall"+index} onChange={changeCheckBoxNotCall} checked={user.called}/>
                                         <label className="custom-control-label" htmlFor={"notCall"+index}></label>
@@ -133,7 +105,7 @@ const SelectPlayerMatchPage = props => {
                     </div>
                     <div className="col-2"></div>
                     <div className="col-5">
-                        <div>{answer.accepted+" réponses positive sur "+answer.total}</div>
+                        <div>{match.accepted+" réponses positive sur "+match.total}</div>
                         <table className="mt-5 table table-hover text-center">
                             <thead>
                             <tr className={"row"}>
@@ -145,20 +117,20 @@ const SelectPlayerMatchPage = props => {
                             <tbody>
                             {call.map((user) =>
                                 <tr className={"row"} key={user.id}>
-                                    <td className="col-4">{user.userId.lastName + " " + user.userId.firstName}</td>
+                                    <td className="col-4">{user.name}</td>
                                     <td className="custom-control custom-checkbox col-4">
-                                        {user["hasConfirmed"] == true &&
-                                            <i className="fas fa-check"></i>
+                                        {user["hasComfirmed"] == true &&
+                                        <i className="fas fa-check"></i>
                                         }
                                         {user["hasRefused"] == true &&
-                                            <i className="fas fa-times"></i>
+                                        <i className="fas fa-times"></i>
                                         }
-                                        {(user["hasRefused"] == false && user["hasConfirmed"] == false) &&
-                                            <i className="far fa-clock"></i>
+                                        {(user["hasRefused"] == false && user["hasComfirmed"] == false) &&
+                                        <i className="far fa-clock"></i>
                                         }
                                     </td>
                                     <td className="col-4">
-                                        <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                        <button onClick={() => handleDelete(user)} className="btn btn-sm btn-danger">Supprimer</button>
                                     </td>
                                 </tr>
                             )}
@@ -171,4 +143,4 @@ const SelectPlayerMatchPage = props => {
     )
 }
 
-export default SelectPlayerMatchPage;
+export default SelectPlayerUnOffMatchPage;

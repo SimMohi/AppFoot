@@ -42,6 +42,7 @@ import ChatPage from "./pages/ChatPage";
 import EventsUser from "./pages/EventsUser";
 import RonvauTeamMemberUser from "./pages/RonvauTeamMemberUser";
 import RonvauTeamCalendarUnOffPage from "./pages/RonvauTeamCalendarUnOFFPage";
+import SelectPlayerUnOffMatchPage from "./pages/SelectPlayerUnOffMatchPage";
 
 require("../css/app.css");
 
@@ -92,6 +93,7 @@ const App = () => {
                         <PrivateRoute path={"/chat"} component={ChatPage}/>
                         <PrivateRoute path={"/match/:id/encode"} component={EncodeMatchPage}/>
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
+                        <PrivateRoute path={"/unOffMatch/:id/select"} component={SelectPlayerUnOffMatchPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/user"} component={RonvauTeamMemberUser}/>
                         <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>

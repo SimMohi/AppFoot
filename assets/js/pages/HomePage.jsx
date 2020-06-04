@@ -12,6 +12,7 @@ import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
 import MatcheAPI from "../services/MatcheAPI";
 import EventsAPI from "../services/EventsAPI";
+import NotificationAPI from "../services/NotificationAPI";
 
 
 const HomePage = props => {
@@ -21,7 +22,7 @@ const HomePage = props => {
     const Localizer = momentLocalizer(moment);
     const allViews = ["month"];
 
-    const [show, setShow] = useState([false, false, false, false, false]);
+    const [show, setShow] = useState([false, false, false, false, false, false]);
     const handleShow = (i) => {
         let showCopy = [...show];
         showCopy[i] = true;
@@ -37,6 +38,11 @@ const HomePage = props => {
     const [absence, setAbsence] = useState("");
     const [infos, setInfos] = useState([]);
     const [calendarInfos, setCalendarInfos] = useState([]);
+    const [editEvent, setEditEvent] = useState({
+        date: "",
+        start: "",
+        end: ""
+    })
     const [selectedEvent, setSelectedEvent] = useState({
         id: "",
         title: "",
@@ -53,6 +59,7 @@ const HomePage = props => {
 
     const [editTraining, setEditTraining] = useState({
         date: "",
+        endDate: "",
         start: "",
         end: ""
     })
@@ -88,13 +95,15 @@ const HomePage = props => {
                     type: response[i]["type"],
                     id: response[i]["id"],
                     abs: response[i]["abs"],
+                    player: response[i]["player"],
                     staff: response[i]["staff"],
                     isOver: response[i]["isOver"],
                     players: response[i]["players"],
                     team: response[i]["teamCat"],
                     teamId: response[i]["teamId"],
                     eventTeamId: response[i]["eventTeamId"],
-                    sub: response[i]["sub"]
+                    sub: response[i]["sub"],
+                    description: response[i]["description"]
                 }
                 if (response[i]["staff"] == true){
                     obj["absences"] = response[i]["absences"];
@@ -120,24 +129,33 @@ const HomePage = props => {
         let buttons = [];
         let obj={};
         if (event.type == "training"){
-            if (event.abs == true){
-                 buttons.push(<button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-success">Annuler mon absence</button>);
-            } else {
-                buttons.push(<button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>);
+            if (!(event.staff == false && event.player == false)){
+                if (event.abs == true){
+                    buttons.push(<button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-success">Annuler mon absence</button>);
+                } else {
+                    buttons.push(<button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>);
+                }
+                if (event.staff == true){
+                    buttons.push(<button onClick={() => findTraining(event.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
+                    buttons.push(<button onClick={() => modalEditTraining(event)} className="btn btn-sm btn-secondary">Modifier l'entrainement </button>);
+                }
             }
-            if (event.staff == true){
-                buttons.push(<button onClick={() => findTraining(event.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
-                buttons.push(<button onClick={modalEditTraining} className="btn btn-sm btn-secondary">Modifier l'entrainement </button>);
-            }
+            const description =
+                <div>
+                    <p><b>Début</b>: {DateFunctions.getHoursHM(event.start)} <b>fin</b>: {DateFunctions.getHoursHM(event.end)}</p>
+                </div>
             obj = {
                 id: event.id,
+                type: event.type,
+                teamId: event.teamId,
                 title: event.title,
                 day: event.start,
                 end: event.end,
                 button: buttons,
                 absences: [],
                 presences: event.presences,
-                staff: event.staff
+                staff: event.staff,
+                description: description
             }
             if (typeof event.absences != "undefined"){
                 obj.absences =  event.absences;
@@ -153,6 +171,7 @@ const HomePage = props => {
             }
             obj = {
                 id: event.id,
+                teamId: event.teamId,
                 title: event.title,
                 day: event.start,
                 end: event.end,
@@ -167,8 +186,16 @@ const HomePage = props => {
             }
             setMOTM(radioMOTM);
         } else if (event.type == "event"){
+            const description =
+                <div>
+                    <p><b>Description</b>: {event.description}</p>
+                    <p><b>Début</b>: {DateFunctions.dateFormatFrDMHM(event.start, 1)}</p>
+                    <p><b>fin</b>: {DateFunctions.dateFormatFrDMHM(event.end, 1)}</p>
+                </div>
             obj = {
                 id: event.id,
+                type: event.type,
+                description: description,
                 title: event.title + " pour " + event.team,
                 day: event.start,
                 end: event.end,
@@ -181,6 +208,31 @@ const HomePage = props => {
             } else {
                 buttons.push(<button onClick={() => unSubscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-danger mr-3"}>Se désinscrire</button>);
             }
+        } else if (event.type == "Amical"){
+            if (event.staff == true){
+                buttons.push(<Link to={"/unOffMatch/"+event.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>);
+                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
+            } else {
+                if (event.isOver){
+                    buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
+                }
+            }
+            obj = {
+                id: event.id,
+                teamId: event.teamId,
+                title: event.title,
+                day: event.start,
+                end: event.end,
+                button: buttons,
+                staff: event.staff,
+                absences: [],
+                players: event.players,
+            }
+            let radioMOTM = [];
+            for (let i = 0; i < event.players.length; i++){
+                radioMOTM.push(false);
+            }
+            setMOTM(radioMOTM);
         }
         setSelectedEvent(obj);
     }
@@ -248,7 +300,15 @@ const HomePage = props => {
             idUser: idUser,
             idTraining: idTraining
         }
-        await TrainingsAPI.postAbsence(post);
+        try{
+            await TrainingsAPI.postAbsence(post);
+            toast.success("Absence encodée avec succès");
+        } catch (e) {
+            toast.error("Erreur lors de l'encodage de l'absence");
+        }
+        handleClose(0);
+        setReload(reload+1);
+        resetselectedEvent();
     }
 
     const deleteAbsence = async (idTraining) => {
@@ -256,7 +316,14 @@ const HomePage = props => {
             idUser: idUser,
             idTraining: idTraining
         }
-        await TrainingsAPI.remAbsence(post);
+        try{
+            await TrainingsAPI.remAbsence(post);
+            toast.success("Absence supprimée avec succès");
+        } catch (e) {
+            toast.error("Erreur lors de la suppression de l'absence");
+        }
+        setReload(reload+1);
+        resetselectedEvent();
     }
 
     const findTraining = async (id) => {
@@ -297,12 +364,12 @@ const HomePage = props => {
         handleClose(1);
     }
 
-    const modalEditTraining = () => {
+    const modalEditTraining = (event) => {
         let obj = {
-            id: selectedEvent.id,
-            date: DateFunctions.dateFormatYMD(selectedEvent.day),
-            start: DateFunctions.getHoursHM(selectedEvent.day),
-            end: DateFunctions.getHoursHM(selectedEvent.end),
+            id: event.id,
+            date: DateFunctions.dateFormatYMD(event.start),
+            start: DateFunctions.getHoursHM(event.start),
+            end: DateFunctions.getHoursHM(event.end),
         }
         setEditTraining(obj);
         handleShow(2);
@@ -313,12 +380,35 @@ const HomePage = props => {
         setEditTraining({...editTraining, [name]: value});
     };
 
-    const submitTraining = async () => {
+    const submitTraining = async (event) => {
         if (editTraining.start > editTraining.end){
             toast.error("heure de début plus grande que heure de fin");
             return ;
         }
+        let newNotif = {idTeam : selectedEvent.teamId,
+            message: "L'entrainement du " + DateFunctions.dateFormatFrDM(selectedEvent.day)+ " a été déplacé au " + DateFunctions.dateFormatFrDM(editTraining.date) + " de "
+                + DateFunctions.hourWh(editTraining.start) + " à " +  DateFunctions.hourWh(editTraining.end),
+        }
         await TrainingsAPI.editTraining(editTraining);
+        await NotificationAPI.newTeamNotif(newNotif)
+        handleClose(2);
+        setReload(reload+1);
+        window.location.reload();
+    }
+
+    const submitEvent = async (event) => {
+        if (editTraining.start > editTraining.end){
+            toast.error("heure de début plus grande que heure de fin");
+            return ;
+        }
+        let newNotif = {idTeam : selectedEvent.teamId,
+            message: "L'événement "+ selectedEvent.title + " du " + DateFunctions.dateFormatFrDM(selectedEvent.day)+ " a été déplacé au " + DateFunctions.dateFormatFrDM(editTraining.date) + " de "
+                + DateFunctions.hourWh(editTraining.start) + " à " +  DateFunctions.hourWh(editTraining.end),
+        }
+        console.log(editTraining);
+        return ;
+        await TrainingsAPI.editTraining(editTraining);
+        await NotificationAPI.newTeamNotif(newNotif)
         handleClose(2);
         setReload(reload+1);
         window.location.reload();
@@ -344,8 +434,12 @@ const HomePage = props => {
             toast.error("Date non valide");
             return ;
         }
+        let newNotif = {idTeam : selectedEvent.teamId,
+            message: "Le match " + selectedEvent.title + " a été déplacé au " + DateFunctions.dateFormatFrDM(editMatch.date) + " à " +  DateFunctions.hourWh(editMatch.hour),
+        }
         try{
             await MatcheAPI.editDateMatch(editMatch);
+            await NotificationAPI.newTeamNotif(newNotif)
             toast.success("La date du match a bien été encodée");
         }catch (e) {
             toast.error("La date du match n'a pas pu être encodée");
@@ -353,6 +447,8 @@ const HomePage = props => {
         handleClose(3);
         setReload(reload+1);
     }
+
+    console.log(selectedEvent);
 
     useEffect( () => {
         find();
@@ -377,13 +473,20 @@ const HomePage = props => {
                       {selectedEvent.title != "" &&
                         <h6>{selectedEvent.title} du {DateFunctions.dateFormatFr(selectedEvent.day)}</h6>
                       }
+                      <div>
+                          {selectedEvent.description}
+                      </div>
                       <div>{selectedEvent.button.map((butt, index) =>
                           <div key={index}>
                               {butt}
                           </div>
                       )}
                       </div>
-                      <div>{selectedEvent.absences.map((ab, index) =>
+                      <div>
+                          {selectedEvent.type == "training" && selectedEvent.absences.length > 0 && selectedEvent.staff &&
+                            <h6>Liste des absents</h6>
+                          }
+                          {selectedEvent.absences.map((ab, index) =>
                           <p key={index}>{ab.name+ " "+ ab.reason}</p>
                       )}</div>
 
@@ -415,7 +518,7 @@ const HomePage = props => {
                           <label className="custom-control-label" htmlFor={"presence"+index}>{user.name}</label>
                       </div>
                   )}
-                  <button onClick={submitPresence} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitPresence()} className="btn btn-success">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[2]} onHide={() => handleClose(2)}>
@@ -426,7 +529,7 @@ const HomePage = props => {
                   <Field name={"date"} label={"Jour de l'entrainement"} type={"date"} value={editTraining.date} onChange={handleChangeTraining} />
                   <Field name={"start"} label={"Heure de début"} type={"time"} value={editTraining.start} onChange={handleChangeTraining} />
                   <Field name={"end"} label={"Heure de fin"} type={"time"} value={editTraining.end} onChange={handleChangeTraining} />
-                  <button onClick={submitTraining} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitTraining(selectedEvent)} className="btn btn-success">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[3]} onHide={() => handleClose(3)}>
@@ -436,7 +539,7 @@ const HomePage = props => {
               <Modal.Body className={""}>
                   <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                   <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
-                  <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitDateMatch()} className="btn btn-success">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[4]} onHide={() => handleClose(4)}>
@@ -451,7 +554,7 @@ const HomePage = props => {
                           <label className="custom-control-label" htmlFor={"customRadio"+index}>{player.name}</label>
                       </div>
                   )}
-                  <button onClick={submitPlayerOfTheMatch} className="btn btn-success mt-5">Valider</button>
+                  <button onClick={() => submitPlayerOfTheMatch()} className="btn btn-success mt-5">Valider</button>
               </Modal.Body>
           </Modal>
       </>

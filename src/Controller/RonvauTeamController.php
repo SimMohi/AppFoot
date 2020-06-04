@@ -271,6 +271,7 @@ class RonvauTeamController extends AbstractController
                 $trainingRes["date"] = $start;
                 $trainingRes["start"] = $start;
                 $trainingRes["end"] = $end;
+                $trainingRes["player"] = $userTeam->getIsPlayer();-
                 $trainingRes["staff"] = $userTeam->getIsStaff();
                 $trainingRes["teamId"] = $teamR->getId();
                 $trainingRes["teamCat"] = $teamR->getCategory();
@@ -286,7 +287,7 @@ class RonvauTeamController extends AbstractController
                 $eventRes["type"] = "event";
                 $eventRes["title"] = $event->getName();
                 $eventRes["start"] = $event->getDate();
-                $eventRes["end"] = $event->getDate();
+                $eventRes["end"] = $event->getEndDate();
                 $eventRes["description"] = $event->getDescription();
                 $eventRes["staff"] = $userTeam->getIsStaff();
                 $eventRes["teamId"] = $teamR->getId();
@@ -339,6 +340,37 @@ class RonvauTeamController extends AbstractController
                 foreach ($players as $player){
                     if ($player->getPlayed()){
                         $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                        $newPlayer = [];
+                        $newPlayer["player"] = $player;
+                        $newPlayer["name"] = $name;
+                        $matchRes["players"][] = $newPlayer;
+                    }
+                }
+                $response[] = $matchRes;
+            }
+            $unofficialMatchs = $teamR->getUnOfficialMatches();
+            foreach ($unofficialMatchs as $unofficialMatch){
+                $matchRes = [];
+                $matchRes["players"] = [];
+                $matchRes["type"] = "Amical";
+                $matchRes["id"] = $unofficialMatch->getId();
+                if ($unofficialMatch->getIsHome()){
+                    $matchRes["title"] = "Fc Ronvau Chaumont" ."-".$unofficialMatch->getOpponent()->getName();
+                } else{
+                    $matchRes["title"] = $unofficialMatch->getOpponent()->getName()."-"."Fc Ronvau Chaumont" ;
+                }
+                $matchRes["start"] = $unofficialMatch->getDate();
+                $matchRes["end"] = $unofficialMatch->getDate();
+                $matchRes["staff"] = $userTeam->getIsStaff();
+                $matchRes["teamId"] = $teamR->getId();
+                $matchRes["teamCat"] = $teamR->getCategory();
+                if ($unofficialMatch->getIsOver()){
+                    $matchRes["isOver"] = $unofficialMatch->getIsOver();
+                }
+                $players =  $unofficialMatch->getPlayerUnofficialMatches();
+                foreach ($players as $player){
+                    if ($player->getPlayed()){
+                        $name = $player->getUserTeam()->getUserId()->getFirstName()." ". $player->getUserTeam()->getUserId()->getLastName();
                         $newPlayer = [];
                         $newPlayer["player"] = $player;
                         $newPlayer["name"] = $name;

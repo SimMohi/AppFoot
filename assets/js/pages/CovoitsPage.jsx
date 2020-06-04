@@ -11,6 +11,7 @@ import axios from 'axios';
 import Field from "../components/forms/Fields";
 import {CARS_API, PASSENGERS_API} from "../config";
 import DateFunctions from "../services/DateFunctions";
+import NotificationAPI from "../services/NotificationAPI";
 
 const CovoitsPage = props => {
 
@@ -126,6 +127,7 @@ const CovoitsPage = props => {
         console.log(copyNewPass);
         try{
             const response = await CovoitAPI.addPassenger(copyNewPass);
+            await NotificationAPI.newNotifCarPass(copyNewPass);
             if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
                 const apiErrors = {};
                 response.data.violations.forEach(violation => {
@@ -230,7 +232,6 @@ const CovoitsPage = props => {
                         <td className={"col-3"}>{adresseFormat(covoit.departureAddress)}</td>
                         <td className={"col-2"}>
                             {chooseButton(covoit)}
-                            <button onClick={() => handleDelete(covoit.id)} className="btn btn-sm btn-danger">Supprimer</button>
                         </td>
                     </tr>
                 )}

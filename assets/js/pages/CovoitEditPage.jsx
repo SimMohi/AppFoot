@@ -104,15 +104,21 @@ const CovoitPage = props => {
             currentCar["carPassengers"][i] = currentCar["carPassengers"][i]["@id"];
         }
         let currentCarPass = carPass[id];
+        let newNotif = {
+            user: currentCarPass["user"]["id"],
+            car: currentCar["id"],
+            accept: true
+        }
         currentCar["placeRemaining"] -= currentCarPass["numberPassenger"];
         currentCar["userId"] = currentCar["userId"]["@id"];
+        currentCar["departureAddress"] = currentCar["departureAddress"]["@id"];
         currentCarPass["user"] = currentCarPass["user"]["@id"];
         currentCarPass["isAccepted"] = true;
-        return;
         try {
             axios.all([
                 axios.put(API_URL + currentCarPass["@id"], currentCarPass),
                 axios.put(CARS_API + "/"+ currentCar.id, currentCar),
+                axios.post(API_URL + "/newNotifCarPassAR", newNotif)
             ]);
             toast.success("La demande a bien été acceptée");
         } catch (error) {
@@ -123,13 +129,14 @@ const CovoitPage = props => {
 
     const handleDelete =  (id, numberPassenger) => {
         let currentCar = JSON.parse(JSON.stringify(car));
+        console.log(currentCar);
         for (let i = 0; i < currentCar["carPassengers"].length; i++){
             currentCar["carPassengers"][i] = currentCar["carPassengers"][i]["@id"];
             if (currentCar["carPassengers"][i]== id){
                 console.log(currentCar["carPassengers"][i]);
             }
         }
-        return;
+        currentCar["departureAddress"] = currentCar["departureAddress"]["@id"];
         currentCar["placeRemaining"] += numberPassenger;
         currentCar["userId"] = currentCar["userId"]["@id"];
         try {
