@@ -13,6 +13,7 @@ import {Link} from "react-router-dom";
 import MatcheAPI from "../services/MatcheAPI";
 import EventsAPI from "../services/EventsAPI";
 import NotificationAPI from "../services/NotificationAPI";
+import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
 
 
 const HomePage = props => {
@@ -219,6 +220,7 @@ const HomePage = props => {
             }
             obj = {
                 id: event.id,
+                type: event.type,
                 teamId: event.teamId,
                 title: event.title,
                 day: event.start,
@@ -438,7 +440,11 @@ const HomePage = props => {
             message: "Le match " + selectedEvent.title + " a été déplacé au " + DateFunctions.dateFormatFrDM(editMatch.date) + " à " +  DateFunctions.hourWh(editMatch.hour),
         }
         try{
-            await MatcheAPI.editDateMatch(editMatch);
+            if (selectedEvent.type == "Amical"){
+                await UnOfficialMatchAPI.editDateUnOffMatch(editMatch);
+            } else {
+                await MatcheAPI.editDateMatch(editMatch);
+            }
             await NotificationAPI.newTeamNotif(newNotif)
             toast.success("La date du match a bien été encodée");
         }catch (e) {

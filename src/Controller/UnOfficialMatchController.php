@@ -121,11 +121,33 @@ class UnOfficialMatchController extends AbstractController
         $notif = new Notification();
         $notif->setUser($userTeam->getUserId());
         $notif->setMessage("Votre sélection pour le match ".$name. ' a été annulée');
-        
+
         $this->getDoctrine()->getManager()->persist($notif);
         $this->getDoctrine()->getManager()->remove($player);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->json("Supprimé avec succès");
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/editDateUnOffMatch")
+     * @throws \Exception
+     */
+    public function editDateUnOffMatch(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $date = new \DateTime($data["date"]);
+        $start = explode(":", $data["hour"]);
+        $date->setTime($start[0], $start[1], 0);
+
+        $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(['id' => $data["id"]]);
+        $match->setDate($date);
+        $this->getDoctrine()->getManager()->persist($match);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("La date a bien été modifiée");
     }
 }

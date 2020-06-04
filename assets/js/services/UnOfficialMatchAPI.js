@@ -29,11 +29,15 @@ function selectUnoff(data) {
     return axios.post(API_URL + "/selectUnoff", data);
 }
 
+function editDateUnOffMatch(data){
+    return axios.post(API_URL + "/editDateUnOffMatch", data);
+}
+
 function delUnOffPl(data){
     return axios.post(API_URL + "/delUnOffPl", data);
 }
 
 
 export default {
-    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl
+    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl, editDateUnOffMatch
 }
