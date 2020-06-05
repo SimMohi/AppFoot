@@ -1,11 +1,6 @@
 import axios from 'axios';
-import {API_URL, COMPETITIONS_API, NAME_COMPETITIONS_API} from "../config";
+import {API_URL, COMPETITIONS_API} from "../config";
 
-function findAllName() {
-    return axios
-        .get(NAME_COMPETITIONS_API)
-        .then(response => response.data["hydra:member"]);
-}
 
 function findAll() {
     return axios
@@ -47,6 +42,10 @@ function getRanking (id){
         .then(response => response.data);
 }
 
+function competVisible(data){
+    return axios.post(API_URL + "/competVisible", data);
+}
+
 export default {
-    findAll, find, findTeam, create, update, deleteCompet, findAllName, getRanking, getMatchCompet
+    findAll, find, findTeam, create, update, deleteCompet, getRanking, getMatchCompet, competVisible
 }

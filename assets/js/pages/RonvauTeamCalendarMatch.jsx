@@ -69,7 +69,7 @@ const RonvauTeamCalendarMatch = props => {
         }catch (e) {
             toast.error("La date du match n'a pas pu être encodée");
         }
-        handleClose();
+        handleClose(0);
         fetchMatch();
     }
 
@@ -164,7 +164,7 @@ const RonvauTeamCalendarMatch = props => {
                 )}
                 </tbody>
             </table>
-            <Modal show={show[0]} onHide={() => handleClose(1)}>
+            <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
                     Encoder la date et l'heure du match
                 </Modal.Header>

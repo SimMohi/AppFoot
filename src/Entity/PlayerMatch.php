@@ -78,11 +78,12 @@ class PlayerMatch
     private $hasRefused;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PlayerOfTheMatch", mappedBy="idPlayerMatch")
+     * @ORM\OneToMany(targetEntity="App\Entity\PlayerOfTheMatch", mappedBy="idPlayerMatch", orphanRemoval=true))
      */
     private $playerOfTheMatches;
 
     /**
+     * @Groups({"team_ronvau_read", "matchs_read"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $refusedJustification;

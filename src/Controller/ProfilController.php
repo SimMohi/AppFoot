@@ -7,6 +7,7 @@ use App\Entity\Address;
 use App\Entity\Chat;
 use App\Entity\Matche;
 use App\Entity\PlayerMatch;
+use App\Entity\PlayerUnofficialMatch;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\User;
@@ -83,6 +84,7 @@ class ProfilController extends AbstractController
         foreach ($userTeams as $userTeam){
             $ronvauTeam = $userTeam->getTeamRonvauId();
             $playerMatches = $this->getDoctrine()->getRepository(PlayerMatch::class)->findBy(['idUserTeam' => $userTeam]);
+            $playerUnOffMatches = $this->getDoctrine()->getRepository(PlayerUnofficialMatch::class)->findBy(['userTeam' => $userTeam]);
             $matches = array();
             foreach ($playerMatches as $playerMatch){
                 if ($playerMatch->getHasConfirmed() == false && $playerMatch->getHasRefused() == false){
@@ -90,6 +92,21 @@ class ProfilController extends AbstractController
                     $matches["name"] = $ronvauTeam->getCategory();
                     $matches["match"] = $match->getHomeTeam()->getClub()->getName()." - ". $match->getVisitorTeam()->getClub()->getName();
                     $matches["joueur"] = $playerMatch;
+                    $matches["type"] = "officiel";
+                    $return["convocations"][] = $matches;
+                }
+            }
+            foreach ($playerUnOffMatches as $playerUnOffMatch){
+                if ($playerUnOffMatch->getHasConfirmed() == false && $playerUnOffMatch->getHasRefused() == false){
+                    $match = $playerUnOffMatch->getUnOfficialMatch();
+                    $matches["name"] = $ronvauTeam->getCategory();
+                    if ($match->getIsHome()){
+                        $matches["match"] = "FC Ronvau Chaumont - ". $match->getOpponent()->getName();
+                    } else{
+                        $matches["match"] = $match->getOpponent()->getName()." - FC Ronvau Chaumont";
+                    }
+                    $matches["type"] = "amical";
+                    $matches["joueur"] = $playerUnOffMatch;
                     $return["convocations"][] = $matches;
                 }
             }

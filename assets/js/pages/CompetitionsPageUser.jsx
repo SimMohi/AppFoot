@@ -21,11 +21,10 @@ const CompetitionsPage = props => {
 
 
     return ( <>
-        <h1>Liste des compétitions</h1>
+        <h1 className={"mb-5"}>Liste des compétitions</h1>
         <table className="table table-hover">
             <thead>
             <tr>
-                <th>Identifiant</th>
                 <th>Nom</th>
                 <th>saison</th>
                 <th></th>
@@ -33,15 +32,17 @@ const CompetitionsPage = props => {
             </thead>
             <tbody>
             {competitions.map(competition =>
-                <tr key={competition.id}>
-                    <td>{competition.id}</td>
-                    <td>{competition.name.name}</td>
-                    <td>{competition.season}</td>
-                    <td>
-                        <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-primary mr-3"}>Classement</Link>
-                        <Link to={"/competition/"+competition.id+"/matchs"} className={"btn btn-sm btn-secondary mr-3"}>Calendrier des matchs</Link>
-                    </td>
-                </tr>
+                    competition.visible &&
+                    <tr key={competition.id}>
+                        <td>{competition.name}</td>
+                        <td>{competition.season}</td>
+                        <td>
+                            <Link to={"/competition/" + competition.id + "/view"}
+                                  className={"btn btn-sm btn-primary mr-3"}>Classement</Link>
+                            <Link to={"/competition/" + competition.id + "/matchs"}
+                                  className={"btn btn-sm btn-secondary mr-3"}>Calendrier des matchs</Link>
+                        </td>
+                    </tr>
             )}
             </tbody>
         </table>

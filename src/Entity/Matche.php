@@ -70,7 +70,7 @@ class Matche
     private $matchDay;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PlayerMatch", mappedBy="idMatch")
+     * @ORM\OneToMany(targetEntity="App\Entity\PlayerMatch", mappedBy="idMatch", orphanRemoval=true))
      * @Groups({"matchs_read"})
      */
     private $playerMatches;

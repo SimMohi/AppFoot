@@ -107,9 +107,9 @@ const SelectPlayerMatchPage = props => {
     return(
         <>
             <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
-            <div className="container">
+            <div className="">
                 <div className="row">
-                    <div className="col-5">
+                    <div className="col-3">
                         <table className="mt-5 table table-hover text-center">
                             <thead>
                             <tr className={"row"}>
@@ -131,22 +131,23 @@ const SelectPlayerMatchPage = props => {
                         </table>
                         <button onClick={callFunction} className="btn btn-primary">Convoquer</button>
                     </div>
-                    <div className="col-2"></div>
-                    <div className="col-5">
+                    <div className="col-1"></div>
+                    <div className="col-8">
                         <div>{answer.accepted+" réponses positive sur "+answer.total}</div>
                         <table className="mt-5 table table-hover text-center">
                             <thead>
                             <tr className={"row"}>
-                                <th className={"col-4"}>Nom</th>
-                                <th className={"col-4"}>Réponse</th>
-                                <th className={"col-4"}></th>
+                                <th className={"col-3"}>Nom</th>
+                                <th className={"col-1"}>Réponse</th>
+                                <th className={"col-6"}>Justification</th>
+                                <th className={"col-2"}></th>
                             </tr>
                             </thead>
                             <tbody>
                             {call.map((user) =>
                                 <tr className={"row"} key={user.id}>
-                                    <td className="col-4">{user.userId.lastName + " " + user.userId.firstName}</td>
-                                    <td className="custom-control custom-checkbox col-4">
+                                    <td className="col-3">{user.userId.lastName + " " + user.userId.firstName}</td>
+                                    <td className="custom-control custom-checkbox col-1">
                                         {user["hasConfirmed"] == true &&
                                             <i className="fas fa-check"></i>
                                         }
@@ -157,7 +158,10 @@ const SelectPlayerMatchPage = props => {
                                             <i className="far fa-clock"></i>
                                         }
                                     </td>
-                                    <td className="col-4">
+                                    <td className="col-6">
+                                        {user["refusedJustification"]}
+                                    </td>
+                                    <td className="col-2">
                                         <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Supprimer</button>
                                     </td>
                                 </tr>

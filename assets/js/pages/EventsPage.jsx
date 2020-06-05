@@ -57,7 +57,7 @@ const EventsPage = props => {
                 <tr key={event.id}>
                     <td>{event.name}</td>
                     <td>{event.description}</td>
-                    <td>{DateFunctions.dateFormatFr(event.date)}</td>
+                    <td>{DateFunctions.dateFormatFr(event.date)}{typeof event.endDate != 'undefined' && " au " + DateFunctions.dateFormatFr(event.endDate)}</td>
                     <td>
                         <button className="btn btn-sm btn-outline-primary mr-3" onClick={() => setShow({["value"]: event.id, ["state"]: true})}>Modifier l'événement</button>
                         <button onClick={() => handleDelete(event.id)} className="btn btn-sm btn-danger">Supprimer</button>

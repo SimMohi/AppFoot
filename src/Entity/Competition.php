@@ -17,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Table(name="competition", uniqueConstraints={
  *      @UniqueConstraint(name="competition_unique",
- *          columns={"season", "name_id"})
+ *          columns={"season", "name"})
  *     }
  *  )
  * @ORM\Entity(repositoryClass="App\Repository\CompetitionRepository")
@@ -52,21 +52,20 @@ class Competition
     private $teams;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Groups({"competitions_read"})
-     */
-    private $matchDayNumber;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=NameCompetition::class, inversedBy="competitions")
+     * @ORM\Column(type="string", length=255)
      * @Groups({"competitions_read"})
      */
     private $name;
 
-
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"competitions_read"})
+     */
+    private $visible;
 
     public function __construct()
     {
+        $this->visible = true;
         $this->teams = new ArrayCollection();
     }
 
@@ -119,26 +118,27 @@ class Competition
         return $this;
     }
 
-    public function getMatchDayNumber(): ?int
-    {
-        return $this->matchDayNumber;
-    }
 
-    public function setMatchDayNumber(int $matchDayNumber): self
-    {
-        $this->matchDayNumber = $matchDayNumber;
-
-        return $this;
-    }
-
-    public function getName(): ?NameCompetition
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(?NameCompetition $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }

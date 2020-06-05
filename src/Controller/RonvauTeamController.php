@@ -318,7 +318,19 @@ class RonvauTeamController extends AbstractController
                 $players =  $home->getPlayerMatches();
                 foreach ($players as $player){
                     if ($player->getPlayed()){
-                        $matchRes["players"][] = $player;
+                        $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                        $newPlayer = [];
+                        $newPlayer["userId"] = $player->getIdUserTeam()->getUserId()->getId();
+                        if ($player->getIdUserTeam()->getUserId() == $user){
+                            if ($player->getHasConfirmed() == false && $player->getHasRefused() == false){
+                                $matchRes["perso"] = "Vous avez été convoqué pour ce match";
+                            } else if ($player->getHasConfirmed() == true && $home->getIsOver() == false){
+                                $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
+                            }
+                        }
+                        $newPlayer["player"] = $player;
+                        $newPlayer["name"] = $name;
+                        $matchRes["players"][] = $newPlayer;
                     }
                 }
                 $response[] = $matchRes;
@@ -338,13 +350,19 @@ class RonvauTeamController extends AbstractController
                 }
                 $players =  $visitor->getPlayerMatches();
                 foreach ($players as $player){
-                    if ($player->getPlayed()){
-                        $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
-                        $newPlayer = [];
-                        $newPlayer["player"] = $player;
-                        $newPlayer["name"] = $name;
-                        $matchRes["players"][] = $newPlayer;
+                    $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                    $newPlayer = [];
+                    $newPlayer["userId"] = $player->getIdUserTeam()->getUserId()->getId();
+                    if ($player->getIdUserTeam()->getUserId() == $user){
+                        if ($player->getHasConfirmed() == false && $player->getHasRefused() == false){
+                            $matchRes["perso"] = "Vous avez été convoqué pour ce match";
+                        } else if ($player->getHasConfirmed() == true && $visitor->getIsOver() == false){
+                            $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
+                        }
                     }
+                    $newPlayer["player"] = $player;
+                    $newPlayer["name"] = $name;
+                    $matchRes["players"][] = $newPlayer;
                 }
                 $response[] = $matchRes;
             }
@@ -369,13 +387,19 @@ class RonvauTeamController extends AbstractController
                 }
                 $players =  $unofficialMatch->getPlayerUnofficialMatches();
                 foreach ($players as $player){
-                    if ($player->getPlayed()){
-                        $name = $player->getUserTeam()->getUserId()->getFirstName()." ". $player->getUserTeam()->getUserId()->getLastName();
-                        $newPlayer = [];
-                        $newPlayer["player"] = $player;
-                        $newPlayer["name"] = $name;
-                        $matchRes["players"][] = $newPlayer;
+                    $name = $player->getUserTeam()->getUserId()->getFirstName()." ". $player->getUserTeam()->getUserId()->getLastName();
+                    $newPlayer = [];
+                    $newPlayer["userId"] = $player->getUserTeam()->getUserId()->getId();
+                    if ($player->getUserTeam()->getUserId() == $user){
+                        if ($player->getHasConfirmed() == false && $player->getHasRefused() == false){
+                            $matchRes["perso"] = "Vous avez été convoqué pour ce match";
+                        } else if ($player->getHasConfirmed() == true && $unofficialMatch->getIsOver() == false){
+                            $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
+                        }
                     }
+//                    $newPlayer["player"] = $player;
+                    $newPlayer["name"] = $name;
+                    $matchRes["unOffPlayers"][] = $newPlayer;
                 }
                 $response[] = $matchRes;
             }

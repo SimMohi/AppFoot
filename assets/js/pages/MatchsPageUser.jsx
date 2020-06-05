@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CompetitionsAPI from "../services/CompetitionsAPI";
 import DateFunctions from "../services/DateFunctions";
+import {Link} from "react-router-dom";
 
 
 const MatchPages = props => {
@@ -32,16 +33,17 @@ const MatchPages = props => {
 
     return(
         <>
-            <div className="w-50">
+            <div className="w-50 m-auto">
+                <Link to={"/competition"} className={"btn btn-link float-right"}>Retour à la liste</Link>
                 <select className="form-control w-50" id="matchDay" name={"matchDay"} onChange={selectMatchDay}>
-                    {matchDay.map(opt =>
-                    <option key={opt} value={opt}>journée numéro {opt}</option>
+                    {matchDay.map((opt,index) =>
+                    <option key={index} value={opt}>journée numéro {opt}</option>
                     )}
                 </select>
                 <div className={"mt-3 bgGrey"}>
-                    {typeof matchs != "undefined" && typeof selectedDay != 'undefined' && matchs[selectedDay].map(mat =>
-                        <>
-                            <div key={mat.id} className={"row m-2"}>
+                    {typeof matchs != "undefined" && typeof selectedDay != 'undefined' && matchs[selectedDay].map((mat,index) =>
+                        <div key={mat.id}>
+                            <div className={"row m-2"}>
                                 <div className="col-2">
                                     {mat.date != null && DateFunctions.dateFormatFrDMHM(mat.date) || "Non défini"}
                                 </div>
@@ -55,12 +57,12 @@ const MatchPages = props => {
                                     {
                                         (mat.homeTeamGoal != null && mat.homeTeamGoal.toString() || "")
                                         + " - " +
-                                        (mat.homeTeamGoal != null && mat.visitorTeamGoal.toString() || "")
+                                        (mat.visitorTeamGoal != null && mat.visitorTeamGoal.toString() || "")
                                     }
                                 </div>
                             </div>
                         <hr/>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>

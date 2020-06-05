@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
+
 
 
 class CompetitionsController extends AbstractController
@@ -36,6 +39,28 @@ class CompetitionsController extends AbstractController
 
         return $this->json(
             $response
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route("/competVisible")
+     */
+    public function competVisible(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $compet = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $data["id"]]);
+
+        $compet->setVisible($data["visible"]);
+
+        $this->getDoctrine()->getManager()->persist($compet);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json(
+            "ok"
         );
     }
 

@@ -20,19 +20,6 @@ const CompetitionTeamsPage = props => {
             axios.get(CLUBS_API),
         ]).then(axios.spread((...responses) => {
             const competTeams = responses[0].data["teams"];
-            for (let i = 0; i < competTeams.length; i++){
-                let date = new Date(competTeams[i].hour);
-                let hours = date.getHours();
-                let minutes = date.getMinutes();
-                if (hours < 10){
-                    hours = hours+"0";
-                }
-                if (minutes < 10){
-                    minutes = minutes+"0";
-                }
-                let hhmm = hours+":"+minutes;
-                competTeams[i].hour = hhmm;
-            }
             setTeams(competTeams);
             const allClubs = responses[1].data["hydra:member"];
             let teamClub = [];
@@ -124,8 +111,6 @@ const CompetitionTeamsPage = props => {
                 <thead className={"container"}>
                     <tr className={"row"}>
                         <th className={"col-4"}>Equipe</th>
-                        <th className={"col-3"}>Jour du match</th>
-                        <th className={"col-3"}>Heure du match</th>
                         <th className={"col-2"}></th>
                     </tr>
                 </thead>
@@ -134,23 +119,6 @@ const CompetitionTeamsPage = props => {
                     <tr key={team.id} className="row">
                         <td className="col-4">
                             {team.club.name}
-                        </td>
-                        <td className="col-3">
-                            <select className="form-control" name={"day"} value={team.day} id={index}
-                                    onChange={handleChangeSelectMatch}>
-                                <option value="0">Choissisez un jour</option>
-                                <option value={"Lundi"}>Lundi</option>
-                                <option value={"Mardi"}>Mardi</option>
-                                <option value={"Mercredi"}>Mercredi</option>
-                                <option value={"Jeudi"}>Jeudi</option>
-                                <option value={"Vendredi"}>Vendredi</option>
-                                <option value={"Samedi"}>Samedi</option>
-                                <option value={"Dimanche"}>Dimanche</option>
-                            </select>
-                        </td>
-                        <td className={"col-3"}>
-                            <input type="time" name={"hour"} className={"form-control"} step={300} id={index}
-                                   value={team.hour} onChange={handleChangeSelectMatch}/>
                         </td>
                         <td className="col-2 ml-auto">
                             <button type={"button"} onClick={()=> modifyTeam(index)} className="btn btn-primary">Modifier</button>
@@ -171,23 +139,6 @@ const CompetitionTeamsPage = props => {
                                 threshold: 0.05,
                             }}
                         />
-                    </td>
-                    <td className="col-3">
-                        <select className="form-control" name={"day"} value={selectMatch["day"]}
-                                onChange={handleAddSelectMatch}>
-                            <option value="0">Choissisez un jour</option>
-                            <option value={"Lundi"}>Lundi</option>
-                            <option value={"Mardi"}>Mardi</option>
-                            <option value={"Mercredi"}>Mercredi</option>
-                            <option value={"Jeudi"}>Jeudi</option>
-                            <option value={"Vendredi"}>Vendredi</option>
-                            <option value={"Samedi"}>Samedi</option>
-                            <option value={"Dimanche"}>Dimanche</option>
-                        </select>
-                    </td>
-                    <td className={"col-3"}>
-                        <input type="time" name={"hour"} className={"form-control"} step={300}
-                               value={selectMatch["hour"]} onChange={handleAddSelectMatch}/>
                     </td>
                     <td className="col-2 ml-auto">
                         <button type={"button"} onClick={addTeam} className="btn btn-success">Ajouter</button>

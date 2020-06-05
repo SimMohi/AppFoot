@@ -10,6 +10,9 @@ import Modal from "react-bootstrap/Modal";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
 import {USERS_API} from "../config";
 import NotificationAPI from "../services/NotificationAPI";
+import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
+import DateFunctions from "../services/DateFunctions";
+import Field from "./forms/Fields";
 
 
 const Navbar = ({ history }) => {
@@ -19,17 +22,25 @@ const Navbar = ({ history }) => {
         convocations: [],
         notif: []
     });
-    console.log(notifications);
-    const [show, setShow] = useState(false);
+    const [justification, setJustification] = useState({
+        reason: "",
+        player: {},
+        type: "",
+    })
+    const [show, setShow] = useState([false, false]);
     const admin = authAPI.getIsAdmin();
     const [reload, setReload] = useState(0);
 
-    const handleShow = () => {
-        setShow(true);
+    const handleShow = (i) => {
+        let showCopy = [...show];
+        showCopy[i] = true;
+        setShow(showCopy);
     }
 
-    const handleClose = () => {
-        setShow(false);
+    const handleClose = (i) => {
+        let showCopy = [...show];
+        showCopy[i] = false;
+        setShow(showCopy);
     }
 
     const handleLogout = () => {
@@ -58,28 +69,59 @@ const Navbar = ({ history }) => {
         }
     }
 
-    const acceptMatch = async (player) => {
-        player["hasConfirmed"] = true;
-        delete player["goal"];
-        delete player["yellowCard"];
-        delete player["redCard"];
+    const handleChange = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        setJustification({...justification, [name]: value});
+    };
+
+    const acceptMatch = async (player, type) => {
         try {
-            await PlayerMatchAPI.update(player.id, player);
+            if (type == "amical"){
+                const userTeam = player.userTeam.replace("/api/user_teams/", "");
+                const unOfficialMatch = player.unOfficialMatch.replace("/api/un_official_matches/", "");
+                let post = {
+                    userTeam: userTeam,
+                    unOfficialMatch: unOfficialMatch,
+                    accept: true
+                }
+                await UnOfficialMatchAPI.updatePlayer(post)
+            } else if (type == "officiel"){
+                player["hasConfirmed"] = true;
+                delete player["goal"];
+                delete player["yellowCard"];
+                delete player["redCard"];
+                await PlayerMatchAPI.update(player.id, player);
+            }
             toast.success("Vous avez accepté la convocation");
         } catch (e) {
         }
         setReload(reload+1);
     }
 
-
-    const deleteNotif = async (player) => {
-        player["hasRefused"] = true;
-        delete player["goal"];
-        delete player["yellowCard"];
-        delete player["redCard"];
+    const deleteNotif = async (player, type) => {
         try {
-            await PlayerMatchAPI.update(player.id, player);
+            if (type == "amical"){
+                const userTeam = player.userTeam.replace("/api/user_teams/", "");
+                const unOfficialMatch = player.unOfficialMatch.replace("/api/un_official_matches/", "");
+                let post = {
+                    userTeam: userTeam,
+                    unOfficialMatch: unOfficialMatch,
+                    accept: false,
+                    reason: justification.reason
+                }
+                await UnOfficialMatchAPI.updatePlayer(post);
+                handleClose(1);
+            } else if (type == "officiel") {
+                player["hasRefused"] = true;
+                player["refusedJustification"] = justification.reason;
+                delete player["goal"];
+                delete player["yellowCard"];
+                delete player["redCard"];
+                await PlayerMatchAPI.update(player.id, player);
+                handleClose(1);
+            }
             toast.error("Vous avez refusé la convocation");
+
         } catch (e) {
         }
         setReload(reload+1);
@@ -91,6 +133,15 @@ const Navbar = ({ history }) => {
         } catch (e) {
         }
         setReload(reload+1);
+    }
+
+    const justif = (player, type) => {
+        handleShow(1);
+        setJustification({
+            reason: "",
+            player: player,
+            type: type,
+        })
     }
 
     useEffect(() => {
@@ -184,7 +235,7 @@ const Navbar = ({ history }) => {
                             <>
                                 <li className="nav-item">
                                     <img src="img/flag-regular.svg" alt=""/>
-                                    <button type={"button"} onClick={handleShow}>
+                                    <button type={"button"} onClick={() => handleShow(0)}>
                                         {notifications.convocations.length+notifications.notif.length}
                                     </button>
                                 </li>
@@ -201,7 +252,7 @@ const Navbar = ({ history }) => {
                     </ul>
                 </div>
             </nav>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
                     Notifications
                 </Modal.Header>
@@ -211,11 +262,11 @@ const Navbar = ({ history }) => {
                             <h5>{not.name}</h5>
                             <div className="row">
                                 <div className="col-9">
-                                    {not.match}
+                                    <p>Vous avez été convoqué pour le match : {not.match}</p>
                                 </div>
                                 <div className="col-3">
-                                    <img id={"greenCheck"} src="img/green_check.png" alt="" onClick={() => acceptMatch(not["joueur"])}/>
-                                    <img id={"redCross"} src="img/red_cross.png" alt="" onClick={() => deleteNotif(not["joueur"])}/>
+                                    <button onClick={() => acceptMatch(not["joueur"], not["type"])} className={"btn btn-sm btn-success mb-1"}>Accepter</button>
+                                    <button onClick={() => justif(not["joueur"], not["type"])} className={"btn btn-sm btn-danger"}>Refuser</button>
                                 </div>
                             </div>
                             <hr/>
@@ -234,6 +285,15 @@ const Navbar = ({ history }) => {
                             <hr/>
                         </div>
                     )}
+                </Modal.Body>
+            </Modal>
+            <Modal show={show[1]} onHide={() => handleClose(1)}>
+                <Modal.Header closeButton>
+                    Justifier Refus
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <Field type={"text"} value={justification.reason} onChange={handleChange} name={"reason"} label={"Raison de l'absence:"}/>
+                    <button onClick={() => deleteNotif(justification.player, justification.type)} className="btn btn-success">Enregistrer</button>
                 </Modal.Body>
             </Modal>
         </>

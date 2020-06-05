@@ -49,26 +49,15 @@ class Team
 
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="homeTeam")
+     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="homeTeam", orphanRemoval=true)
      */
     private $matchA;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="visitorTeam")
+     * @ORM\OneToMany(targetEntity="App\Entity\Matche", mappedBy="visitorTeam", orphanRemoval=true)
      */
     private $matchB;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"teams_read", "competitions_read", "clubs_read"})
-     */
-    private $day;
-
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups({"teams_read", "competitions_read", "clubs_read"})
-     */
-    private $hour;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\TeamRonvau", mappedBy="team", cascade={"persist", "remove"})
@@ -170,30 +159,6 @@ class Team
                 $matchB->setVisitorTeam(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getDay(): ?string
-    {
-        return $this->day;
-    }
-
-    public function setDay(?string $day): self
-    {
-        $this->day = $day;
-
-        return $this;
-    }
-
-    public function getHour(): ?\DateTimeInterface
-    {
-        return $this->hour;
-    }
-
-    public function setHour(?\DateTimeInterface $hour): self
-    {
-        $this->hour = $hour;
 
         return $this;
     }

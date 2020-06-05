@@ -43,6 +43,7 @@ const  CompetitionViewPage = props => {
 
     return (
       <>
+          <Link to={"/competition"} className={"btn btn-link float-right mb-3"}>Retour à la liste</Link>
           <table className="table table-hover text-">
               <thead>
               <tr>
@@ -67,7 +68,7 @@ const  CompetitionViewPage = props => {
               )}
               </tbody>
           </table>
-          {!isAdmin &&
+          {isAdmin &&
               <Link to={"/competition/" + id + "/matchs"} className={"btn btn-info float-right"}>Ajouter des matchs</Link>
           }
       </>

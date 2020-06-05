@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 
 const CompetitionsPage = props => {
     const [competitions, setCompetitions] = useState([]);
-
+    const [reload, setReload] = useState(0);
     const FindCompetitions = async () => {
         try {
             const data = await CompetitionsAPI.findAll();
@@ -16,7 +16,7 @@ const CompetitionsPage = props => {
 
     useEffect( () => {
         FindCompetitions();
-    }, []);
+    }, [reload]);
 
 
     const handleDelete = id => {
@@ -30,27 +30,45 @@ const CompetitionsPage = props => {
         }
     };
 
+    const visible = async (id, visible) => {
+        const data = {
+            id: id,
+            visible: visible
+        }
+        try{
+            await CompetitionsAPI.competVisible(data);
+        } catch (e) {
+
+        }
+        setReload(reload+1);
+    }
+
     return ( <>
         <h1>Liste des compétitions</h1>
         <Link to={"/competition/new/"} className={"btn btn-info float-right"}>Nouvelle compétition</Link>
         <table className="table table-hover">
             <thead>
             <tr>
-                <th>Identifiant</th>
                 <th>Nom</th>
                 <th>format</th>
-                <th>season</th>
+                <th>saison</th>
             </tr>
             </thead>
             <tbody>
             {competitions.map(competition =>
                 <tr key={competition.id}>
-                    <td>{competition.id}</td>
-                    <td>{competition.name.name}</td>
+                    <td>{competition.name}</td>
                     <td>{competition.season}</td>
                     <td>
                         <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-primary mr-3"}>Sélectionner</Link>
                         <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-primary mr-3"}>Editer</Link>
+                        {competition.visible &&
+                            <button onClick={() => visible(competition.id, false)}
+                                className="btn btn-sm btn-secondary mr-3">Rendre invisible</button>
+                        ||
+                            <button onClick={() => visible(competition.id, true)}
+                                className="btn btn-sm btn-secondary mr-3">Rendre visible</button>
+                        }
                         <button onClick={() => handleDelete(competition.id)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>

@@ -163,9 +163,11 @@ function getHoursHM(date, convert = 0) {
     return hours+":"+minutes;
 }
 
-function getHoursFRHM(date) {
+function getHoursFRHM(date, convert = 0) {
     let d = new Date(date);
-    d = convertUTCDateToLocalDate(d);
+    if (convert == 1){
+        d = convertUTCDateToLocalDate(d);
+    }
     let hours = d.getHours();
     let minutes = d.getMinutes();
     if (hours < 10){

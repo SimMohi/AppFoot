@@ -100,11 +100,13 @@ const HomePage = props => {
                     staff: response[i]["staff"],
                     isOver: response[i]["isOver"],
                     players: response[i]["players"],
+                    unOffplayers: response[i]["unOffPlayers"],
                     team: response[i]["teamCat"],
                     teamId: response[i]["teamId"],
                     eventTeamId: response[i]["eventTeamId"],
                     sub: response[i]["sub"],
-                    description: response[i]["description"]
+                    description: response[i]["description"],
+                    perso: response[i]["perso"],
                 }
                 if (response[i]["staff"] == true){
                     obj["absences"] = response[i]["absences"];
@@ -127,6 +129,7 @@ const HomePage = props => {
     };
 
     const test = ( event ) => {
+        console.log(event);
         let buttons = [];
         let obj={};
         if (event.type == "training"){
@@ -170,6 +173,11 @@ const HomePage = props => {
                     buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
                 }
             }
+            const description =
+                <div>
+                    <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                    <p>{event.perso}</p>
+                </div>
             obj = {
                 id: event.id,
                 teamId: event.teamId,
@@ -179,6 +187,7 @@ const HomePage = props => {
                 button: buttons,
                 staff: event.staff,
                 absences: [],
+                description: description,
                 players: event.players,
             }
             let radioMOTM = [];
@@ -218,6 +227,11 @@ const HomePage = props => {
                     buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
                 }
             }
+            const description =
+                <div>
+                    <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                    <p>{event.perso}</p>
+                </div>
             obj = {
                 id: event.id,
                 type: event.type,
@@ -227,8 +241,9 @@ const HomePage = props => {
                 end: event.end,
                 button: buttons,
                 staff: event.staff,
+                description: description,
                 absences: [],
-                players: event.players,
+                unOffplayers: event.unOffplayers,
             }
             let radioMOTM = [];
             for (let i = 0; i < event.players.length; i++){

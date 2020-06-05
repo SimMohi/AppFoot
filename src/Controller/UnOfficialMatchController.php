@@ -59,6 +59,7 @@ class UnOfficialMatchController extends AbstractController
                 } else {
                     $user["hasRefused"] = false;
                 }
+                $user["refusedJustification"] = $called->getRefusedJustification();
                 $response["called"][] = $user;
             }
         }
@@ -89,10 +90,6 @@ class UnOfficialMatchController extends AbstractController
                 $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(["id" => $call["idUserTeam"]]);
                 $newPlayer->setUserTeam($userTeam);
                 $newPlayer->setUnOfficialMatch($match);
-                $notif = new Notification();
-                $notif->setUser($userTeam->getUserId());
-                $notif->setMessage("Vous avez été sélectionné pour le match ".$name);
-                $this->getDoctrine()->getManager()->persist($notif);
                 $this->getDoctrine()->getManager()->persist($newPlayer);
                 $this->getDoctrine()->getManager()->flush();
             }
@@ -106,6 +103,35 @@ class UnOfficialMatchController extends AbstractController
      * @return JsonResponse
      */
     public function delUnOffPl (Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(["id" => $data["idUserTeam"]]);
+        $unOffMatch = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $data["idMatch"]]);
+        if ($unOffMatch->getIsHome()){
+            $name = "FC Ronvau Chaumont - ". $unOffMatch->getOpponent()->getName();
+        } else {
+            $name =  $unOffMatch->getOpponent()->getName() .' - ' . "FC Ronvau Chaumont";
+        }
+        $player = $this->getDoctrine()->getRepository(PlayerUnofficialMatch::class)->findOneBy(["userTeam" => $userTeam, 'unOfficialMatch' => $unOffMatch]);
+
+        $notif = new Notification();
+        $notif->setUser($userTeam->getUserId());
+        $notif->setMessage("Votre sélection pour le match ".$name. ' a été annulée');
+
+        $this->getDoctrine()->getManager()->persist($notif);
+        $this->getDoctrine()->getManager()->remove($player);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("Supprimé avec succès");
+    }
+
+    /**
+     * @Route("/delUnOffPl")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function acceptPlayer (Request $request){
         $data = $request->getContent();
         $data = json_decode($data, true);
 
@@ -149,5 +175,33 @@ class UnOfficialMatchController extends AbstractController
         $this->getDoctrine()->getManager()->flush();
 
         return $this->json("La date a bien été modifiée");
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/acceptConvoc")
+     * @throws \Exception
+     */
+    public function acceptConvoc(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(["id" => $data["userTeam"]]);
+        $unOffMatch = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $data["unOfficialMatch"]]);
+        $player = $this->getDoctrine()->getRepository(PlayerUnofficialMatch::class)->findOneBy(['userTeam' => $userTeam, 'unOfficialMatch' => $unOffMatch]);
+
+        if ($data["accept"] == true){
+            $player->setHasConfirmed(true);
+        } else {
+            $player->setHasRefused(true);
+            $player->setRefusedJustification($data["reason"]);
+        }
+
+        $this->getDoctrine()->getManager()->persist($player);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("OK");
     }
 }
