@@ -41,6 +41,11 @@ function getPersonnalCalendarInfo(userId){
         .then(response => response.data);
 }
 
+function getTeamMember(id){
+    return axios.get(API_URL +"/getTeamMember/"+ id)
+        .then(response => response.data);
+}
+
 export default {
-    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo
+    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo, getTeamMember
 }

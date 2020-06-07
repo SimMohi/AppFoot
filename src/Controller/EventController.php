@@ -26,13 +26,14 @@ class EventController extends AbstractController
         $data = json_decode($data, true);
 
         $eventTeam = $this->getDoctrine()->getRepository(EventsTeam::class)->findOneBy(['id' => $data["eventTeam"]]);
+        $event = $eventTeam->getIdEvents();
         $teamR = $eventTeam->getIdTeamRonvau();
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["user"]]);
 
         $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
 
         $userTeamEvent = new UserTeamEvent();
-        $userTeamEvent->setEventTeam($eventTeam);
+        $userTeamEvent->setEvent($event);
         $userTeamEvent->setUserTeam($userTeam);
 
         $this->getDoctrine()->getManager()->persist($userTeamEvent);
@@ -51,12 +52,13 @@ class EventController extends AbstractController
         $data = json_decode($data, true);
 
         $eventTeam = $this->getDoctrine()->getRepository(EventsTeam::class)->findOneBy(['id' => $data["eventTeam"]]);
+        $event = $eventTeam->getIdEvents();
         $teamR = $eventTeam->getIdTeamRonvau();
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["user"]]);
 
         $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
 
-        $userTeamEvent =  $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['eventTeam' => $eventTeam, 'userTeam' => $userTeam]);
+        $userTeamEvent =  $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['event' => $event, 'userTeam' => $userTeam]);
 
         $this->getDoctrine()->getManager()->remove($userTeamEvent);
         $this->getDoctrine()->getManager()->flush();
@@ -83,7 +85,7 @@ class EventController extends AbstractController
             foreach ($eventsTeam as $eventTeam){
                 $event = $eventTeam->getIdEvents();
                 $eventsArr = array();
-                $userTeamEvents =  $eventTeam->getUserTeamEvents();
+                $userTeamEvents =  $event->getUserTeamEvents();
                 $userTeamArr = array();
                 foreach ($userTeamEvents as $userTeamEvent){
                     $userTeamArr[] = $userTeamEvent->getUserTeam()->getId();
@@ -101,6 +103,37 @@ class EventController extends AbstractController
             }
             $response[] = $teamArr;
         }
+        return $this->json($response);
+    }
+
+    /**
+     * @Route("/getEventUserTeam/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getEventUserTeam(int $id){
+        $event = $this->getDoctrine()->getRepository(Event::class)->findOneBy(['id' => $id]);
+        $userTeamEvents = $event->getUserTeamEvents();
+        $teamEvents = $event->getEventsTeams();
+
+        $response = array();
+        foreach ($teamEvents as $teamEvent){
+            $userTeamArr = array();
+            $cat = $teamEvent->getIdTeamRonvau()->getCategory();
+            $userTeamArr["name"] = $cat;
+            foreach ($userTeamEvents as $userTeamEvent){
+                $userArr = [];
+                $user =  $userTeamEvent->getUserTeam()->getUserId();
+                $team =  $userTeamEvent->getUserTeam()->getTeamRonvauId();
+                if ($team == $teamEvent->getIdTeamRonvau()){
+                    $userArr["id"] = $user->getId();
+                    $userArr["name"] = $user->getLastname(). " " . $user->getFirstName();
+                    $userTeamArr["sub"][] = $userArr;
+                }
+            }
+            $response[] = $userTeamArr;
+        }
+
         return $this->json($response);
     }
 }

@@ -19,9 +19,9 @@ function findMatchDay(matchDay){
         .then(response => response.data["hydra:member"]);
 }
 
-function findCompetMatchDay(compet, matchDay){
+function findCompetMatchDay(compet){
     return axios
-        .get(API_URL + "/getMatchCompetition/"+compet+"/"+matchDay)
+        .get(API_URL + "/getMatchCompetition/"+compet)
         .then(response => response.data);
 }
 
@@ -71,9 +71,30 @@ function getUnOfMatchDetails (id){
 
 function getUnOfMatchCompet(idTeamR){
     return axios.get(API_URL + "/getUnOfMatchCompet/" + idTeamR )
-        .then(response => response.data);}
+        .then(response => response.data);
+}
+
+function scoreMatch(data) {
+    return axios.post(API_URL+ "/scoreMatch", data);
+}
+
+function newMatch(data){
+    return axios.post(API_URL+ "/newMatch", data);
+}
+
+function newDateMatch(data) {
+    return axios.post(API_URL+ "/newDateMatch", data);
+}
+
+function editDateUnOffMatch(data){
+    return axios.post(API_URL+ "/editDateUnOffMatch", data);
+}
+
+function editScore(data){
+    return axios.post(API_URL+ "/editScore", data);
+}
 
 export default {
     findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch,
-    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails
+    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails, scoreMatch, newMatch, newDateMatch, editDateUnOffMatch, editScore
 }

@@ -3,13 +3,19 @@ import {Link} from "react-router-dom";
 import ClubsAPI from "../services/ClubsAPI";
 import authAPI from "../services/authAPI";
 import Field from "../components/forms/Fields";
+import Modal from "react-bootstrap/Modal";
 
 const ClubsPage = props => {
 
+    const [show, setShow] = useState(false);
     const [clubs, setClubs] = useState([]);
     const isAdmin = authAPI.getIsAdmin();
     const [search, setSearch] = useState("");
     const [names, setNames] = useState([]);
+    const [selectedClub, setSelectedClub] = useState({
+        id: "",
+        name:""
+    })
 
     const FindClub = async () => {
         try {
@@ -26,15 +32,16 @@ const ClubsPage = props => {
         FindClub();
     }, []);
 
-    const handleDelete = id => {
+    const handleDelete = () => {
         const originalClubs = [...clubs];
-        setClubs(clubs.filter(club => club.id !== id));
+        setClubs(clubs.filter(club => club.id !== selectedClub.id));
         try {
-            ClubsAPI.deleteClub(id);
-            setClubs(data);
+            ClubsAPI.deleteClub(selectedClub.id);
         } catch (error) {
             console.log(error.response);
+            setClubs(originalClubs);
         }
+        setShow(false);
     };
 
     const changeSearch = ({ currentTarget }) => {
@@ -49,6 +56,14 @@ const ClubsPage = props => {
         }
         setClubs(clubArr)
         setSearch(value);
+    }
+
+    const openModal = (club) => {
+        setSelectedClub({
+            id: club.id,
+            name: club.name
+        })
+        setShow(true);
     }
 
     const adresseFormat = (address) => {
@@ -86,7 +101,7 @@ const ClubsPage = props => {
                         {isAdmin &&
                             <>
                                 <Link to={"/club/"+club.id} className={"btn btn-sm btn-primary mr-3"}>Modifier</Link>
-                                <button onClick={() => handleDelete(club.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                <button onClick={() => openModal(club)} className="btn btn-sm btn-danger">Supprimer</button>
                             </>
                         }
                     </td>
@@ -94,6 +109,13 @@ const ClubsPage = props => {
             )}
             </tbody>
         </table>
+        <Modal show={show} onHide={() => setShow(false)}>
+            <Modal.Body className={""}>
+                <h6>Etes vous sûr de vouloir supprimer le club {selectedClub.name} ? </h6>
+                <h6>Cette action est irréversible.</h6>
+                <button onClick={() => handleDelete()} className="btn btn-danger float-right">Supprimer</button>
+            </Modal.Body>
+        </Modal>
         </>
         );
 }

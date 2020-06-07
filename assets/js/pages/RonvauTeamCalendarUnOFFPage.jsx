@@ -7,19 +7,28 @@ import DateFunctions from "../services/DateFunctions";
 import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
 import authAPI from "../services/authAPI";
+import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
+import ClubsAPI from "../services/ClubsAPI";
+import ReactSearchBox from "react-search-box";
 
 const RonvauTeamCalendarUnOffPage = props => {
 
     const {id} = props.match.params;
-    // const isAdmin = authAPI.getIsAdmin();
-    const isAdmin = false;
+    const isAdmin = authAPI.getIsAdmin();
     const [matchTeamRonvau, setMatchTeamRonvau] = useState([]);
-    const [show, setShow] = useState([false, false]);
+    const [show, setShow] = useState([false, false, false]);
     const [editMatch, setEditMatch] = useState({
         id: "",
         date: "",
         hour: "20:00",
     });
+    const [clubs, setClubs] = useState([]);
+    const [selectClub, setSelectClub] = useState({});
+    const [newMatch, setNewMatch] = useState({
+        isHome: true,
+        date: DateFunctions.todayFormatYMD(),
+        time: "20:00"
+    })
     const [name, setName] = useState("");
 
     const [players, setPlayers] = useState([]);
@@ -64,7 +73,7 @@ const RonvauTeamCalendarUnOffPage = props => {
             return ;
         }
         try{
-            await MatcheAPI.editDateMatch(editMatch);
+            await MatcheAPI.editDateUnOffMatch(editMatch);
             toast.success("La date du match a bien été encodée");
         }catch (e) {
             toast.error("La date du match n'a pas pu être encodée");
@@ -84,6 +93,55 @@ const RonvauTeamCalendarUnOffPage = props => {
         handleShow(1);
     }
 
+    const addNonOffMatch = () => {
+        fetchClubs();
+        handleShow(2);
+    }
+
+    const handleChangeNewMatch = ({currentTarget}) => {
+        const { name, value } = currentTarget;
+        if (name == "isHome"){
+            setNewMatch({...newMatch, ["isHome"]: !newMatch.isHome});
+        } else {
+            setNewMatch({...newMatch, [name]: value});
+        }
+    }
+
+    const createMatch = async () => {
+        if (Object.keys(selectClub).length === 0 && selectClub.constructor === Object){
+            toast.warn("Pas d'équipe adverse");
+            return ;
+        }
+        let copy = JSON.parse(JSON.stringify(newMatch));
+        copy["teamRonvau"] = id ;
+        copy["opponent"] = selectClub.key;
+        try {
+            await UnOfficialMatchAPI.create(copy);
+            toast.success("Match encodés avec succès");
+        } catch (e) {
+            toast.error("Erreur lors de l'encodage du match");
+        }
+        handleClose(2);
+        fetchMatch();
+
+    }
+
+    const fetchClubs = async () => {
+        try {
+            const response = await ClubsAPI.findAll();
+            let clubArray = [];
+            for (let i = 0; i < response.length; i++) {
+                let club = {
+                    "key": response[i].id,
+                    "value": response[i].name
+                }
+                clubArray.push(club);
+            }
+            setClubs(clubArray);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     useEffect( () => {
         fetchMatch();
@@ -91,6 +149,12 @@ const RonvauTeamCalendarUnOffPage = props => {
 
     return(
         <>
+            <div className="d-flex">
+                <Link to={"/equipeRonvau/"+ id+ "/matchCalendar"} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+                <div className={" ml-auto"}>
+                    {isAdmin &&<button onClick={() => addNonOffMatch()} className="btn  btn-primary">Ajouter un match hors Championnat</button>}
+                </div>
+            </div>
             <h3 className={"text-center"}>{name}</h3>
             <table className="mt-5 table table-hover text-center container">
                 <thead className={""}>
@@ -123,7 +187,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                             <button onClick={() => editMatchDate(mtr)}
                                     className="btn btn-sm btn-success">Date du match
                             </button>
-                            <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
+                            <Link to={"/unOffMatch/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
                         </>
                         ||
                         ""
@@ -131,7 +195,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                         </td>
                         {isAdmin &&
                         <td className={"col-2"}>
-                            <Link to={"/match/" + mtr.id + "/encode"}
+                            <Link to={"/unOffMatch/" + mtr.id + "/encode"}
                                   className={"btn btn-sm btn-secondary"}>Encodage</Link>
                         </td>
                         ||
@@ -146,7 +210,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                 )}
                 </tbody>
             </table>
-            <Modal show={show[0]} onHide={() => handleClose(1)}>
+            <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
                     Encoder la date et l'heure du match
                 </Modal.Header>
@@ -188,6 +252,34 @@ const RonvauTeamCalendarUnOffPage = props => {
                     </div>
 
 
+                </Modal.Body>
+            </Modal>
+            <Modal show={show[2]} onHide={() => handleClose(2)}>
+                <Modal.Header closeButton>
+                    Programmer un match
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <div className="mb-3">
+                        <ReactSearchBox
+                            placeholder="Club adverse"
+                            data={clubs}
+                            onSelect={record => setSelectClub(record)}
+                            onFocus={() => {
+                            }}
+                            onChange={() => {
+                            }}
+                            fuseConfigs={{
+                                threshold: 0.05,
+                            }}
+                        />
+                    </div>
+                    <Field name={"date"} label={"Jour du match"} type={"date"} value={newMatch.date} onChange={handleChangeNewMatch}/>
+                    <Field name={"time"} label={"heure du match"} type={"time"} value={newMatch.time} onChange={handleChangeNewMatch}/>
+                    <div className={"custom-control custom-checkbox mb-3 mt-3"}>
+                        <input type="checkbox" className="custom-control-input" name={"isHome"} id={"isHome"} checked={newMatch.isHome} onChange={handleChangeNewMatch}/>
+                        <label className="custom-control-label" htmlFor={"isHome"}>Se joue à domicile</label>
+                    </div>
+                    <button onClick={() => createMatch()} className="btn btn-primary float-right">Valider</button>
                 </Modal.Body>
             </Modal>
         </>

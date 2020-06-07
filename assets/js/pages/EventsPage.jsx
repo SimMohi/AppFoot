@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-
 import EventsAPI from "../services/EventsAPI";
-import EventPage from "./EventPage";
-import Header from "../components/Header";
 import DateFunctions from "../services/DateFunctions";
-import authAPI from "../services/authAPI";
+import {Link} from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 
 const EventsPage = props => {
     const [events, setEvents] = useState([]);
-    const [show, setShow] = useState({
-        state: false,
-        value: "",
+    const [show, setShow] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState({
+        id: "",
+        name:"",
     });
 
 
@@ -29,20 +28,29 @@ const EventsPage = props => {
     }, []);
 
 
-    const handleDelete = id => {
+    const handleDelete = () => {
         const originalEvents = [...events];
-        setEvents(events.filter(event => event.id !== id));
+        setEvents(events.filter(event => event.id !== selectedEvent.id));
         try {
-            EventsAPI.deleteEvent(id);
+            EventsAPI.deleteEvent(selectedEvent.id);
         } catch (error) {
             console.log(error.response);
             setEvents(originalEvents);
         }
+        setShow(false);
     };
 
+    const openModal = (event) => {
+        setSelectedEvent({
+            id: event.id,
+            name: event.name
+        })
+        setShow(true);
+    }
+
     return ( <>
-        <Header title={"Liste des événements"} other={<button className="btn btn-outline-primary" onClick={() => setShow({["value"]: "new", ["state"]: !show.state})}>Ajouter un événement</button>}/>
-        {show.state && <EventPage id={show.value}/>}
+        <Link to={"/events/new"} className={"btn btn-primary float-right"}>Créer un événement</Link>
+        <h3 className={"mb-5"}>Liste des différents événements</h3>
         <table className="table table-hover">
             <thead>
             <tr>
@@ -59,13 +67,21 @@ const EventsPage = props => {
                     <td>{event.description}</td>
                     <td>{DateFunctions.dateFormatFr(event.date)}{typeof event.endDate != 'undefined' && " au " + DateFunctions.dateFormatFr(event.endDate)}</td>
                     <td>
-                        <button className="btn btn-sm btn-outline-primary mr-3" onClick={() => setShow({["value"]: event.id, ["state"]: true})}>Modifier l'événement</button>
-                        <button onClick={() => handleDelete(event.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                        <Link to={"/events/"+event.id+"/inscrit"} className={"btn btn-sm btn-success mr-3"}>Liste des inscrits</Link>
+                        <Link to={"/events/"+event.id} className={"btn btn-sm btn-outline-primary mr-3"}>Modifier l'événement</Link>
+                        <button onClick={() => openModal(event)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>
             )}
             </tbody>
         </table>
+        <Modal show={show} onHide={() => setShow(false)}>
+            <Modal.Body className={""}>
+                <h6>Etes vous sûr de vouloir supprimer l'événement {selectedEvent.name} ? </h6>
+                <h6>Cette action est irréversible.</h6>
+                <button onClick={() => handleDelete()} className="btn btn-danger float-right">Supprimer</button>
+            </Modal.Body>
+        </Modal>
     </>);
 }
 export default EventsPage;

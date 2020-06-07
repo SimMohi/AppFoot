@@ -49,6 +49,11 @@ function unSubUTE(data){
     return axios.post(API_URL + "/unSubscribeUTE", data);
 }
 
+function getEventUserTeam(id){
+    return axios.get(API_URL+ "/getEventUserTeam/" + id)
+        .then(response => response.data);
+}
+
 export default {
-    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam, createUTE, unSubUTE, getEventUser
+    findAll, find, create, update, deleteEvent, addTeams, getEventsTeam, createUTE, unSubUTE, getEventUser, getEventUserTeam
 }

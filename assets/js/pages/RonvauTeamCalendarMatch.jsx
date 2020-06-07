@@ -106,8 +106,13 @@ const RonvauTeamCalendarMatch = props => {
 
     return(
         <>
+            <div className="d-flex">
+                <Link to={"/equipeRonvau/"+ id+ "/select"} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+                <div className={" ml-auto"}>
+                    <Link to={"/equipeRonvau/"+id+"/unOffMatchCalendar"} className={"btn btn-primary float-right mb-3"}>Voir matchs non offciels</Link>
+                </div>
+            </div>
             <h3 className={"text-center"}>{name}</h3>
-            <Link to={"/equipeRonvau/"+id+"/unOffMatchCalendar"} className={"btn btn-primary float-right mb-3"}>Voir matchs non offciels</Link>
             <table className="mt-5 table table-hover text-center">
                 <thead className={""}>
                     <tr className={"row"}>

@@ -234,19 +234,25 @@ const Navbar = ({ history }) => {
                         </> ||
                             <>
                                 <li className="nav-item">
-                                    <img src="img/flag-regular.svg" alt=""/>
-                                    <button type={"button"} onClick={() => handleShow(0)}>
-                                        {notifications.convocations.length+notifications.notif.length}
-                                    </button>
+                                    <div className="d-flex flex-column">
+                                        <img src="img/flag-regular.svg" alt="" id={"flag"}/>
+                                        <button type={"button"} className={"btn btn-danger"} onClick={() => handleShow(0)}>
+                                            {notifications.convocations.length+notifications.notif.length}
+                                        </button>
+                                    </div>
                                 </li>
                                 <li className="nav-item">
-                                    <NavLink to={"/profil"} className="btn btn-danger ml-2 mr-2">
-                                        Mon profil
-                                    </NavLink>
+                                    <div>
+                                        <NavLink to={"/profil"} className="btn btn-danger ml-2 mr-2 ">
+                                            Mon profil
+                                        </NavLink>
+                                    </div>
                                 </li>
-                                <li className="nav-item">
-                                    <button onClick={handleLogout} className={"btn btn-danger"}>Déconnexion</button>
-                                </li>
+                                <div>
+                                    <li className="nav-item">
+                                        <button onClick={handleLogout} className={"btn btn-danger"}>Déconnexion</button>
+                                    </li>
+                                </div>
                             </>
                         }
                     </ul>

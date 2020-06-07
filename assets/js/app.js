@@ -17,6 +17,7 @@ import ClubPage from "./pages/ClubPage";
 import CompetitionViewPage from "./pages/CompetitionViewPage";
 import MatchPagesUser from "./pages/MatchsPageUser";
 import MatchPages from "./pages/MatchsPage";
+import MatchesPages from "./pages/MatchesPage";
 import CovoitsPage from "./pages/CovoitsPage";
 import CovoitEditPage from "./pages/CovoitEditPage";
 import {ToastContainer} from "react-toastify";
@@ -43,6 +44,10 @@ import EventsUser from "./pages/EventsUser";
 import RonvauTeamMemberUser from "./pages/RonvauTeamMemberUser";
 import RonvauTeamCalendarUnOffPage from "./pages/RonvauTeamCalendarUnOFFPage";
 import SelectPlayerUnOffMatchPage from "./pages/SelectPlayerUnOffMatchPage";
+import EventPage from "./pages/EventPage";
+import EventSubPage from "./pages/EventSubPage";
+import RonvauTeamMember from "./pages/RonvauTeamMember";
+import EncodeUnOffMatchPage from "./pages/encodeUnOffPage";
 
 require("../css/app.css");
 
@@ -74,28 +79,30 @@ const App = () => {
                         <Route path={"/register"} component={RegisterPage}/>
                         <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
-                        {isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchPages}/>}
+                        {isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchesPages}/>}
                         {!isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchPagesUser}/>}                        }
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
                         <PrivateRoute path={"/competition/:id/équipes"} component={CompetitionTeamsPage}/>
                         <PrivateRoute path={"/competition/:id"} component={CompetitionPage}/>
                         {isAdmin && <PrivateRoute path={"/competition"} component={CompetitionsPage}/>}
                         {!isAdmin && <PrivateRoute path={"/competition"} component={CompetitionsPageUser}/>}
+                        {isAdmin && <PrivateRoute path={"/events/:id/inscrit"} component={EventSubPage}/>}
+                        {isAdmin && <PrivateRoute path={"/events/:id"} component={EventPage}/>}
                         {isAdmin && <PrivateRoute path={"/events"} component={EventsPage}/>}
                         {!isAdmin && <PrivateRoute path={"/events"} component={EventsUser}/>}
                         <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>
                         <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>
-                        {isAdmin &&
-                            <PrivateRoute path={"/club/:id"} component={ClubPage}/>
-                        }
+                        {isAdmin && <PrivateRoute path={"/club/:id"} component={ClubPage}/>}
                         <PrivateRoute path={"/club"} component={ClubsPage}/>
                         <PrivateRoute path={"/chat"} component={ChatPage}/>
                         <PrivateRoute path={"/match/:id/encode"} component={EncodeMatchPage}/>
+                        <PrivateRoute path={"/unOffMatch/:id/encode"} component={EncodeUnOffMatchPage}/>
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
                         <PrivateRoute path={"/unOffMatch/:id/select"} component={SelectPlayerUnOffMatchPage}/>
+                        {isAdmin && <PrivateRoute path={"/equipeRonvau/:id/userAdmin"} component={RonvauTeamMember}/>}
                         <PrivateRoute path={"/equipeRonvau/:id/user"} component={RonvauTeamMemberUser}/>
-                        <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamSelectPage}/>
+                        <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamMemberUser}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>
                         <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
                         <PrivateRoute path={"/equipeRonvau/:id/unOffMatchCalendar"} component={RonvauTeamCalendarUnOffPage}/>

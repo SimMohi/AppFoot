@@ -53,7 +53,7 @@ class Competition
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"competitions_read"})
+     * @Groups({"competitions_read", "team_ronvau_read"})
      */
     private $name;
 

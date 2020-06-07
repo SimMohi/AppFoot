@@ -84,6 +84,7 @@ class Matche
     public function __construct()
     {
         $this->playerMatches = new ArrayCollection();
+        $this->isOver = false;
     }
 
     public function getId(): ?int

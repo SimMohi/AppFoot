@@ -293,7 +293,7 @@ class RonvauTeamController extends AbstractController
                 $eventRes["teamId"] = $teamR->getId();
                 $eventRes["teamCat"] = $teamR->getCategory();
                 $eventRes["eventTeamId"] = $eventsTeam->getId();
-                $userTeamEvent = $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['userTeam' => $userTeam, 'eventTeam' => $eventsTeam]);
+                $userTeamEvent = $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['userTeam' => $userTeam, 'event' => $event]);
                 if ($userTeamEvent === null){
                     $eventRes["sub"] = false;
                 }
@@ -595,5 +595,63 @@ class RonvauTeamController extends AbstractController
         }
 
         return $this->json("Vote enregistré");
+    }
+
+    /**
+     * @Route("/getTeamMember/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getTeamMember (int $id){
+
+        $team = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $id]);
+        $userTeams = $team->getUserTeams();
+        $response = [];
+        $response["category"] = $team->getCategory();
+        $response["coachs"] = [];
+        $response["players"] = [];
+        $response["supporters"] = [];
+        foreach ($userTeams as $userTeam) {
+            $utArr = [];
+            $utArr["name"] = $userTeam->getUserId()->getLastName() . " " . $userTeam->getUserId()->getFirstName();
+            $utArr["id"] = $userTeam->getUserId()->getId();
+            $play = 0;
+            $goal = 0;
+            $yellow = 0;
+            $red = 0;
+            $trainingN = 0;
+            if ($userTeam->getIsPlayer()) {
+                $matchs = $userTeam->getPlayerMatches();
+                $trainings = $userTeam->getPlayerTrainings();
+                foreach ($matchs as $match) {
+                    if ($match->getPlayed()) {
+                        $play += 1;
+                        $goal += $match->getGoal();
+                        $yellow += $match->getYellowCard();
+                        $red += $match->getRedCard();
+                    }
+                }
+                foreach ($trainings as $training) {
+                    if ($training->getWasPresent()) {
+                        $trainingN += 1;
+                    }
+                }
+                $utArr["train"] = $trainingN;
+                $utArr["play"] = $play;
+                $utArr["goal"] = $goal;
+                $utArr["yellow"] = $yellow;
+                $utArr["red"] = $red;
+                $response["players"][] = $utArr;
+            }
+            if ($userTeam->getIsStaff()) {
+                $utArr["tel"] = $userTeam->getUserId()->getGsm();
+                $utArr["email"] = $userTeam->getUserId()->getEmail();
+                $response["coachs"][] = $utArr;
+            } elseif ($userTeam->getIsPlayer() == false && $userTeam->getIsStaff() == false){
+                $response["supporters"][] = $utArr;
+            }
+        }
+
+        return $this->json($response);
     }
 }

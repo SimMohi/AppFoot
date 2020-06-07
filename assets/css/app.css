@@ -5,3 +5,8 @@
 .bgGrey{
     background-color: #e8eaed;
 }
+
+#flag{
+    height: 20px;
+    width: 52px;
+}

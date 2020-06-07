@@ -4,8 +4,10 @@
 namespace App\Controller;
 
 
+use App\Entity\Club;
 use App\Entity\Notification;
 use App\Entity\PlayerUnofficialMatch;
+use App\Entity\TeamRonvau;
 use App\Entity\UnOfficialMatch;
 use App\Entity\UserTeam;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,6 +27,8 @@ class UnOfficialMatchController extends AbstractController
         $response["called"] = [];
         $response["notCalled"] = [];
         $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $id]);
+        $response["id"] =  $match->getId();
+
         if ($match->getIsHome()){
             $response["name"] = "FC Ronvau Chaumont - ".$match->getOpponent()->getName();
         } else {
@@ -127,7 +131,7 @@ class UnOfficialMatchController extends AbstractController
     }
 
     /**
-     * @Route("/delUnOffPl")
+     * @Route("/acceptPlayer")
      * @param Request $request
      * @return JsonResponse
      */
@@ -200,6 +204,36 @@ class UnOfficialMatchController extends AbstractController
         }
 
         $this->getDoctrine()->getManager()->persist($player);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("OK");
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/createUnOff")
+     * @throws \Exception
+     */
+    public function createUnOff(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $opponent = $this->getDoctrine()->getRepository(Club::class)->findOneBy(["id" => $data["opponent"]]);
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(["id" => $data["teamRonvau"]]);
+
+        $unOff = new UnOfficialMatch();
+        $date = new \DateTime($data["date"]);
+        $start = explode(":", $data["time"]);
+        $date->setTime($start[0], $start[1], 0);
+        $unOff->setDate($date);
+        $unOff->setIsHome($data["isHome"]);
+        $unOff->setTeamRonvau($teamR);
+        $unOff->setOpponent($opponent);
+
+
+        $this->getDoctrine()->getManager()->persist($unOff);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->json("OK");

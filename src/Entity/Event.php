@@ -59,9 +59,15 @@ class Event
      */
     private $endDate;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UserTeamEvent::class, mappedBy="event", orphanRemoval=true)
+     */
+    private $userTeamEvents;
+
     public function __construct()
     {
         $this->eventsTeams = new ArrayCollection();
+        $this->userTeamEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,6 +150,37 @@ class Event
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UserTeamEvent[]
+     */
+    public function getUserTeamEvents(): Collection
+    {
+        return $this->userTeamEvents;
+    }
+
+    public function addUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if (!$this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents[] = $userTeamEvent;
+            $userTeamEvent->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserTeamEvent(UserTeamEvent $userTeamEvent): self
+    {
+        if ($this->userTeamEvents->contains($userTeamEvent)) {
+            $this->userTeamEvents->removeElement($userTeamEvent);
+            // set the owning side to null (unless already changed)
+            if ($userTeamEvent->getEvent() === $this) {
+                $userTeamEvent->setEvent(null);
+            }
+        }
 
         return $this;
     }

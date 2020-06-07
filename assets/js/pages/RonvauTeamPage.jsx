@@ -40,8 +40,6 @@ const RonvauTeamPage = props => {
         select: ""
     });
 
-    console.log(trainingDay);
-
     const fetchCompetition = async () => {
         try {
             const competitions = await RonvauTeamAPI.findCompetRonvau();
@@ -110,6 +108,8 @@ const RonvauTeamPage = props => {
         }
         try {
             if (editing){
+                delete copyRonvauTeam["userTeams"];
+                delete copyRonvauTeam["team"];
                 await RonvauTeamAPI.update(id, copyRonvauTeam);
                 toast.success("L'équipe a bien été modifiée");
                 props.history.replace("/equipeRonvau");
@@ -259,37 +259,33 @@ const RonvauTeamPage = props => {
 
     return  (
         <>
-            {!editing && <h1>Création d'une nouvelle équipe</h1> || <h1>Modification d'une équipe</h1>}
-            <div className={"container"}>
+            <Link to={"/equipeRonvau"} className={"btn btn-info mb-5"}>Retour à la liste</Link>
+            <Link to={"/equipeRonvau/"+ id+"/userAdmin"} className={"btn btn-lg btn-primary mb-5 mr-3 float-right"}>Gestion des joueurs</Link>
+            <div className="row">
+                <div className="col-9">
+                    {!editing && <h1 className={"mb-5"}>Création d'une nouvelle équipe</h1> || <h1 className={"mb-5"}>Modification d'une équipe</h1>}
+                </div>
+                <div className="col-3">
+
+                </div>
+            </div>
+            <div className={""}>
                 <form onSubmit={handleSubmit}>
                     <div className="row">
-                        <div className="col-8">
-                            <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
-                            <Field name={"coach"} label={"Coach de l'équipe"} type={"text"} value={ronvauTeam.coach} onChange={handleChange} error={errors.coach}/>
+                        <div className="col-7">
+                            <div className="row">
+                                <div className="col-8">
+                                    <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
+                                    <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                                </div>
+                                <div className="col-4">
+                                    <div className="from-group mt-4">
+
+                                    </div>
+                                </div>
+                            </div>
                             {editing &&
                                 <>
-                                    <table className="mt-5 table table-hover text-center">
-                                        <thead>
-                                        <tr>
-                                            <th>Nom</th>
-                                            <th>joueur</th>
-                                            <th>Staff</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {ronvauTeam["userTeams"].map(userTeam =>
-                                            <tr key={userTeam.id}>
-                                                <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
-                                                <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                                <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                                <td>
-                                                    <button type={"button"} onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
-                                                </td>
-                                            </tr>
-                                        )}
-                                        </tbody>
-                                    </table>
                                     <h5 className={"mt-5"}>Programmation des entraînements</h5>
                                     <div className={"m-4 container"}>
                                         <table className="mt-5 table table-hover text-center">
@@ -353,7 +349,7 @@ const RonvauTeamPage = props => {
                                 </>
                             }
                         </div>
-                        <div className="col-4">
+                        <div className="col-5">
                             <div className="col">
                                 {editing &&
                                 <>
@@ -384,43 +380,12 @@ const RonvauTeamPage = props => {
                                         </>
                                     ||
                                         <>
-                                            <h5>L'équipe est liée à la compétition: </h5>
-                                            <h5>
-                                                {ronvauTeam["team"]["competition"]["name"]}
-                                                <button type={"button"} onClick={handleDeleteCompet} className="btn btn-sm btn-danger float-right">Supprimer</button>
-                                            </h5>
+                                            <h5>L'équipe est liée à la compétition: {ronvauTeam["team"]["competition"]["name"]}</h5>
+                                            <button type={"button"} onClick={handleDeleteCompet} className="btn btn-sm btn-danger">Supprimer l'équipe de cette compétition</button>
                                         </>
                                     }
-                                    <div className="mt-3 p-0">
-                                        <ReactSearchBox
-                                            placeholder="Ajouter un utilisateur à l'équipe"
-                                            data={users}
-                                            onSelect={record => setSelectUser({...selectUser, ["id"]: record["key"]})}
-                                            onFocus={() => {
-                                            }}
-                                            onChange={() => {}}
-                                            fuseConfigs={{
-                                                threshold: 0.05,
-                                            }}
-                                        />
-                                    </div>
-                                    <select className="form-control mt-3" name={"role"} value={selectUser["role"]}
-                                            onChange={handleChangeSelect}>
-                                        <option value={0}>Joueur</option>
-                                        <option value={1}>Coach</option>
-                                        <option value={2}>Coach - Joueur</option>
-                                    </select>
-                                    <div className={"mt-3 mb-5"}>
-                                        <button type={"button"} onClick={() => AddUserTeam()}
-                                                className="btn btn-primary ml-auto d-block">Ajouter
-                                        </button>
-                                    </div>
                                 </>
                                 }
-                                <div className="from-group mt-5">
-                                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
-                                    <Link to={"/equipeRonvau"} className={"btn btn-link"}>Retour à la liste</Link>
-                                </div>
                             </div>
                         </div>
                     </div>

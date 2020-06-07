@@ -11,7 +11,7 @@ import Modal from "react-bootstrap/Modal";
 
 const EventPage = props => {
 
-    const id = props.id;
+    const {id} = props.match.params;
     const [editing, setEditing] = useState(false);
     const [ronvauTeams, setRonvauTeams] = useState([]);
     const [selectRt, setSelectRt] = useState([]);
@@ -114,11 +114,15 @@ const EventPage = props => {
             return ;
         }
         try {
+            let copy = JSON.parse(JSON.stringify(event));
+            copy["date"] = new Date(copy["date"]+" "+ copy["start"]);
+            copy["endDate"] = new Date(copy["endDate"]+" "+ copy["end"]);
+            if (copy["date"] > copy["endDate"]){
+                toast.warn("Date de fin antérieur à celle de début");
+                return ;
+            }
+            delete copy["eventsTeams"];
             if (editing){
-                let copy = JSON.parse(JSON.stringify(event));
-                copy["date"] = new Date(copy["date"]+" "+ copy["start"]);
-                copy["endDate"] = new Date(copy["endDate"]+" "+ copy["end"]);
-                delete copy["eventsTeams"];
                 await EventsAPI.update(id, copy);
             } else {
                 if (event.date < DateFunctions.todayFormatYMD()){
@@ -127,7 +131,8 @@ const EventPage = props => {
                     setErrors(apiErrors);
                     return ;
                 }
-                await EventsAPI.create(event);
+                await EventsAPI.create(copy);
+                toast.success("Evenement créé avec succès");
             }
             setErrors({});
         } catch (error) {
@@ -140,8 +145,7 @@ const EventPage = props => {
                 setErrors(apiErrors);
             }
         }
-        return ;
-        window.location.reload();
+        window.history.back();
     };
 
 
@@ -152,9 +156,9 @@ const EventPage = props => {
         }
     }, [id]);
 
-
     return  (
         <>
+            <Link to={"/events"} className={"btn btn-primary float-right mb-3"}>Retour à la liste</Link>
             {!editing && <h5 className={"mb-3"}>Création d'un nouvel événement</h5> ||
             <div className={"container"}>
                 <div className="row">
@@ -189,28 +193,43 @@ const EventPage = props => {
                                 </div>
                             </div>
                             <div className="col-6">
-                                <div className="form-check ">
-                                    <input className="form-check-input" type="checkbox" id={"allRt"} checked={selectAll} onChange={selectAllRt}/>
-                                    <label className="form-check-label" htmlFor={"allRt"}>
-                                        Inviter toutes les équipes
-                                    </label>
-                                </div>
-                                {ronvauTeams.map((rt, index) =>
-                                    <div key={index} className="form-check">
-                                        <input className="form-check-input" type="checkbox" checked={selectRt[index]["value"]} onChange={() => changeSelect(index)} id={"rt"+ rt.id}/>
-                                        <label className="form-check-label" htmlFor={"rt"+ rt.id}>
-                                            {rt.category}
-                                        </label>
+                                <h5>Inviter des équipes à cet événement</h5>
+                                <div className={"ml-5"}>
+                                    <div className="form-group">
+                                        <div className="custom-control custom-checkbox ">
+                                            <input className="custom-control-input" type="checkbox" id={"allRt"} checked={selectAll} onChange={selectAllRt}/>
+                                            <label className="custom-control-label" htmlFor={"allRt"}>
+                                                Inviter toutes les équipes
+                                            </label>
+                                        </div>
+                                        {ronvauTeams.map((rt, index) =>
+                                            <div key={index} className="custom-control custom-checkbox ">
+                                                <input className="custom-control-input" type="checkbox" checked={selectRt[index]["value"]} onChange={() => changeSelect(index)} id={"rt"+ rt.id}/>
+                                                <label className="custom-control-label" htmlFor={"rt"+ rt.id}>
+                                                    {rt.category}
+                                                </label>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-                                <button type={"button"} onClick={addTeams} className="btn btn-outline-primary mt-3">Inviter</button>
+                                    <button type={"button"} onClick={addTeams} className="btn btn-outline-primary mt-3">Inviter</button>
+                                </div>
                             </div>
                         </>
                         ||
                         <div className={"mb-5 col-12"}>
                             <Field name={"name"} label={"Nom de l'événement"} type={"text"} value={event.name} onChange={handleChange} error={errors.name}/>
                             <Field name={"description"} label={"Description de l'événement"} type={"text"} value={event.description} onChange={handleChange} error={errors.description}/>
-                            <Field name={"date"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Jour de l'événement"} type={"date"} value={event.date} onChange={handleChange} error={errors.date}/>
+                            <div className="row">
+                                <div className="col-6">
+                                    <Field name={"date"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Date de début de l'événement"} type={"date"} value={event.date} onChange={handleChange} error={errors.date}/>
+                                    <Field name={"start"} label={"heure de début"} type={"time"} value={event.start} onChange={handleChange} error={errors.date}/>
+                                </div>
+                                <div className="col-6">
+                                    <Field name={"endDate"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Date de fin de l'événement"} type={"date"} value={event.endDate} onChange={handleChange}/>
+                                    <Field name={"end"} label={"Heure de fin"} type={"time"} value={event.end} onChange={handleChange} error={errors.date}/>
+                                </div>
+                            </div>
+
                             <div className="from-group">
                                 <button type={"button"} onClick={handleSubmit} className="btn btn-success">Enregistrer</button>
                             </div>

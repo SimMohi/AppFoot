@@ -11,11 +11,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 /**
  * @ORM\Table(name="user_team_event", uniqueConstraints={
  *     @UniqueConstraint(name="user_team_event_unique",
- *         columns={"user_team_id", "event_team_id"})
+ *         columns={"user_team_id", "event_id"})
  *     }
  * )
  * @ORM\Entity(repositoryClass=UserTeamEventRepository::class)
- * @UniqueEntity(fields={"userTeam", "eventTeam"}, message="Vous êtes déjà inscrit à cet événement")
+ * @UniqueEntity(fields={"userTeam", "event"}, message="Vous êtes déjà inscrit à cet événement")
  * @ApiResource
  */
 class UserTeamEvent
@@ -30,10 +30,10 @@ class UserTeamEvent
 
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity=EventsTeam::class, inversedBy="userTeamEvents")
+     * @ORM\ManyToOne(targetEntity=Event::class, inversedBy="userTeamEvents")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $eventTeam;
+    private $event;
 
     public function getUserTeam(): ?UserTeam
     {
@@ -47,14 +47,14 @@ class UserTeamEvent
         return $this;
     }
 
-    public function getEventTeam(): ?EventsTeam
+    public function getEvent(): ?Event
     {
-        return $this->eventTeam;
+        return $this->event;
     }
 
-    public function setEventTeam(?EventsTeam $eventTeam): self
+    public function setEvent(?Event $event): self
     {
-        $this->eventTeam = $eventTeam;
+        $this->event = $event;
 
         return $this;
     }
