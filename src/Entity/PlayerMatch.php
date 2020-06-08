@@ -60,7 +60,7 @@ class PlayerMatch
     private $yellowCard;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"matchs_read"})
      */
     private $redCard;
@@ -161,12 +161,12 @@ class PlayerMatch
         return $this;
     }
 
-    public function getRedCard(): ?int
+    public function getRedCard(): ?bool
     {
         return $this->redCard;
     }
 
-    public function setRedCard(int $redCard): self
+    public function setRedCard(bool $redCard): self
     {
         $this->redCard = $redCard;
 

@@ -7,6 +7,7 @@ import DateFunctions from "../services/DateFunctions";
 import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
 import authAPI from "../services/authAPI";
+import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
 
 const RonvauTeamCalendarMatch = props => {
 
@@ -20,6 +21,8 @@ const RonvauTeamCalendarMatch = props => {
         hour: "20:00",
     });
     const [name, setName] = useState("");
+
+    const [convocP, setConvocP] = useState([]);
 
     const [players, setPlayers] = useState([]);
 
@@ -99,6 +102,12 @@ const RonvauTeamCalendarMatch = props => {
         handleShow(1);
     }
 
+    const convoc = async (idMatch) => {
+        const response = await MatcheAPI.calledPlayerMatch(idMatch);
+        setConvocP(response);
+        handleShow(2);
+    }
+
 
     useEffect( () => {
         fetchMatch();
@@ -152,19 +161,21 @@ const RonvauTeamCalendarMatch = props => {
                             ""
                         }
                         </td>
+                        <td className={"col-2"}>
                         {isAdmin &&
-                            <td className={"col-2"}>
-                                <Link to={"/match/" + mtr.id + "/encode"}
-                                      className={"btn btn-sm btn-secondary"}>Encodage</Link>
-                            </td>
-                            ||
-                            mtr.isOver &&
-                            <td className={"col-2"}>
+                            <Link to={"/match/" + mtr.id + "/encode"}
+                                  className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                        ||
+                        !mtr.isOver &&
                                 <button onClick={() => detailsMatch(mtr)}
                                         className="btn btn-sm btn-secondary">Détails
                                 </button>
-                            </td>
+                        ||
+                            <button onClick={() => convoc(mtr.id)}
+                                    className="btn btn-sm btn-secondary">Liste des convoqués
+                            </button>
                         }
+                        </td>
                     </tr>
                 )}
                 </tbody>
@@ -209,8 +220,16 @@ const RonvauTeamCalendarMatch = props => {
                             )}
                         </div>
                     </div>
-
-
+                </Modal.Body>
+            </Modal>
+            <Modal show={show[2]} onHide={() => handleClose(2)}>
+                <Modal.Header closeButton>
+                    Liste des convoqués pour ce match
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    {convocP.map((p, index) =>
+                        <p key={index}>{p}</p>
+                    )}
                 </Modal.Body>
             </Modal>
         </>

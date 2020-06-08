@@ -94,7 +94,12 @@ function editScore(data){
     return axios.post(API_URL+ "/editScore", data);
 }
 
+function calledPlayerMatch(id) {
+    return axios.get(API_URL + "/calledPlayerMatch/" + id )
+        .then(response => response.data);
+}
+
 export default {
     findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch,
-    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails, scoreMatch, newMatch, newDateMatch, editDateUnOffMatch, editScore
+    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails, scoreMatch, newMatch, newDateMatch, editDateUnOffMatch, editScore, calledPlayerMatch
 }

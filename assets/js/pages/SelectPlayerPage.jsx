@@ -3,6 +3,7 @@ import MatcheAPI from "../services/MatcheAPI";
 import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import {toast} from "react-toastify";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
+import {Link} from "react-router-dom";
 const SelectPlayerMatchPage = props => {
 
     const {id} = props.match.params;
@@ -106,6 +107,7 @@ const SelectPlayerMatchPage = props => {
 
     return(
         <>
+            <button onClick={() =>  window.history.back()} className={"btn btn-info mr-3 mb-5"}>Retour</button>
             <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
             <div className="">
                 <div className="row">

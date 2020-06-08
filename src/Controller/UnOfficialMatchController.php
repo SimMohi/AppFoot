@@ -30,9 +30,21 @@ class UnOfficialMatchController extends AbstractController
         $response["id"] =  $match->getId();
 
         if ($match->getIsHome()){
-            $response["name"] = "FC Ronvau Chaumont - ".$match->getOpponent()->getName();
+            $response["name"] = "FC Ronvau Chaumont - ".$match->getOpponent()->getName(). " : " . $match->getteamRonvau()->getCategory();
+            $response["home"] = true;
         } else {
             $response["name"] = $match->getOpponent()->getName(). " - FC Ronvau Chaumont";
+            $response["home"] = false;
+        }
+        if ( $match->getRonvauTeamGoal() === null){
+            $response["ronvauGoal"] = "";
+        } else {
+            $response["ronvauGoal"] = $match->getRonvauTeamGoal();
+        }
+        if ( $match->getOpponentGoal() === null){
+            $response["opponentGoal"] = "";
+        } else {
+            $response["opponentGoal"] = $match->getOpponentGoal();
         }
         $response["cat"] = $match->getTeamRonvau()->getCategory();
         $response["date"] = $match->getDate();
@@ -63,12 +75,85 @@ class UnOfficialMatchController extends AbstractController
                 } else {
                     $user["hasRefused"] = false;
                 }
+                if ($called->getPlayed()){
+                    $user["played"] = $called->getPlayed();
+                } else {
+                    $user["played"] = false;
+                }
+                if ($called->getRedCard()){
+                    $user["red"] = $called->getRedCard();
+                } else {
+                    $user["red"] = false;
+                }
+
+                $user["goal"] = $called->getGoal();
+                $user["yellow"] = $called->getYellowCard();
+
                 $user["refusedJustification"] = $called->getRefusedJustification();
                 $response["called"][] = $user;
             }
         }
         $response["accepted"] = $accepted;
         $response["total"] = count($response["called"]);
+        return $this->json($response);
+    }
+
+    /**
+     * @Route("/calledPlayerUnOffMatch/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function calledPlayerUnOffMatch(int $id)
+    {
+        $response = [];
+        $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $id]);
+        $called = $match->getPlayerUnofficialMatches();
+
+        foreach ($called as $call){
+            $response[] = $call->getUserTeam()->getUserId()->getFirstName() . " " . $call->getUserTeam()->getUserId()->getLastName();
+        }
+        return $this->json($response);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/postEncodeUnOffMatch")
+     */
+    public function postEncodeUnOffMatch(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+        $users = $data["players"];
+        $response = array();
+        $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(['id' => $data["idMatch"]]);
+        $match->setRonvauTeamGoal($data["goalRonvau"]);
+        $match->setOpponentGoal($data["opponentGoal"]);
+        $match->setIsOver(true);
+
+        foreach ($users as $user) {
+            $matchPlayer = $this->getDoctrine()->getRepository(PlayerUnofficialMatch::class)->findOneBy(['userTeam' => $user["idUserTeam"], 'unOfficialMatch' => $match]);
+
+            if (isset($user["played"])) {
+                $matchPlayer->setPlayed($user["played"]);
+            }
+
+            if (isset($user["goal"])) {
+                $matchPlayer->setGoal($user["goal"]);
+            }
+
+            if (isset($user["red"])) {
+                $matchPlayer->setRedCard($user["red"]);
+            }
+
+            if (isset($user["yellow"])) {
+                $matchPlayer->setYellowCard($user["yellow"]);
+            }
+            $this->getDoctrine()->getManager()->persist($matchPlayer);
+        }
+        $this->getDoctrine()->getManager()->persist($match);
+        $this->getDoctrine()->getManager()->flush();
+
         return $this->json($response);
     }
 

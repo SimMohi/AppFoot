@@ -57,7 +57,20 @@ const MatchPages = props => {
 
     const changeMatchDay = ({ currentTarget }) => {
         const i = (currentTarget.value);
-        setMatchOfDay(allMatchs[i]);
+        let copy = JSON.parse(JSON.stringify(allMatchs));
+        for (let j = 0; j < copy[i].length; j++){
+            if (copy[i][j]["homeTeamGoal"] !== null ){
+                copy[i][j]["originalHomeTeamGoal"] = copy[i][j]["homeTeamGoal"];
+            } else {
+                copy[i][j]["originalHomeTeamGoal"] = null;
+            }
+            if (copy[i][j]["visitorTeamGoal"] !== null ){
+                copy[i][j]["originalVisitorTeamGoal"] = copy[i][j]["visitorTeamGoal"];
+            } else {
+                copy[i][j]["originalVisitorTeamGoal"] = null;
+            }
+        }
+        setMatchOfDay(copy[i]);
         setSelectedMatchDay(currentTarget.value);
     }
 
@@ -132,9 +145,11 @@ const MatchPages = props => {
     const handleSubmit = async () => {
         try{
             MatcheAPI.scoreMatch(matchOfDay);
+            toast.success("Matchs enregistrés avec succès");
         } catch (e) {
-
+            toast.error("Erreur lors de l'enregistrement des matchs");
         }
+        setReload(reload+1);
     }
 
     const openModal = (match) => {
@@ -181,6 +196,7 @@ const MatchPages = props => {
 
     const submitScore = async () => {
         await MatcheAPI.editScore(editMatch);
+
         setReload(reload+1);
         handleClose(1);
     }
@@ -192,6 +208,7 @@ const MatchPages = props => {
     }, [id, reload]);
 
     console.log(matchOfDay);
+
 
     return(
         <>
@@ -217,7 +234,7 @@ const MatchPages = props => {
                         <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(m.date, 1)}</td>
                         <td className={"col-3"}><div>{m.homeTeam.club.name}</div></td>
                         <td className={"col-1"}>
-                            {m.homeTeamGoal === null  &&
+                            {m.originalHomeTeamGoal === null  &&
                             <input type={"number"} className={"form-control"}
                                    value={m.homeTeamGoal || 0} min={0} name={index}
                                    onChange={handleChangeGoalA}/>
@@ -227,7 +244,7 @@ const MatchPages = props => {
                         </td>
                         <td className={"col-3"}><div>{m.visitorTeam.club.name}</div></td>
                         <td className={"col-1"}>
-                            {m.visitorTeamGoal === null &&
+                            {m.originalVisitorTeamGoal === null &&
                             <input type={"number"} className={"form-control"}
                                    value={m.visitorTeamGoal || 0} min={0} name={index}
                                    onChange={handleChangeGoalB}/>

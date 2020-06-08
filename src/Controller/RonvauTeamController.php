@@ -312,21 +312,36 @@ class RonvauTeamController extends AbstractController
                 $matchRes["staff"] = $userTeam->getIsStaff();
                 $matchRes["teamId"] = $teamR->getId();
                 $matchRes["teamCat"] = $teamR->getCategory();
+                $address = $home->getHomeTeam()->getClub()->getAddress();
+                if ($address !== null){
+                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                }
                 if ($home->getIsOver()) {
+                    $matchRes["goalA"] = $home->getHomeTeamGoal();
+                    $matchRes["goalB"] = $home->getVisitorTeamGoal();
                     $matchRes["isOver"] = $home->getIsOver();
                 }
                 $players =  $home->getPlayerMatches();
+                $matchRes["players"] = [];
+                $matchRes["details"] = [];
+                $matchRes["called"] = [];
                 foreach ($players as $player){
-                    if ($player->getPlayed()){
-                        $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
-                        $newPlayer = [];
-                        $newPlayer["userId"] = $player->getIdUserTeam()->getUserId()->getId();
-                        if ($player->getIdUserTeam()->getUserId() == $user){
-                            if ($player->getHasConfirmed() == false && $player->getHasRefused() == false){
-                                $matchRes["perso"] = "Vous avez été convoqué pour ce match";
-                            } else if ($player->getHasConfirmed() == true && $home->getIsOver() == false){
-                                $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
-                            }
+                $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                $matchRes["called"][] = $name;
+                    $newPlayer = [];
+                    $newPlayer["userId"] = $player->getIdUserTeam()->getUserId()->getId();
+                    if ($player->getIdUserTeam()->getUserId() == $user){
+                        if ($player->getHasConfirmed() == false && $player->getHasRefused() == false){
+                            $matchRes["perso"] = "Vous avez été convoqué pour ce match";
+                        } else if ($player->getHasConfirmed() == true && $home->getIsOver() == false){
+                            $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
+                        }
+                        if ($player->getPlayed()) {
+                            $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName() . " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+                            $playerArr["yellow"] = $player->getYellowCard();
+                            $playerArr["red"] = $player->getRedCard();
+                            $playerArr["goal"] = $player->getGoal();
+                            $matchRes["details"][] = $playerArr;
                         }
                         $newPlayer["player"] = $player;
                         $newPlayer["name"] = $name;
@@ -337,6 +352,9 @@ class RonvauTeamController extends AbstractController
             }
             foreach ($matchesTeamV as $visitor){
                 $matchRes = [];
+                $matchRes["details"] = [];
+                $matchRes["players"] = [];
+                $matchRes["called"] = [];
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $visitor->getId();
                 $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName()."-".$visitor->getVisitorTeam()->getClub()->getName();
@@ -345,12 +363,19 @@ class RonvauTeamController extends AbstractController
                 $matchRes["staff"] = $userTeam->getIsStaff();
                 $matchRes["teamId"] = $teamR->getId();
                 $matchRes["teamCat"] = $teamR->getCategory();
+                $address = $visitor->getHomeTeam()->getClub()->getAddress();
+                if ($address !== null){
+                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                }
                 if ($visitor->getIsOver()){
                     $matchRes["isOver"] = $visitor->getIsOver();
+                    $matchRes["goalA"] = $visitor->getHomeTeamGoal();
+                    $matchRes["goalB"] = $visitor->getVisitorTeamGoal();
                 }
                 $players =  $visitor->getPlayerMatches();
                 foreach ($players as $player){
                     $name = $player->getIdUserTeam()->getUserId()->getFirstName()." ". $player->getIdUserTeam()->getUserId()->getLastName();
+                    $matchRes["called"][] = $name;
                     $newPlayer = [];
                     $newPlayer["userId"] = $player->getIdUserTeam()->getUserId()->getId();
                     if ($player->getIdUserTeam()->getUserId() == $user){
@@ -359,6 +384,13 @@ class RonvauTeamController extends AbstractController
                         } else if ($player->getHasConfirmed() == true && $visitor->getIsOver() == false){
                             $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
                         }
+                    }
+                    if ($player->getPlayed()) {
+                        $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName() . " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+                        $playerArr["yellow"] = $player->getYellowCard();
+                        $playerArr["red"] = $player->getRedCard();
+                        $playerArr["goal"] = $player->getGoal();
+                        $matchRes["details"][] = $playerArr;
                     }
                     $newPlayer["player"] = $player;
                     $newPlayer["name"] = $name;
@@ -377,6 +409,17 @@ class RonvauTeamController extends AbstractController
                 } else{
                     $matchRes["title"] = $unofficialMatch->getOpponent()->getName()."-"."Fc Ronvau Chaumont" ;
                 }
+                if ($unofficialMatch->getIsHome()){
+                    $address = $unofficialMatch->getTeamRonvau()->getTeam()->getClub()->getAddress();
+                } else {
+                    $address = $unofficialMatch->getOpponent()->getAddress();
+                }
+                if ($address !== null){
+                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                }
+                $matchRes["details"] = [];
+                $matchRes["players"] = [];
+                $matchRes["called"] = [];
                 $matchRes["start"] = $unofficialMatch->getDate();
                 $matchRes["end"] = $unofficialMatch->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
@@ -388,6 +431,7 @@ class RonvauTeamController extends AbstractController
                 $players =  $unofficialMatch->getPlayerUnofficialMatches();
                 foreach ($players as $player){
                     $name = $player->getUserTeam()->getUserId()->getFirstName()." ". $player->getUserTeam()->getUserId()->getLastName();
+                    $matchRes["called"][] = $name;
                     $newPlayer = [];
                     $newPlayer["userId"] = $player->getUserTeam()->getUserId()->getId();
                     if ($player->getUserTeam()->getUserId() == $user){
@@ -397,7 +441,13 @@ class RonvauTeamController extends AbstractController
                             $matchRes["perso"] = "Vous avez accepté la convocation pour ce match";
                         }
                     }
-//                    $newPlayer["player"] = $player;
+                    if ($player->getPlayed()) {
+                        $playerArr["name"] = $player->getUserTeam()->getUserId()->getLastName() . " " . $player->getUserTeam()->getUserId()->getFirstName();
+                        $playerArr["yellow"] = $player->getYellowCard();
+                        $playerArr["red"] = $player->getRedCard();
+                        $playerArr["goal"] = $player->getGoal();
+                        $matchRes["details"][] = $playerArr;
+                    }
                     $newPlayer["name"] = $name;
                     $matchRes["unOffPlayers"][] = $newPlayer;
                 }

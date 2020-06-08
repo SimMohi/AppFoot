@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "../css/app.css";
 import NavBar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import { HashRouter, Switch, Route, withRouter, Redirect } from "react-router-dom";
+import {HashRouter, Switch, Route, withRouter, Redirect, NavLink} from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import authAPI from "./services/authAPI";
 import AuthContext from "./contexts/AuthContext";
@@ -48,6 +48,8 @@ import EventPage from "./pages/EventPage";
 import EventSubPage from "./pages/EventSubPage";
 import RonvauTeamMember from "./pages/RonvauTeamMember";
 import EncodeUnOffMatchPage from "./pages/encodeUnOffPage";
+import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 
 require("../css/app.css");
 
@@ -60,9 +62,6 @@ const App = () => {
     );
 
     const isAdmin = authAPI.getIsAdmin();
-
-    // const isAdmin = false;
-
     const NavBarWIthRouter = withRouter(NavBar);
 
 
@@ -70,7 +69,128 @@ const App = () => {
         <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
             <HashRouter>
                 <NavBarWIthRouter/>
-                <main className="p-5 mt-5">
+                <SideNav
+                    onSelect={(selected) => {
+                    }}
+                >
+                    <SideNav.Toggle />
+                    <SideNav.Nav defaultSelected="home">
+                        <NavItem eventKey="home">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/"}>
+                                    <i className="fas fa-calendar-alt" style={{ fontSize: '1.75em' }} />
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/"}>
+                                    Mon calendrier
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        {isAdmin &&
+                        <>
+                        <NavItem eventKey="access">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/userAccess"}>
+                                    <i className="fas fa-users-cog" style={{fontSize: '1.75em'}}/>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/userAccess"}>
+                                    Gestion des accès
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        <NavItem eventKey="gestionTeam">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    Gestion des équipes
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        </>
+                        ||
+                        <NavItem eventKey="team">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    <i className="fas fa-tshirt" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    Mes équipes
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        }
+                        <NavItem eventKey="car">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/covoit"}>
+                                    <i className="fas fa-car" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/covoit"}>
+                                    Covoiturage
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        <NavItem eventKey="chat">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/chat"}>
+                                    <i className="fas fa-comment" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/chat"}>
+                                    Chat
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        <NavItem eventKey="event">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/events"}>
+                                    <i className="fas fa-hotdog" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/events"}>
+                                    Evènements
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        <NavItem eventKey="club">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/club"}>
+                                    <i className="fas fa-futbol" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/club"}>
+                                    Clubs
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                        <NavItem eventKey="competition">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/competition"}>
+                                    <i className="fas fa-trophy" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/competition"}>
+                                    Compétitions
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
+                    </SideNav.Nav>
+                </SideNav>
+                <main className="p-5 ml-5 mt-5">
                     <Switch>
                         <Route
                             path="/login"

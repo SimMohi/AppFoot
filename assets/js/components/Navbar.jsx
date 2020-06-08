@@ -150,10 +150,10 @@ const Navbar = ({ history }) => {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-danger">
-                <NavLink className="navbar-brand" to={"/"}>
-                    Mon Calendrier
-                </NavLink>
+            <nav className="navbar navbar-expand-lg navbar-dark" id={"navBar"}>
+                {/*<NavLink className="navbar-brand" to={"/"}>*/}
+                {/*    Mon Calendrier*/}
+                {/*</NavLink>*/}
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -170,59 +170,58 @@ const Navbar = ({ history }) => {
                     <ul className="navbar-nav mr-auto">
                         {isAuthenticated &&
                             <>
-                                <li className="nav-item active">
-                                    <NavLink className="nav-link" to={"/competition"}>
-                                        Competitions
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/club"}>
-                                        Clubs
-                                    </NavLink>
-                                </li>
-                                {admin &&
-                                    <>
-                                        <li className="nav-item">
-                                            <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                                Gestion des équipes
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink className="nav-link" to={"/userAccess"}>
-                                                Gestion des accès
-                                            </NavLink>
-                                        </li>
-                                    </>
-                                    ||
-                                    <li className="nav-item">
-                                        <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                            Mes équipes
-                                        </NavLink>
-                                    </li>
-                                }
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/events"}>
-                                        Evenements
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/covoit"}>
-                                        Covoiturage
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to={"/chat"}>
-                                        Chat
-                                    </NavLink>
-                                </li>
-
+                                {/*<li className="nav-item active">*/}
+                                {/*    <NavLink className="nav-link" to={"/competition"}>*/}
+                                {/*        Competitions*/}
+                                {/*    </NavLink>*/}
+                                {/*</li>*/}
+                                {/*<li className="nav-item">*/}
+                                {/*    <NavLink className="nav-link" to={"/club"}>*/}
+                                {/*        Clubs*/}
+                                {/*    </NavLink>*/}
+                                {/*</li>*/}
+                                {/*{admin &&*/}
+                                {/*    <>*/}
+                                {/*        <li className="nav-item">*/}
+                                {/*            <NavLink className="nav-link" to={"/equipeRonvau"}>*/}
+                                {/*                Gestion des équipes*/}
+                                {/*            </NavLink>*/}
+                                {/*        </li>*/}
+                                {/*        <li className="nav-item">*/}
+                                {/*            <NavLink className="nav-link" to={"/userAccess"}>*/}
+                                {/*                Gestion des accès*/}
+                                {/*            </NavLink>*/}
+                                {/*        </li>*/}
+                                {/*    </>*/}
+                                {/*    ||*/}
+                                {/*    <li className="nav-item">*/}
+                                {/*        <NavLink className="nav-link" to={"/equipeRonvau"}>*/}
+                                {/*            Mes équipes*/}
+                                {/*        </NavLink>*/}
+                                {/*    </li>*/}
+                                {/*}*/}
+                                {/*<li className="nav-item">*/}
+                                {/*    <NavLink className="nav-link" to={"/events"}>*/}
+                                {/*        Evenements*/}
+                                {/*    </NavLink>*/}
+                                {/*</li>*/}
+                                {/*<li className="nav-item">*/}
+                                {/*    <NavLink className="nav-link" to={"/covoit"}>*/}
+                                {/*        Covoiturage*/}
+                                {/*    </NavLink>*/}
+                                {/*</li>*/}
+                                {/*<li className="nav-item">*/}
+                                {/*    <NavLink className="nav-link" to={"/chat"}>*/}
+                                {/*        Chat*/}
+                                {/*    </NavLink>*/}
+                                {/*</li>*/}
                             </>
                         }
                     </ul>
                     <ul className="navbar-nav ml-auto">
                         {!isAuthenticated && <>
                             <li className="nav-item">
-                                <NavLink to={"/register"} className="btn btn-light ml-2 mr-2">
+                                <NavLink to={"/register"} className="btn btn-light ml-2 mr-2 ">
                                     Inscription
                                 </NavLink>
                             </li>
@@ -234,8 +233,8 @@ const Navbar = ({ history }) => {
                         </> ||
                             <>
                                 <li className="nav-item">
-                                    <div className="d-flex flex-column">
-                                        <img src="img/flag-regular.svg" alt="" id={"flag"}/>
+                                    <div className="d-flex flex-row">
+                                        <i className="far fa-envelope mr-1 pt-1" style={{ fontSize: '1.75em' }}></i>
                                         <button type={"button"} className={"btn btn-danger"} onClick={() => handleShow(0)}>
                                             {notifications.convocations.length+notifications.notif.length}
                                         </button>

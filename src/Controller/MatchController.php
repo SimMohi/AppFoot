@@ -35,11 +35,11 @@ class MatchController extends AbstractController
         foreach ($users as $user) {
             if ($user["called"] == false) continue;
             $matchPlayer = new PlayerMatch();
-            $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['id' => $user["id"]], ['date' => 'ASC']);
+            $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['id' => $user["id"]]);
             $matchPlayer->setIdUserTeam($userTeam);
 
-            $userTeam = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["match"]]);
-            $matchPlayer->setIdMatch($userTeam);
+            $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["match"]]);
+            $matchPlayer->setIdMatch($match);
 
             $this->getDoctrine()->getManager()->persist($matchPlayer);
             $response[] = $matchPlayer->getId();
@@ -78,6 +78,7 @@ class MatchController extends AbstractController
             if (isset($user["yellowCard"])) {
                 $matchPlayer->setYellowCard($user["yellowCard"]);
             }
+            $match = $matchPlayer->getIdMatch();
 
             $this->getDoctrine()->getManager()->persist($matchPlayer);
             $response[] = $matchPlayer->getId();
@@ -180,6 +181,23 @@ class MatchController extends AbstractController
 
 
     /**
+     * @Route("/calledPlayerMatch/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function calledPlayerMatch(int $id)
+    {
+        $response = [];
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(["id" => $id]);
+        $called = $match->getPlayerMatches();
+
+        foreach ($called as $call){
+            $response[] = $call->getIdUserTeam()->getUserId()->getFirstName() . " " . $call->getIdUserTeam()->getUserId()->getLastName();
+        }
+        return $this->json($response);
+    }
+
+    /**
      * @param int $teamId
      * @return JsonResponse
      * @Route ("/getUnOfMatchCompet/{teamId}")
@@ -227,7 +245,7 @@ class MatchController extends AbstractController
         foreach ($players as $player) {
             $playerArr = array();
             if ($player->getPlayed()) {
-                $playerArr["name"] = $player->getIdUserTeam()->getUserId()->getLastName() . " " . $player->getIdUserTeam()->getUserId()->getFirstName();
+                $playerArr["name"] = $player->getUserTeam()->getUserId()->getLastName() . " " . $player->getUserTeam()->getUserId()->getFirstName();
                 $playerArr["yellow"] = $player->getYellowCard();
                 $playerArr["red"] = $player->getRedCard();
                 $playerArr["goal"] = $player->getGoal();

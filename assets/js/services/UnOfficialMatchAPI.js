@@ -50,7 +50,17 @@ function updatePlayer(data){
     return axios.put(API_URL + "/acceptConvoc", data);
 }
 
+function postEncodeUnOffMatch(data){
+    return axios.post(API_URL + "/postEncodeUnOffMatch", data);
+}
+
+function calledPlayerUnOffMatch(id) {
+    return axios
+        .get(API_URL + "/calledPlayerUnOffMatch/" + id)
+        .then(response => response.data);
+}
+
 
 export default {
-    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl, editDateUnOffMatch, updatePlayer, deletePlayerUnOffMatch
+    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl, editDateUnOffMatch, updatePlayer, deletePlayerUnOffMatch, postEncodeUnOffMatch, calledPlayerUnOffMatch
 }

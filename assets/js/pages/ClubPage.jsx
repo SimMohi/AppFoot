@@ -27,7 +27,9 @@ const ClubPage = props => {
         try {
             const { name, address } = await ClubsAPI.find(id);
             setClub({ name, address });
-            setAddress(address);
+            if (address != null){
+                setAddress(address);
+            }
         } catch (error) {
             console.log(error.response);
         }

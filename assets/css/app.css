@@ -6,6 +6,11 @@
     background-color: #e8eaed;
 }
 
+#navBar{
+    background-color: #db3d44;
+    height: 64px;
+}
+
 #flag{
     height: 20px;
     width: 52px;

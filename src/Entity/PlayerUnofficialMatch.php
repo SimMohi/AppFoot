@@ -66,7 +66,7 @@ class PlayerUnofficialMatch
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"unoffP_read"})
      */
-    private $redCar;
+    private $redCard;
 
     /**
      * @ORM\Column(type="boolean")
@@ -152,14 +152,14 @@ class PlayerUnofficialMatch
         return $this;
     }
 
-    public function getRedCar(): ?int
+    public function getRedCard(): ?int
     {
-        return $this->redCar;
+        return $this->redCard;
     }
 
-    public function setRedCar(?int $redCar): self
+    public function setRedCard(?int $redCard): self
     {
-        $this->redCar = $redCar;
+        $this->redCard = $redCard;
 
         return $this;
     }

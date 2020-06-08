@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
 import MatcheAPI from "../services/MatcheAPI";
 import Field from "../components/forms/Fields";
+import {toast} from "react-toastify";
 
 const EncodeMatchPage = props => {
 
@@ -34,7 +35,11 @@ const EncodeMatchPage = props => {
         const { name, value, id } = currentTarget;
         let index = id.replace(name,"");
         let copyMatch = JSON.parse(JSON.stringify(match));
-        copyMatch["playerMatches"][index][name] = value;
+        if (name == "redCard"){
+            copyMatch["playerMatches"][index][name] = !copyMatch["playerMatches"][index][name];
+        } else {
+            copyMatch["playerMatches"][index][name] = value;
+        }
         setMatch(copyMatch);
     };
 
@@ -42,8 +47,9 @@ const EncodeMatchPage = props => {
         let playerMatch = JSON.parse(JSON.stringify(match["playerMatches"]));
         try {
             await MatcheAPI.postEncodeMatch(playerMatch);
+            toast.success("Les statistiques ont bien été enregistrées");
         }catch (e) {
-            toast.error("Les statistiques ont bien été enregistrées");
+            toast.error("Les statistiques n'ont pas été enregistrées");
         }
 
     }
@@ -56,6 +62,7 @@ const EncodeMatchPage = props => {
     if (typeof match.id != 'undefined'){
         return(
             <>
+                <button onClick={() =>  window.history.back()} className={"btn btn-info mr-3 mb-5"}>Retour</button>
                 <h3>{match.homeTeam.club.name} - {match.visitorTeam.club.name} </h3>
                 <h5 className={"mt-5"}>Encoder les statistiques des joueurs</h5>
                 <table className="mt-5 table table-hover text-center container">
@@ -81,12 +88,14 @@ const EncodeMatchPage = props => {
                                        value={playerMatch["goal"] || 0} onChange={handleChange} disabled={!playerMatch.played}/>
                             </td>
                             <td className={"col-2"}>
-                                <input type={"number"} className={"form-control"}  min={0}  name={"yellowCard"} id={"yellowCard"+index}
+                                <input type={"number"} className={"form-control"}  min={0}  max={2} name={"yellowCard"} id={"yellowCard"+index}
                                        value={playerMatch["yellowCard"] || 0} onChange={handleChange} disabled={!playerMatch.played}/>
                             </td>
                             <td className={"col-2"}>
-                                <input type={"number"} className={"form-control"}  min={0}  name={"redCard"} id={"redCard"+index}
-                                       value={playerMatch["redCard"] || 0} onChange={handleChange} disabled={!playerMatch.played}/>
+                                <div className={"custom-control custom-checkbox"}>
+                                    <input type="checkbox" className="custom-control-input" id={"redCard"+index}  name={"redCard"} checked={playerMatch["redCard"] || false} onChange={handleChange}  disabled={!playerMatch.played}/>
+                                    <label className="custom-control-label" htmlFor={"redCard"+index}></label>
+                                </div>
                             </td>
                         </tr>
                     )}

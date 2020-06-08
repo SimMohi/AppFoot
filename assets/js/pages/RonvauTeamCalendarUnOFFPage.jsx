@@ -16,7 +16,7 @@ const RonvauTeamCalendarUnOffPage = props => {
     const {id} = props.match.params;
     const isAdmin = authAPI.getIsAdmin();
     const [matchTeamRonvau, setMatchTeamRonvau] = useState([]);
-    const [show, setShow] = useState([false, false, false]);
+    const [show, setShow] = useState([false, false, false, false]);
     const [editMatch, setEditMatch] = useState({
         id: "",
         date: "",
@@ -29,6 +29,7 @@ const RonvauTeamCalendarUnOffPage = props => {
         date: DateFunctions.todayFormatYMD(),
         time: "20:00"
     })
+    const [convocP, setConvocP] = useState([]);
     const [name, setName] = useState("");
 
     const [players, setPlayers] = useState([]);
@@ -48,6 +49,7 @@ const RonvauTeamCalendarUnOffPage = props => {
     const fetchMatch = async () => {
         const response = await MatcheAPI.getUnOfMatchCompet(id);
         setName(response["name"]);
+        response["matchs"].sort(DateFunctions.orderByDate);
         setMatchTeamRonvau(response['matchs']);
     }
 
@@ -78,15 +80,15 @@ const RonvauTeamCalendarUnOffPage = props => {
         }catch (e) {
             toast.error("La date du match n'a pas pu être encodée");
         }
-        handleClose();
+        handleClose(0);
         fetchMatch();
     }
 
 
     const detailsMatch =  async (a) => {
         try {
-            const respponse = await MatcheAPI.getUnOfMatchDetails(a.id);
-            setPlayers(respponse);
+            const response = await MatcheAPI.getUnOfMatchDetails(a.id);
+            setPlayers(response);
         }catch (e) {
             console.log(e);
         }
@@ -125,6 +127,13 @@ const RonvauTeamCalendarUnOffPage = props => {
         fetchMatch();
 
     }
+
+    const convoc = async (idMatch) => {
+        const response = await UnOfficialMatchAPI.calledPlayerUnOffMatch(idMatch);
+        setConvocP(response);
+        handleShow(3);
+    }
+
 
     const fetchClubs = async () => {
         try {
@@ -199,10 +208,16 @@ const RonvauTeamCalendarUnOffPage = props => {
                                   className={"btn btn-sm btn-secondary"}>Encodage</Link>
                         </td>
                         ||
-                        !mtr.isOver &&
+                        mtr.isOver &&
                         <td className={"col-2"}>
                             <button onClick={() => detailsMatch(mtr)}
                                     className="btn btn-sm btn-secondary">Détails
+                            </button>
+                        </td>
+                            ||
+                        <td className={"col-2"}>
+                            <button onClick={() => convoc(mtr.id)}
+                                    className="btn btn-sm btn-secondary">Liste des convoqués
                             </button>
                         </td>
                         }
@@ -250,8 +265,6 @@ const RonvauTeamCalendarUnOffPage = props => {
                             )}
                         </div>
                     </div>
-
-
                 </Modal.Body>
             </Modal>
             <Modal show={show[2]} onHide={() => handleClose(2)}>
@@ -280,6 +293,16 @@ const RonvauTeamCalendarUnOffPage = props => {
                         <label className="custom-control-label" htmlFor={"isHome"}>Se joue à domicile</label>
                     </div>
                     <button onClick={() => createMatch()} className="btn btn-primary float-right">Valider</button>
+                </Modal.Body>
+            </Modal>
+            <Modal show={show[3]} onHide={() => handleClose(3)}>
+                <Modal.Header closeButton>
+                    Liste des convoqués pour ce match
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    {convocP.map((p, index) =>
+                        <p key={index}>{p}</p>
+                    )}
                 </Modal.Body>
             </Modal>
         </>

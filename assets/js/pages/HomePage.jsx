@@ -23,7 +23,7 @@ const HomePage = props => {
     const Localizer = momentLocalizer(moment);
     const allViews = ["month"];
 
-    const [show, setShow] = useState([false, false, false, false, false, false]);
+    const [show, setShow] = useState([false, false, false, false, false, false, false]);
     const handleShow = (i) => {
         let showCopy = [...show];
         showCopy[i] = true;
@@ -50,7 +50,9 @@ const HomePage = props => {
         infos: "",
         button: [],
         absences: [],
-        staff: false
+        staff: false,
+        details: [],
+        called: [],
     });
 
     const [selectedTrainingUsers, setSelectedTrainingUsers] = useState([]);
@@ -107,6 +109,11 @@ const HomePage = props => {
                     sub: response[i]["sub"],
                     description: response[i]["description"],
                     perso: response[i]["perso"],
+                    address: response[i]["address"],
+                    details: response[i]["details"],
+                    goalA: response[i]["goalA"],
+                    goalB: response[i]["goalB"],
+                    called: response[i]["called"]
                 }
                 if (response[i]["staff"] == true){
                     obj["absences"] = response[i]["absences"];
@@ -170,13 +177,21 @@ const HomePage = props => {
                 buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
             } else {
                 if (event.isOver){
-                    buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
+                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-success">Details</button>);
+                } else {
+                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-success">Liste des convoqués</button>);
                 }
             }
             const description =
                 <div>
+                    {event.goalA != null && event.goalB != null &&
+                            <p><b>Score</b> : {event.goalA}-{event.goalB}</p>
+                    }
+                    {!event.isOver &&
                     <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                    }
                     <p>{event.perso}</p>
+                    <p>{event.address}</p>
                 </div>
             obj = {
                 id: event.id,
@@ -189,6 +204,8 @@ const HomePage = props => {
                 absences: [],
                 description: description,
                 players: event.players,
+                details: event.details,
+                called: event.called
             }
             let radioMOTM = [];
             for (let i = 0; i < event.players.length; i++){
@@ -224,13 +241,16 @@ const HomePage = props => {
                 buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
             } else {
                 if (event.isOver){
-                    buttons.push(<button onClick={() => handleShow(4)} className="btn btn-sm btn-success">Vote pour l'homme du match</button>);
+                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-success">Details</button>);
+                } else {
+                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-success">Liste des convoqués</button>);
                 }
             }
             const description =
                 <div>
                     <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
                     <p>{event.perso}</p>
+                    <p>{event.address}</p>
                 </div>
             obj = {
                 id: event.id,
@@ -244,6 +264,8 @@ const HomePage = props => {
                 description: description,
                 absences: [],
                 unOffplayers: event.unOffplayers,
+                details: event.details,
+                called: event.called
             }
             let radioMOTM = [];
             for (let i = 0; i < event.players.length; i++){
@@ -422,7 +444,6 @@ const HomePage = props => {
             message: "L'événement "+ selectedEvent.title + " du " + DateFunctions.dateFormatFrDM(selectedEvent.day)+ " a été déplacé au " + DateFunctions.dateFormatFrDM(editTraining.date) + " de "
                 + DateFunctions.hourWh(editTraining.start) + " à " +  DateFunctions.hourWh(editTraining.end),
         }
-        console.log(editTraining);
         return ;
         await TrainingsAPI.editTraining(editTraining);
         await NotificationAPI.newTeamNotif(newNotif)
@@ -469,7 +490,6 @@ const HomePage = props => {
         setReload(reload+1);
     }
 
-    console.log(selectedEvent);
 
     useEffect( () => {
         find();
@@ -477,9 +497,9 @@ const HomePage = props => {
 
     return (
       <>
-          <div className="container">
+          <div className="">
               <div className="row">
-                  <div style={{ height: 700 }} className={"col-8"}>
+                  <div style={{ height: 700 }} className={"col-9"}>
                       <Calendar
                           onSelectEvent={event => test(event)}
                           selectable={true}
@@ -490,7 +510,7 @@ const HomePage = props => {
                           defaultDate={new Date()}
                       />
                   </div>
-                  <div className="col-4 text-center">
+                  <div className="col-3 text-center">
                       {selectedEvent.title != "" &&
                         <h6>{selectedEvent.title} du {DateFunctions.dateFormatFr(selectedEvent.day)}</h6>
                       }
@@ -576,6 +596,48 @@ const HomePage = props => {
                       </div>
                   )}
                   <button onClick={() => submitPlayerOfTheMatch()} className="btn btn-success mt-5">Valider</button>
+              </Modal.Body>
+          </Modal>
+          <Modal show={show[5]} onHide={() => handleClose(5)}>
+              <Modal.Header closeButton>
+                  Détails du match
+              </Modal.Header>
+              <Modal.Body className={""}>
+                  <div className="row">
+                      <div className={"col-6"}>
+                          <h6>Joueurs</h6>
+                          {typeof selectedEvent["details"] != "undefined" && selectedEvent["details"].map((play, index) =>
+                              <div key={index}>{play.name}</div>
+                          )}
+                      </div>
+                      <div className="col-6">
+                          <h6>Goals</h6>
+                          {typeof selectedEvent["details"] != "undefined" && selectedEvent["details"].map((play, index) =>
+                              play["goal"] > 0 &&
+                              <div key={index}>{play.name}</div>
+                          )}
+                          <h6 className={"mt-3"}>Cartons Jaunes</h6>
+                          {typeof selectedEvent["details"] != "undefined" && selectedEvent["details"].map((play, index) =>
+                              play["yellow"] > 0 &&
+                              <div key={index}>{play.name}</div>
+                          )}
+                          <h6 className={"mt-3"}>Cartons Rouges</h6>
+                          {typeof selectedEvent["details"] != "undefined" && selectedEvent["details"].map((play, index) =>
+                              play["red"] > 0 &&
+                              <div key={index}>{play.name}</div>
+                          )}
+                      </div>
+                  </div>
+              </Modal.Body>
+          </Modal>
+          <Modal show={show[6]} onHide={() => handleClose(6)}>
+              <Modal.Header closeButton>
+                  Liste des convoqués pour ce match
+              </Modal.Header>
+              <Modal.Body className={""}>
+                  {selectedEvent["called"].map((p, index) =>
+                      <p key={index}>{p}</p>
+                  )}
               </Modal.Body>
           </Modal>
       </>
