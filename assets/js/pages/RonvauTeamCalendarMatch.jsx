@@ -94,8 +94,6 @@ const RonvauTeamCalendarMatch = props => {
         try {
             const respponse = await MatcheAPI.getMatchDetails(a.id);
             setPlayers(respponse);
-            console.log(a);
-            console.log(respponse);
         }catch (e) {
             console.log(e);
         }

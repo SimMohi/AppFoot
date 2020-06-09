@@ -117,7 +117,6 @@ const CompetitionPage = props => {
     }
 
     const openModal = (team) => {
-        console.log(team)
         setShow(true);
         setSelectedTeam({
             id: team.id,

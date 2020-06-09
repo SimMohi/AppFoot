@@ -16,8 +16,6 @@ const ProfilUserPage = props => {
     const [allUsers, setAllUSers] = useState([]);
     const [info, setInfo] = useState([]);
 
-    console.log(info);
-
     const fetchUser = async () => {
         axios.all([
             axios.get(API_URL + "/profile/" + id),
@@ -38,7 +36,6 @@ const ProfilUserPage = props => {
                 }
             }
             setAllUSers(allUsersArray);
-            console.log(responses[0]);
             if (typeof  responses[0]["data"]["infos"] != 'undefined'){
                 setInfo(responses[0]["data"]["infos"]);
             }

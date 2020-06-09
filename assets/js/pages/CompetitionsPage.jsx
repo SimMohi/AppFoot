@@ -50,7 +50,6 @@ const CompetitionsPage = props => {
             <thead>
             <tr>
                 <th>Nom</th>
-                <th>format</th>
                 <th>saison</th>
             </tr>
             </thead>

@@ -50,7 +50,6 @@ const EncodeUnOffMatchPage = props => {
 
     const handleChangeScore = ({currentTarget}) => {
         const { name, value } = currentTarget;
-        console.log(name, value);
         setMatch({...match, [name]: value});
     }
 
@@ -72,7 +71,6 @@ const EncodeUnOffMatchPage = props => {
             opponentGoal: match.opponentGoal
         }
         try {
-            console.log(post);
             await UnOfficialMatchAPI.postEncodeUnOffMatch(post);
             toast.success("Les statistiques ont bien été enregistrées");
 

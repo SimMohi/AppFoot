@@ -21,9 +21,9 @@ class CompetitionsController extends AbstractController
 {
     /**
      * Get the competitions where Ronvau is in
-     * @Route("/getCompetitionsRonvau")
+     * @Route("/getCompetitionsRonvau/{id}")
      */
-    public function getCompetitionsRonvau()
+    public function getCompetitionsRonvau(int $id)
     {
         $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['name' => "F.C. Ronvau Chaumont"]);
         $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['club' => $ronvau->getId()]);

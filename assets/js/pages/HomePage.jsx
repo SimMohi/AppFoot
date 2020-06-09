@@ -136,7 +136,6 @@ const HomePage = props => {
     };
 
     const test = ( event ) => {
-        console.log(event);
         let buttons = [];
         let obj={};
         if (event.type == "training"){

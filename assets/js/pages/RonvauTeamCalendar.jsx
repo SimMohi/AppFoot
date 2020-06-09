@@ -27,9 +27,6 @@ const RonvauTeamCalendar = props => {
 
     const changeDate = async (newDate) => {
         setDate(newDate);
-        console.log(newDate.getMonth());
-        console.log(newDate.getDate());
-        console.log(newDate.getFullYear());
 
         let post = {
             day: "Jeudi",

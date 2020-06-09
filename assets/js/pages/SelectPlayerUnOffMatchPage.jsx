@@ -26,7 +26,6 @@ const SelectPlayerUnOffMatchPage = props => {
 
     const fetchMatch = async () => {
         const responseMatch = await UnOfficialMatchAPI.find(id);
-        console.log(responseMatch);
         setMatch(responseMatch);
         setNotCall(responseMatch["notCalled"]);
         setCall(responseMatch["called"]);

@@ -129,11 +129,9 @@ const CovoitPage = props => {
 
     const handleDelete =  (id, numberPassenger) => {
         let currentCar = JSON.parse(JSON.stringify(car));
-        console.log(currentCar);
         for (let i = 0; i < currentCar["carPassengers"].length; i++){
             currentCar["carPassengers"][i] = currentCar["carPassengers"][i]["@id"];
             if (currentCar["carPassengers"][i]== id){
-                console.log(currentCar["carPassengers"][i]);
             }
         }
         currentCar["departureAddress"] = currentCar["departureAddress"]["@id"];

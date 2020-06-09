@@ -64,7 +64,6 @@ const RonvauTeamSelectPage = props => {
         copy["teamRonvau"] = "api/team_ronvaus/" + id ;
         copy["opponent"] = "/api/clubs/" + selectClub.key;
         copy["date"] = new Date(copy.date+ " " + copy.time);
-        console.log(copy.date);
         delete copy.time;
         try {
             await UnOfficialMatchAPI.create(copy);

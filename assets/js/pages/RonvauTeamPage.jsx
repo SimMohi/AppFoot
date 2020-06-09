@@ -60,7 +60,6 @@ const RonvauTeamPage = props => {
     const fetchTrainingDay = async () => {
         try{
             const allTrainingDay = await TrainingsAPI.findAllTrainingDay(id);
-            console.log(allTrainingDay);
             setTrainingDay(allTrainingDay);
         }catch (e) {
             console.log(e.response);

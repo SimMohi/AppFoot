@@ -207,9 +207,6 @@ const MatchPages = props => {
         FindMatchDayNumber();
     }, [id, reload]);
 
-    console.log(matchOfDay);
-
-
     return(
         <>
             <div className="form-group w-25">

@@ -67,7 +67,6 @@ const CovoitsPage = props => {
                     futurCar.push(data[i]);
                 }
             }
-            console.log(futurCar);
             futurCar.sort(DateFunctions.orderByDate);
             setCovoits(futurCar);
         } catch (error) {
@@ -137,7 +136,6 @@ const CovoitsPage = props => {
         copyNewPass["user"] = userConnected["id"];
         copyNewPass["car"] = modalParam["id"];
         copyNewPass["isAccepted"] = false;
-        console.log(copyNewPass);
         try{
             const response = await CovoitAPI.addPassenger(copyNewPass);
             await NotificationAPI.newNotifCarPass(copyNewPass);

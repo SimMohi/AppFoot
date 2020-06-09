@@ -67,9 +67,7 @@ const ClubsPage = props => {
     }
 
     const adresseFormat = (address) => {
-        address.street = address.street.toLowerCase();
-        address.street = address.street.replace("rue", "");
-        return "rue " + address.street + " " + address.number + ", " + address.code + " " + address.city
+        return address.street + " " + address.number + ", " + address.code + " " + address.city
     }
 
     return (

@@ -40,12 +40,10 @@ const EventPage = props => {
         try {
             const data = await RonvauTeamAPI.findAll();
             let { name, description, date, eventsTeams, endDate} = await EventsAPI.find(id);
-            console.log(endDate);
             const end = DateFunctions.getHoursHM(endDate, 1);
             const start = DateFunctions.getHoursHM(date, 1);
             date = DateFunctions.dateFormatYMD(date);
             endDate = DateFunctions.dateFormatYMD(endDate);
-            console.log(end);
             let teams = [];
             for (let i = 0; i < eventsTeams.length; i++){
                 setOriginalEventsTeam(true);

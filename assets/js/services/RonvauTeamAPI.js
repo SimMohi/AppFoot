@@ -15,7 +15,7 @@ function find(id){
 
 function findCompetRonvau(){
     return axios
-        .get(API_URL + "/getCompetitionsRonvau/")
+        .get(API_URL + "/getCompetitionsRonvau/1")
         .then(response => response.data);
 }
 

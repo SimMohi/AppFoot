@@ -97,7 +97,6 @@ const CompetitionTeamsPage = props => {
         } catch (e) {
             toast.error("La modification a échoué");
         }
-        console.log(copyTeam);
     }
 
     useEffect(() => {

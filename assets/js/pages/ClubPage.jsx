@@ -63,8 +63,8 @@ const ClubPage = props => {
                 copyAdd["clubId"] = response["data"].id;
                 await ClubsAPI.postClubAddress(copyAdd);
                 toast.success("Le club a bien été créé");
-                props.history.replace("/club");
             }
+            props.history.replace("/club");
             setErrors({});
         } catch (error) {
             if(error.response.data.violations){
@@ -97,10 +97,10 @@ const ClubPage = props => {
                 </div>
                 <div className="row">
                     <div className="col-4">
-                        <Field name={"city"} label={"Ville"} type={"text"} value={address.city} onChange={handleChangeAdd} error={errors.city}/>
+                        <Field name={"number"} label={"Numéro"} type={"number"} value={address.number} onChange={handleChangeAdd} error={errors.number}/>
                     </div>
                     <div className="col-4">
-                        <Field name={"number"} label={"Numéro"} type={"number"} value={address.number} onChange={handleChangeAdd} error={errors.number}/>
+                        <Field name={"city"} label={"Ville"} type={"text"} value={address.city} onChange={handleChangeAdd} error={errors.city}/>
                     </div>
                     <div className="col-4">
                         <Field name={"code"} label={"Code postal"} type={"text"} value={address.code} onChange={handleChangeAdd} error={errors.code}/>

@@ -59,7 +59,6 @@ const ProfilPage = props => {
                         }
                         setUser({ id, lastName, firstName, email, gsm});
                         const response = await usersAPI.profile(id);
-                        console.log(response);
                         setInfo(response["data"]["infos"]);
                     } else {
                         let user =  {
