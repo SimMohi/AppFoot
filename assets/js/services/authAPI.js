@@ -44,7 +44,6 @@ function getUserInfo(){
 }
 
 function getIsAdmin(){
-    return false;
     const token = window.localStorage.getItem(("authToken"));
 
     if (token) {

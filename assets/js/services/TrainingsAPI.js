@@ -3,8 +3,8 @@ import {API_URL} from "../config";
 
 function findAllTrainingDay(teamRonvau) {
     return axios
-        .get("http://localhost:8000/api/training_days?teamRonvau=/api/team_ronvaus/"+teamRonvau)
-        .then(response => response.data["hydra:member"]);
+        .get(API_URL + "/getTrainingDay/"+teamRonvau)
+        .then(response => response.data);
 }
 
 function createTrainingDay(teamRonvau){

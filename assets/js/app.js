@@ -69,16 +69,17 @@ const App = () => {
         <AuthContext.Provider value={{isAuthenticated, setIsAuthenticated}}>
             <HashRouter>
                 <NavBarWIthRouter/>
+                {isAuthenticated &&
                 <SideNav
                     onSelect={(selected) => {
                     }}
                 >
-                    <SideNav.Toggle />
+                    <SideNav.Toggle/>
                     <SideNav.Nav defaultSelected="home">
                         <NavItem eventKey="home">
                             <NavIcon>
                                 <NavLink className="nav-link" to={"/"}>
-                                    <i className="fas fa-calendar-alt" style={{ fontSize: '1.75em' }} />
+                                    <i className="fas fa-calendar-alt" style={{fontSize: '1.75em'}}/>
                                 </NavLink>
                             </NavIcon>
                             <NavText>
@@ -89,30 +90,30 @@ const App = () => {
                         </NavItem>
                         {isAdmin &&
                         <>
-                        <NavItem eventKey="access">
-                            <NavIcon>
-                                <NavLink className="nav-link" to={"/userAccess"}>
-                                    <i className="fas fa-users-cog" style={{fontSize: '1.75em'}}/>
-                                </NavLink>
-                            </NavIcon>
-                            <NavText>
-                                <NavLink className="nav-link" to={"/userAccess"}>
-                                    Gestion des accès
-                                </NavLink>
-                            </NavText>
-                        </NavItem>
-                        <NavItem eventKey="gestionTeam">
-                            <NavIcon>
-                                <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                    <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
-                                </NavLink>
-                            </NavIcon>
-                            <NavText>
-                                <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                    Gestion des équipes
-                                </NavLink>
-                            </NavText>
-                        </NavItem>
+                            <NavItem eventKey="access">
+                                <NavIcon>
+                                    <NavLink className="nav-link" to={"/userAccess"}>
+                                        <i className="fas fa-users-cog" style={{fontSize: '1.75em'}}/>
+                                    </NavLink>
+                                </NavIcon>
+                                <NavText>
+                                    <NavLink className="nav-link" to={"/userAccess"}>
+                                        Gestion des accès
+                                    </NavLink>
+                                </NavText>
+                            </NavItem>
+                            <NavItem eventKey="gestionTeam">
+                                <NavIcon>
+                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                        <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
+                                    </NavLink>
+                                </NavIcon>
+                                <NavText>
+                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                        Gestion des équipes
+                                    </NavLink>
+                                </NavText>
+                            </NavItem>
                         </>
                         ||
                         <NavItem eventKey="team">
@@ -190,6 +191,7 @@ const App = () => {
                         </NavItem>
                     </SideNav.Nav>
                 </SideNav>
+                }
                 <main className="p-5 ml-5 mt-5">
                     <Switch>
                         <Route

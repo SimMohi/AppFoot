@@ -60,6 +60,7 @@ const RonvauTeamPage = props => {
     const fetchTrainingDay = async () => {
         try{
             const allTrainingDay = await TrainingsAPI.findAllTrainingDay(id);
+            console.log(allTrainingDay);
             setTrainingDay(allTrainingDay);
         }catch (e) {
             console.log(e.response);
@@ -234,9 +235,8 @@ const RonvauTeamPage = props => {
 
     const handleDeleteTrainingDay = async (index) => {
         let delTD = trainingDay[index];
-        let teamR = delTD.teamRonvau.replace("/api/team_ronvaus/", "");
+        let teamR = id;
         let post = {
-            id: delTD.id,
             day: delTD.day,
             teamR: teamR
         }
@@ -299,19 +299,15 @@ const RonvauTeamPage = props => {
                                             </thead>
                                             <tbody>
                                             {trainingDay.map((td, index) =>
-                                                <tr className={"row"} key={td.id}>
+                                                <tr className={"row"} key={index}>
                                                     <td className={"col-3"}>
                                                         {td.day}
                                                     </td>
                                                     <td className={"col-3"}>
-                                                        <Moment format="HH:mm">
-                                                            {td.hourStart}
-                                                        </Moment>
+                                                        {td.start}
                                                     </td>
                                                     <td className={"col-3"}>
-                                                        <Moment format="HH:mm">
-                                                            {td.hourEnd}
-                                                        </Moment>
+                                                        {td.end}
                                                     </td>
                                                     <td className={"col-3"}>
                                                         <button type={"button"} onClick={() => handleDeleteTrainingDay(index)} className="btn btn-sm btn-danger">Supprimer</button>

@@ -635,7 +635,7 @@ const HomePage = props => {
                   Liste des convoqués pour ce match
               </Modal.Header>
               <Modal.Body className={""}>
-                  {selectedEvent["called"].map((p, index) =>
+                  {typeof selectedEvent["called"] != "undefined" && selectedEvent["called"].map((p, index) =>
                       <p key={index}>{p}</p>
                   )}
               </Modal.Body>

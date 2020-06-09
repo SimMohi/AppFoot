@@ -28,6 +28,55 @@ class RonvauTeamController extends AbstractController
 {
 
     /**
+     * @Route("/getTrainingDay/{id}")
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getTrainingDay (int $id){
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $id]);
+        $trainings = $teamR->getTrainings();
+        $response = [];
+        foreach ($trainings as $training){
+            $date = $training->getStart();
+            $end = $training->getEnd();
+            if ($date < new \DateTime()){
+                continue;
+            }
+            switch ($date->format("D")) {
+                case "Mon":
+                    $weekDay = "Lundi";
+                    break;
+                case "Tue":
+                    $weekDay = "Mardi";
+                    break;
+                case "Wed":
+                    $weekDay = "Mercredi";
+                    break;
+                case "Thu":
+                    $weekDay = "Jeudi";
+                    break;
+                case "Fri":
+                    $weekDay = "Vendredi";
+                    break;
+                case "Sat":
+                    $weekDay = "Samedi";
+                    break;
+                case "Sun":
+                    $weekDay = "Dimanche";
+                    break;
+            }
+            $trainArr["day"] = $weekDay;
+            $trainArr["start"] = $date->format("H:i");
+            $trainArr["end"] = $end->format("H:i");
+            if (!in_array($trainArr, $response)){
+                $response[] = $trainArr;
+            }
+        }
+        return $this->json($response);
+    }
+
+    /**
      * @Route("/postTrainingDay")
      * @param Request $request
      * @return JsonResponse
@@ -116,7 +165,6 @@ class RonvauTeamController extends AbstractController
     public function deleteTrainingDay (Request $request){
         $data = $request->getContent();
         $data = json_decode($data, true);
-        $trainingDayId = $data["id"];
         $teamId = $data["teamR"];
         $day = $data["day"];
 

@@ -82,6 +82,7 @@ const CovoitPage = props => {
                     toast.error(response.data.message);
                     return ;
                 }
+                window.location.reload();
                 toast.success("Le covoiturage a bien été créé");
             }
             setErrors({});

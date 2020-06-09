@@ -18,6 +18,7 @@ const CovoitsPage = props => {
     const [show, setShow] = useState([
         false, false
     ]);
+
     const [modalParam, setModalParam] = useState("");
     const [covoits, setCovoits] = useState([]);
     const [userConnected, setUserConnected] = useState({});
@@ -50,6 +51,7 @@ const CovoitsPage = props => {
         setShow(showCopy);
     }
 
+
     const handleClose = (index) => {
         let showCopy = [...show];
         showCopy[index] = false;
@@ -59,8 +61,15 @@ const CovoitsPage = props => {
     const findCovoits = async () => {
         try {
             const data = await CovoitAPI.findAll();
-            data.sort(DateFunctions.orderByDate);
-            setCovoits(data);
+            let futurCar = [];
+            for (let i = 0; i < data.length; i++){
+                if (new Date(data[i]["date"]) > new Date()){
+                    futurCar.push(data[i]);
+                }
+            }
+            console.log(futurCar);
+            futurCar.sort(DateFunctions.orderByDate);
+            setCovoits(futurCar);
         } catch (error) {
             console.log(error.response);
         }
@@ -102,9 +111,13 @@ const CovoitsPage = props => {
             return <button className="btn btn-sm btn-success mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
         if (covoit.userId["@id"] == userConnected["@id"]){
-            return <Link to={"/covoit/"+covoit.id} className="btn btn-primary btn-sm mr-3">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
-            </Link>
+            return (
+            <>
+                <Link to={"/covoit/"+covoit.id} className="btn btn-primary btn-sm mr-3">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
+                </Link>
+                <button onClick={() => handleDelete(covoit.id)} className={"btn btn-danger btn-sm"}>Supprimer</button>
+            </>)
         }
         return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
