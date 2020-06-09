@@ -13,7 +13,6 @@ use App\Entity\PlayerTraining;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\Training;
-use App\Entity\TrainingDay;
 use App\Entity\User;
 use App\Entity\UserTeam;
 use App\Entity\UserTeamEvent;
@@ -79,13 +78,6 @@ class RonvauTeamController extends AbstractController
         $copyEnd = clone $begin;
         $copyStart->setTime($start[0], $start[1], 0);
         $copyEnd->setTime($end[0], $end[1], 0);
-
-        $newTrD = new TrainingDay();
-        $newTrD->setTeamRonvau($teamR);
-        $newTrD->setDay($day);
-        $newTrD->setHourStart($copyStart);
-        $newTrD->setHourEnd($copyEnd);
-        $this->getDoctrine()->getManager()->persist($newTrD);
 
         $response = [];
         while ($begin <= $max){
@@ -153,8 +145,6 @@ class RonvauTeamController extends AbstractController
             default :
                 return $this->json("Mauvais jour encodé");
         }
-        $trainingDay = $this->getDoctrine()->getRepository(TrainingDay::class)->findOneBy(['id' => $trainingDayId]);
-        $this->getDoctrine()->getManager()->remove($trainingDay);
         $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $teamId]);
         $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
         if (count($trainings) > 0){

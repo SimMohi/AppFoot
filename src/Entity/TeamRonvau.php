@@ -56,10 +56,6 @@ class TeamRonvau
      */
     private $eventsTeams;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\TrainingDay", mappedBy="teamRonvau")
-     */
-    private $trainingDays;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="channel")
@@ -212,36 +208,6 @@ class TeamRonvau
         return $this;
     }
 
-    /**
-     * @return Collection|TrainingDay[]
-     */
-    public function getTrainingDays(): Collection
-    {
-        return $this->trainingDays;
-    }
-
-    public function addTrainingDay(TrainingDay $trainingDay): self
-    {
-        if (!$this->trainingDays->contains($trainingDay)) {
-            $this->trainingDays[] = $trainingDay;
-            $trainingDay->setTeamRonvau($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTrainingDay(TrainingDay $trainingDay): self
-    {
-        if ($this->trainingDays->contains($trainingDay)) {
-            $this->trainingDays->removeElement($trainingDay);
-            // set the owning side to null (unless already changed)
-            if ($trainingDay->getTeamRonvau() === $this) {
-                $trainingDay->setTeamRonvau(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|Chat[]
