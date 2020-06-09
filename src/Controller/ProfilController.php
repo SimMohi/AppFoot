@@ -44,7 +44,7 @@ class ProfilController extends AbstractController
         } else {
             $return["address"] = array();
         }
-
+        $return["infos"] = [];
         foreach ($userTeams as $userTeam){
             $category = $userTeam->getTeamRonvauId()->getCategory();
             $userMatchs = $this->getDoctrine()->getRepository(PlayerMatch::class)->findBy(['idUserTeam' => $userTeam]);
