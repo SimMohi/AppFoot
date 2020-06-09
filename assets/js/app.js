@@ -102,7 +102,7 @@ const App = () => {
                                     </NavLink>
                                 </NavText>
                             </NavItem>
-                            <NavItem eventKey="gestionTeam">
+                            <NavItem eventKey="team">
                                 <NavIcon>
                                     <NavLink className="nav-link" to={"/equipeRonvau"}>
                                         <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>

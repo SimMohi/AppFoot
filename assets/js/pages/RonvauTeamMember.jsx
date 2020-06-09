@@ -80,6 +80,16 @@ const RonvauTeamMember = props => {
         setReload(reload+1);
     }
 
+    const handleDelete = async (idUserTeam) => {
+        try{
+            await UsersTeamAPI.deleteUserTeam(idUserTeam);
+            toast.success("la suppression de l'utilisateur de l'équipe a réussi");
+        }catch (e) {
+            toast.error("la suppression de l'utilisateur a échoué");
+        }
+        setReload(reload+1);
+    }
+
     useEffect(() => {
         fetchRonvauTeam(id);
         fetchUsers();

@@ -189,16 +189,6 @@ const RonvauTeamPage = props => {
         setReload(reload+1);
     }
 
-    const handleDelete = async (idUserTeam) => {
-        try{
-            await UsersTeamAPI.deleteUserTeam(idUserTeam);
-            toast.success("la suppression de l'utilisateur de l'équipe a réussi");
-        }catch (e) {
-            toast.error("la suppression de l'utilisateur a échoué");
-        }
-        setReload(reload+1);
-    }
-
     const handleDeleteCompet = async () => {
         let copyRonvauTeam = JSON.parse(JSON.stringify(ronvauTeam));
         for(let i = 0; i < copyRonvauTeam["userTeams"].length; i++){

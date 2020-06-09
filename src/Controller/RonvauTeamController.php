@@ -264,7 +264,7 @@ class RonvauTeamController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function getPersonnalCalendarInfo ($userId){
+    public function getPersonnalCalendarInfo (int $userId){
 
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
@@ -314,7 +314,9 @@ class RonvauTeamController extends AbstractController
                 $trainingRes["teamId"] = $teamR->getId();
                 $trainingRes["teamCat"] = $teamR->getCategory();
                 $isAbs = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy([ 'idTraining' => $training, 'idUserTeam' => $userTeam]);
-                $trainingRes["abs"] = $isAbs->getIsAbsent();
+                if ($isAbs !== null){
+                    $trainingRes["abs"] = $isAbs->getIsAbsent();
+                }
                 $response[] = $trainingRes;
             }
             $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
