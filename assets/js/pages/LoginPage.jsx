@@ -57,7 +57,7 @@ const LoginPage = ({ history}) => {
                 <Field label={"Mot de passe"} name={"password"} value={credentials.password} onChange={handleChange}
                        type={"password"} error={""}/>
                 <div className="form-group">
-                    <button type={"submit"} className={"btn btn-success"}>Se connecter</button>
+                    <button type={"submit"} className={"btn btn-danger"}>Se connecter</button>
                 </div>
             </form>
         </>

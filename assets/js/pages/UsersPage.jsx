@@ -116,56 +116,52 @@ const UsersPage = () => {
                     <Field type={"text"} value={search} onChange={changeSearch} placeholder={"Trier par nom"}/>
                 </div>
             </div>
-            <div className="row justify-content-center">
-                <div className="col-xs-12 col-sm-12 col-md-10 col-lg-10">
-                    <table className="table table-hover">
-                        <thead className="bg-light">
-                        <tr>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th className="text-center">Email</th>
-                            <th className="text-center">Est accepté ?</th>
-                            <th className="text-center">Est admin</th>
-                            <th className="text-center"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {users.map((user, index) =>
-                            <tr key={user.id}>
-                                <td>{user.lastName}</td>
-                                <td>{user.firstName}</td>
-                                <td className="text-center">{user.email}</td>
-                                <td className="text-center">{user.isAccepted && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                {user.isAccepted &&
-                                <td className="custom-control custom-checkbox text-center">
-                                    <input type="checkbox" className="custom-control-input" checked={checkbox[index]}
-                                           onChange={() => changeRole(index)} id={"adminCheck" + index}/>
-                                    <label className="custom-control-label" htmlFor={"adminCheck" + index}></label>
-                                </td>
-                                ||
-                                <td></td>
-                                }
-                                <td className="text-center">
-                                    {user.isAccepted == false &&
-                                    <>
-                                        <button onClick={() => Accept(user.id)}
-                                                className="btn btn-sm btn-success mr-3">Accepter</button>
-                                        <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Refuser</button>
-                                    </>
-                                    ||
-                                    <>
-                                        <button onClick={() => Accept(user.id)}
-                                                className="btn btn-sm btn-success mr-3" disabled={true}>Accepter</button>
-                                        <button onClick={() => openModal(user)} className="btn btn-sm btn-danger">Supprimer</button>
-                                    </>
-                                    }
-                                </td>
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <table className="table table-hover whiteBorder">
+                <thead className="bg-light">
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th className="text-center">Email</th>
+                    <th className="text-center">Est accepté ?</th>
+                    <th className="text-center">Est admin</th>
+                    <th className="text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {users.map((user, index) =>
+                    <tr key={user.id}>
+                        <td>{user.lastName}</td>
+                        <td>{user.firstName}</td>
+                        <td className="text-center">{user.email}</td>
+                        <td className="text-center">{user.isAccepted && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
+                        {user.isAccepted &&
+                        <td className="custom-control custom-checkbox text-center">
+                            <input type="checkbox" className="custom-control-input" checked={checkbox[index]}
+                                   onChange={() => changeRole(index)} id={"adminCheck" + index}/>
+                            <label className="custom-control-label" htmlFor={"adminCheck" + index}></label>
+                        </td>
+                        ||
+                        <td></td>
+                        }
+                        <td className="text-center">
+                            {user.isAccepted == false &&
+                            <>
+                                <button onClick={() => Accept(user.id)}
+                                        className="btn btn-sm btn-success mr-3">Accepter</button>
+                                <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Refuser</button>
+                            </>
+                            ||
+                            <>
+                                <button onClick={() => Accept(user.id)}
+                                        className="btn btn-sm btn-success mr-3" disabled={true}>Accepter</button>
+                                <button onClick={() => openModal(user)} className="btn btn-sm btn-danger">Supprimer</button>
+                            </>
+                            }
+                        </td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Body className={""}>
                     <h6>Etes vous sûr de vouloir supprimer l'utilisateur {selectedUser.name} ? </h6>

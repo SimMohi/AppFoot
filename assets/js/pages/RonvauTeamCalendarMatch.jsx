@@ -114,15 +114,15 @@ const RonvauTeamCalendarMatch = props => {
     return(
         <>
             <div className="d-flex">
-                <Link to={"/equipeRonvau/"+ id+ "/select"} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+                <Link to={"/equipeRonvau/"+ id+ "/select"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
                 <div className={" ml-auto"}>
-                    <Link to={"/equipeRonvau/"+id+"/unOffMatchCalendar"} className={"btn btn-primary float-right mb-3"}>Voir matchs non offciels</Link>
+                    <Link to={"/equipeRonvau/"+id+"/unOffMatchCalendar"} className={"btn btn-outline-danger float-right mb-3"}>Voir matchs non offciels</Link>
                 </div>
             </div>
             <h3 className={"text-center"}>{name}</h3>
-            <table className="mt-5 table table-hover text-center">
+            <table className="mt-5 table table-hover text-center whiteBorder">
                 <thead className={""}>
-                    <tr className={"row"}>
+                    <tr className={"row ml-3 mr-3"}>
                         <th className={"col-1"}>Journée</th>
                         <th className={"col-1"}>Date</th>
                         <th className={"col-3"}>Domicile</th>
@@ -133,7 +133,7 @@ const RonvauTeamCalendarMatch = props => {
                 </thead>
                 <tbody>
                 {matchTeamRonvau.map(mtr =>
-                    <tr key={mtr.id} className={"row"}>
+                    <tr key={mtr.id} className={"row ml-3 mr-3"}>
                         <td className={"col-1"}>{mtr.matchDay}</td>
                         {mtr.date != null &&
                             <td className={"col-1"}>{DateFunctions.dateFormatFrDM(mtr.date)} &nbsp;
@@ -151,9 +151,9 @@ const RonvauTeamCalendarMatch = props => {
                         || isAdmin &&
                             <>
                                 <button onClick={() => editMatchDate(mtr)}
-                                        className="btn btn-sm btn-success">Date du match
+                                        className="btn btn-sm btn-outline-danger">Date du match
                                 </button>
-                                <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
+                                <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-btn-warning mr-3"}>Convocations</Link>
                             </>
                             ||
                             ""
@@ -162,15 +162,15 @@ const RonvauTeamCalendarMatch = props => {
                         <td className={"col-2"}>
                         {isAdmin &&
                             <Link to={"/match/" + mtr.id + "/encode"}
-                                  className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                                  className={"btn btn-sm btn-danger"}>Encodage</Link>
                         ||
                         !mtr.isOver &&
                                 <button onClick={() => detailsMatch(mtr)}
-                                        className="btn btn-sm btn-secondary">Détails
+                                        className="btn btn-sm btn-warning">Détails
                                 </button>
                         ||
                             <button onClick={() => convoc(mtr.id)}
-                                    className="btn btn-sm btn-secondary">Liste des convoqués
+                                    className="btn btn-sm btn-warning">Liste des convoqués
                             </button>
                         }
                         </td>
@@ -185,7 +185,7 @@ const RonvauTeamCalendarMatch = props => {
                 <Modal.Body className={""}>
                     <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                     <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
-                    <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
+                    <button onClick={submitDateMatch} className="btn btn-danger">Enregistrer</button>
                 </Modal.Body>
             </Modal>
             <Modal show={show[1]} onHide={() => handleClose(1)}>

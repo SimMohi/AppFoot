@@ -108,7 +108,7 @@ const CovoitPage = props => {
 
     return(
         <>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className={""}>
                 <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} error={errors.title}/>
                 <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
                 <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
@@ -138,7 +138,7 @@ const CovoitPage = props => {
                 }
                 <Field name={"placeRemaining"} label={"Nombre de places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining}/>
                 <div className="from-group">
-                    <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                    <button type={"submit"} className="btn btn-warning float-right">Enregistrer</button>
                 </div>
             </form>
         </>

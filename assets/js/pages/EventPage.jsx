@@ -133,6 +133,7 @@ const EventPage = props => {
                 toast.success("Evenement créé avec succès");
             }
             setErrors({});
+            window.history.back();
         } catch (error) {
             if(error.response.data.violations){
                 console.log(error.response.data.violations);
@@ -143,7 +144,6 @@ const EventPage = props => {
                 setErrors(apiErrors);
             }
         }
-        window.history.back();
     };
 
 
@@ -156,14 +156,11 @@ const EventPage = props => {
 
     return  (
         <>
-            <Link to={"/events"} className={"btn btn-primary float-right mb-3"}>Retour à la liste</Link>
-            {!editing && <h5 className={"mb-3"}>Création d'un nouvel événement</h5> ||
-            <div className={"container"}>
-                <div className="row">
-                    <h5 className={"col-8"}>Modification d'un événement</h5>
-                </div>
-            </div>}
-            <div className="container">
+            <Link to={"/events"} className={"btn btn-danger mb-3"}><i className="fas fa-arrow-left"/></Link>
+            {!editing && <h3 className={"mb-5 text-center"}>Création d'un nouvel événement</h3> ||
+                <h3 className={"col-8 text-center mb-5"}>Modification d'un événement</h3>
+            }
+            <div className="">
                 <div className="row">
                     {editing &&
                         <>
@@ -187,10 +184,10 @@ const EventPage = props => {
                                     </div>
                                 </div>
                                 <div className="from-group">
-                                    <button type={"button"} onClick={handleSubmit} className="btn btn-success">Enregistrer</button>
+                                    <button type={"button"} onClick={handleSubmit} className="btn btn-warning">Enregistrer</button>
                                 </div>
                             </div>
-                            <div className="col-6">
+                            <div className="col-5 ml-5">
                                 <h5>Inviter des équipes à cet événement</h5>
                                 <div className={"ml-5"}>
                                     <div className="form-group">
@@ -209,12 +206,12 @@ const EventPage = props => {
                                             </div>
                                         )}
                                     </div>
-                                    <button type={"button"} onClick={addTeams} className="btn btn-outline-primary mt-3">Inviter</button>
+                                    <button type={"button"} onClick={addTeams} className="btn btn-outline-warning mt-3">Inviter</button>
                                 </div>
                             </div>
                         </>
                         ||
-                        <div className={"mb-5 col-12"}>
+                        <div className={"mb-5 col-12 whiteBorder p-3"}>
                             <Field name={"name"} label={"Nom de l'événement"} type={"text"} value={event.name} onChange={handleChange} error={errors.name}/>
                             <Field name={"description"} label={"Description de l'événement"} type={"text"} value={event.description} onChange={handleChange} error={errors.description}/>
                             <div className="row">
@@ -229,7 +226,7 @@ const EventPage = props => {
                             </div>
 
                             <div className="from-group">
-                                <button type={"button"} onClick={handleSubmit} className="btn btn-success">Enregistrer</button>
+                                <button type={"button"} onClick={handleSubmit} className="btn btn-danger">Enregistrer</button>
                             </div>
                         </div>
                     }

@@ -24,10 +24,11 @@ const EventSubPage = props => {
 
     return (
         <>
-            <h3 className={"mb-3"}>Liste des différents inscrits à cette compétition</h3>
+            <Link to={"/events"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
+            <h3 className={"mb-3"}>Liste des différents inscrits à cet événement</h3>
             <p>{total} personnes sont inscrites à cet événement</p>
             {teams.map((t, index) =>
-                <div key={index} className={"border rounded m-3 p-3"}>
+                <div key={index} className={"whiteBorder m-5 p-3"}>
                     <h6><u>{t.name}</u></h6>
                     <div className={'d-flex flex-row'}>
                         {t.sub.map((s, index) =>

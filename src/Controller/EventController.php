@@ -82,6 +82,7 @@ class EventController extends AbstractController
             $userTeamId =  $userTeam->getId();
             $teamArr["idUserTeam"] = $userTeamId;
             $eventsTeam = $userTeam->getTeamRonvauId()->getEventsTeams();
+            $teamArr["events"] = [];
             foreach ($eventsTeam as $eventTeam){
                 $event = $eventTeam->getIdEvents();
                 $eventsArr = array();

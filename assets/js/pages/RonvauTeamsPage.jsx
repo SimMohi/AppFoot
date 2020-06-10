@@ -82,8 +82,8 @@ const RonvauTeamsPage = () => {
 
     return ( <>
         <h1 className={"mb-5"}>Liste des équipes</h1>
-        <button onClick={() => handleShow(0)} className="btn btn-primary float-right">Nouvelle équipe</button>
-        <table className="table table-hover text-center">
+        <button onClick={() => handleShow(0)} className="btn btn-outline-danger float-right mb-3">Nouvelle équipe</button>
+        <table className="table table-hover text-center whiteBorder">
             <thead>
             <tr>
                 <th>Catégorie</th>
@@ -97,7 +97,7 @@ const RonvauTeamsPage = () => {
                     <td>{ronvauTeam["userTeams"].length}</td>
                     <td>
                         <Link to={"/equipeRonvau/"+ronvauTeam.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Sélectionner</Link>
-                        <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-primary mr-3"}>Editer</Link>
+                        <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-secondary mr-3"}>Editer</Link>
                         <button onClick={() => handleDelete(ronvauTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>
@@ -111,7 +111,7 @@ const RonvauTeamsPage = () => {
             <Modal.Body>
                 <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={newTeam.category} onChange={handleChange} error={errors.category}/>
                 <div className="from-group mt-3 float-right">
-                    <button type={"button"}  onClick={handleSubmit} className="btn btn-outline-success">Enregistrer</button>
+                    <button type={"button"}  onClick={handleSubmit} className="btn btn-warning">Enregistrer</button>
                 </div>
             </Modal.Body>
         </Modal>

@@ -77,12 +77,12 @@ const ClubsPage = props => {
                 <Field type={"text"} value={search} onChange={changeSearch} placeholder={"Trier par nom"}/>
                 {isAdmin &&
                     <div>
-                        <Link to={"/club/new/"} className={"btn btn-info float-right"}> Nouveau club</Link>
+                        <Link to={"/club/new/"} className={"btn btn-warning float-right"}> Nouveau club</Link>
                     </div>
                 }
             </div>
 
-        <table className="table table-hover mt-3">
+        <table className="table table-hover mt-3 whiteBorder">
             <thead>
             <tr>
                 <th>Nom</th>
@@ -98,7 +98,7 @@ const ClubsPage = props => {
                     <td>
                         {isAdmin &&
                             <>
-                                <Link to={"/club/"+club.id} className={"btn btn-sm btn-primary mr-3"}>Modifier</Link>
+                                <Link to={"/club/"+club.id} className={"btn btn-sm btn-outline-warning mr-3"}>Modifier</Link>
                                 <button onClick={() => openModal(club)} className="btn btn-sm btn-danger">Supprimer</button>
                             </>
                         }

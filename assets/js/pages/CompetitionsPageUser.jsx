@@ -22,7 +22,7 @@ const CompetitionsPage = props => {
 
     return ( <>
         <h1 className={"mb-5"}>Liste des compétitions</h1>
-        <table className="table table-hover">
+        <table className="table table-hover whiteBorder col-8">
             <thead>
             <tr>
                 <th>Nom</th>
@@ -38,9 +38,9 @@ const CompetitionsPage = props => {
                         <td>{competition.season}</td>
                         <td>
                             <Link to={"/competition/" + competition.id + "/view"}
-                                  className={"btn btn-sm btn-primary mr-3"}>Classement</Link>
+                                  className={"btn btn-sm btn-warning mr-3"}>Classement</Link>
                             <Link to={"/competition/" + competition.id + "/matchs"}
-                                  className={"btn btn-sm btn-secondary mr-3"}>Calendrier des matchs</Link>
+                                  className={"btn btn-sm btn-danger mr-3"}>Calendrier des matchs</Link>
                         </td>
                     </tr>
             )}

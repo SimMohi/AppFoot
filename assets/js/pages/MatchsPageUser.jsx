@@ -33,14 +33,14 @@ const MatchPages = props => {
 
     return(
         <>
+            <Link to={"/competition"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
             <div className="w-50 m-auto">
-                <Link to={"/competition"} className={"btn btn-link float-right"}>Retour à la liste</Link>
                 <select className="form-control w-50" id="matchDay" name={"matchDay"} onChange={selectMatchDay}>
                     {matchDay.map((opt,index) =>
                     <option key={index} value={opt}>journée numéro {opt}</option>
                     )}
                 </select>
-                <div className={"mt-3 bgGrey"}>
+                <div className={"mt-3 whiteBorder p-5"}>
                     {typeof matchs != "undefined" && typeof selectedDay != 'undefined' && matchs[selectedDay].map((mat,index) =>
                         <div key={mat.id}>
                             <div className={"row m-2"}>

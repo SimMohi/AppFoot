@@ -89,46 +89,39 @@ const App = () => {
                             </NavText>
                         </NavItem>
                         {isAdmin &&
-                        <>
-                            <NavItem eventKey="access">
-                                <NavIcon>
-                                    <NavLink className="nav-link" to={"/userAccess"}>
-                                        <i className="fas fa-users-cog" style={{fontSize: '1.75em'}}/>
-                                    </NavLink>
-                                </NavIcon>
-                                <NavText>
-                                    <NavLink className="nav-link" to={"/userAccess"}>
-                                        Gestion des accès
-                                    </NavLink>
-                                </NavText>
-                            </NavItem>
-                            <NavItem eventKey="team">
-                                <NavIcon>
-                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                        <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
-                                    </NavLink>
-                                </NavIcon>
-                                <NavText>
-                                    <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                        Gestion des équipes
-                                    </NavLink>
-                                </NavText>
-                            </NavItem>
-                        </>
-                        ||
-                        <NavItem eventKey="team">
+                        <NavItem eventKey="access">
                             <NavIcon>
-                                <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                    <i className="fas fa-tshirt" style={{fontSize: '1.75em'}}></i>
+                                <NavLink className="nav-link" to={"/userAccess"}>
+                                    <i className="fas fa-users-cog" style={{fontSize: '1.75em'}}/>
                                 </NavLink>
                             </NavIcon>
                             <NavText>
-                                <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                    Mes équipes
+                                <NavLink className="nav-link" to={"/userAccess"}>
+                                    Gestion des accès
                                 </NavLink>
                             </NavText>
                         </NavItem>
                         }
+                        <NavItem eventKey="team">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    {isAdmin &&
+                                    <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
+                                    ||
+                                    <i className="fas fa-tshirt" style={{fontSize: '1.75em'}}></i>
+                                    }
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/equipeRonvau"}>
+                                    {isAdmin &&
+                                    "Gestion des équipes"
+                                    ||
+                                        "Equipes"
+                                    }
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
                         <NavItem eventKey="car">
                             <NavIcon>
                                 <NavLink className="nav-link" to={"/covoit"}>
@@ -192,7 +185,7 @@ const App = () => {
                     </SideNav.Nav>
                 </SideNav>
                 }
-                <main className="p-5 ml-5 mt-5">
+                <main className="p-5 ml-5">
                     <Switch>
                         <Route
                             path="/login"

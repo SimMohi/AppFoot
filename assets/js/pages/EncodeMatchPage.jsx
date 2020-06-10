@@ -62,7 +62,7 @@ const EncodeMatchPage = props => {
     if (typeof match.id != 'undefined'){
         return(
             <>
-                <button onClick={() =>  window.history.back()} className={"btn btn-info mr-3 mb-5"}>Retour</button>
+                <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
                 <h3>{match.homeTeam.club.name} - {match.visitorTeam.club.name} </h3>
                 <h5 className={"mt-5"}>Encoder les statistiques des joueurs</h5>
                 <table className="mt-5 table table-hover text-center container">
@@ -101,7 +101,7 @@ const EncodeMatchPage = props => {
                     )}
                     </tbody>
                 </table>
-                <button onClick={handleSubmit} className="btn btn-success float-right">Enregistrer</button>
+                <button onClick={handleSubmit} className="btn btn-warning float-right">Enregistrer</button>
             </>
         )
     } else {

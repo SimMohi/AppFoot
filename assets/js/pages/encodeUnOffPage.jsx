@@ -86,7 +86,7 @@ const EncodeUnOffMatchPage = props => {
 
      return(
             <>
-                <button onClick={() =>  window.history.back()} className={"btn btn-info mr-3 mb-5"}>Retour</button>
+                <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
                 <h3>{match.name} </h3>
                 <div className={"row"}>
                     <div className="col-1">
@@ -114,7 +114,7 @@ const EncodeUnOffMatchPage = props => {
                     }
                 </div>
                 <h5 className={"mt-5"}>Encoder les statistiques des joueurs</h5>
-                <table className="mt-5 table table-hover text-center ">
+                <table className="mt-5 table table-hover text-center whiteBorder">
                     <thead>
                     <tr className={"row"}>
                         <th className={"col-4"}>Nom</th>
@@ -150,7 +150,7 @@ const EncodeUnOffMatchPage = props => {
                     )}
                     </tbody>
                 </table>
-                <button onClick={handleSubmit} className="btn btn-success float-right">Enregistrer</button>
+                <button onClick={handleSubmit} className="btn btn-danger float-right">Enregistrer</button>
             </>
         )
 }

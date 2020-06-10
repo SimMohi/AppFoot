@@ -21,8 +21,8 @@ const RonvauTeamsPage = () => {
     }, []);
 
     return ( <>
-        <h1>Liste des equipes</h1>
-        <table className="table table-hover text-center">
+        <h1 className={"mb-5"}>Liste des equipes</h1>
+        <table className="table table-hover text-center whiteBorder">
             <thead>
             <tr>
                 <th>Catégorie</th>

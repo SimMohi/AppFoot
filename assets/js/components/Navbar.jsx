@@ -270,7 +270,7 @@ const Navbar = ({ history }) => {
                                     <p>Vous avez été convoqué pour le match : {not.match}</p>
                                 </div>
                                 <div className="col-3">
-                                    <button onClick={() => acceptMatch(not["joueur"], not["type"])} className={"btn btn-sm btn-success mb-1"}>Accepter</button>
+                                    <button onClick={() => acceptMatch(not["joueur"], not["type"])} className={"btn btn-sm btn-warning mb-1"}>Accepter</button>
                                     <button onClick={() => justif(not["joueur"], not["type"])} className={"btn btn-sm btn-danger"}>Refuser</button>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@ const Navbar = ({ history }) => {
                                     {not.message}
                                 </div>
                                 <div className="col-3">
-                                    <button onClick={() => seenNotif(not.id)} className="btn btn-sm btn-primary">D'accord</button>
+                                    <button onClick={() => seenNotif(not.id)} className="btn btn-sm btn-warning">D'accord</button>
                                 </div>
                             </div>
                             <hr/>
@@ -298,7 +298,7 @@ const Navbar = ({ history }) => {
                 </Modal.Header>
                 <Modal.Body className={""}>
                     <Field type={"text"} value={justification.reason} onChange={handleChange} name={"reason"} label={"Raison de l'absence:"}/>
-                    <button onClick={() => deleteNotif(justification.player, justification.type)} className="btn btn-success">Enregistrer</button>
+                    <button onClick={() => deleteNotif(justification.player, justification.type)} className="btn btn-warning">Enregistrer</button>
                 </Modal.Body>
             </Modal>
         </>

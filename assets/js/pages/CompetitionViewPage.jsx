@@ -43,11 +43,12 @@ const  CompetitionViewPage = props => {
 
     return (
       <>
-          <Link to={"/competition"} className={"btn btn-link float-right mb-3"}>Retour à la liste</Link>
-          <table className="table table-hover text-">
+          <Link to={"/competition"} className={"btn btn-danger mb-5"}><i className="fas fa-arrow-left"/></Link>
+          <table className="table table-hover whiteBorder">
               <thead>
               <tr>
-                  <th>Nom</th>
+                  <th></th>
+                  <th>Equipe</th>
                   <th>Jouer</th>
                   <th>Gagner</th>
                   <th>Nul</th>
@@ -56,8 +57,9 @@ const  CompetitionViewPage = props => {
               </tr>
               </thead>
               <tbody>
-              {orderTeams.map(team =>
+              {orderTeams.map((team, index) =>
                   <tr key={team.id}>
+                      <td>{index+1}</td>
                       <td>{team.name}</td>
                       <td>{team.played}</td>
                       <td>{team.won} </td>
@@ -69,7 +71,7 @@ const  CompetitionViewPage = props => {
               </tbody>
           </table>
           {isAdmin &&
-              <Link to={"/competition/" + id + "/matchs"} className={"btn btn-info float-right"}>Ajouter des matchs</Link>
+              <Link to={"/competition/" + id + "/matchs"} className={"btn btn-warning float-right"}>Ajouter des matchs</Link>
           }
       </>
     );

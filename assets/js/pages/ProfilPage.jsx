@@ -130,7 +130,7 @@ const ProfilPage = props => {
             <div className="container">
                 <div className="row">
                     <div className="col-8">
-                        <form onSubmit={handleSubmit} className={"container mt-5"}>
+                        <form onSubmit={handleSubmit} className={"container mt-5 p-3 whiteBorder"}>
                             <div className="row">
                                 <div className="col-6">
                                     <Field name={"lastName"} label={"Nom de famille"} type={"text"} value={user.lastName} onChange={handleChange} error={errors.lastName}/>
@@ -173,7 +173,7 @@ const ProfilPage = props => {
                             </div>
 
                             <div className="from-group">
-                                <button type={"submit"} className="btn btn-success ml-auto">Enregistrer</button>
+                                <button type={"submit"} className="btn btn-danger ml-auto">Enregistrer</button>
                             </div>
                         </form>
                     </div>
@@ -194,9 +194,9 @@ const ProfilPage = props => {
                 </div>
             </div>
             <h5 className={"mt-5"}>Vos statistiques</h5>
-            <table className="table table-hover mt-5 text-center container">
+            <table className="table table-hover mt-5 text-center container whiteBorder">
                 <thead>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-4"}>Equipe</th>
                     <th className={"col-2"}>Matchs joués</th>
                     <th className={"col-2"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
@@ -206,7 +206,7 @@ const ProfilPage = props => {
                 </thead>
                 <tbody>
                 {info.map((team, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-4"}>{team.team}</td>
                         <td className={"col-2"}>{team.played}</td>
                         <td className={"col-2"}>{team.goal}</td>

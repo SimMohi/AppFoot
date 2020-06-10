@@ -85,8 +85,9 @@ const ClubPage = props => {
 
     return(
         <>
+            <Link to={"/club"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
             {!editing && <h1 className={"mb-5"}>Création d'un nouveau Club</h1> || <h1 className={"mb-5"}>Modification d'un Club</h1>}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className={"whiteBorder p-5"}>
                 <div className="row">
                     <div className="col-4">
                         <Field name={"name"} label={"Nom du club"} type={"text"} value={club.name} onChange={handleChange} error={errors.name}/>
@@ -107,8 +108,7 @@ const ClubPage = props => {
                     </div>
                 </div>
                 <div className="from-group">
-                    <button type={"submit"} className="btn btn-success">Enregistrer</button>
-                    <Link to={"/club"} className={"btn btn-link"}>Retour à la liste</Link>
+                    <button type={"submit"} className="btn btn-warning float-right">Enregistrer</button>
                 </div>
             </form>
         </>

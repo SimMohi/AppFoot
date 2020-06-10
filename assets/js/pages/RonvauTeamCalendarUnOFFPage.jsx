@@ -159,15 +159,15 @@ const RonvauTeamCalendarUnOffPage = props => {
     return(
         <>
             <div className="d-flex">
-                <Link to={"/equipeRonvau/"+ id+ "/matchCalendar"} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+                <Link to={"/equipeRonvau/"+ id+ "/matchCalendar"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
                 <div className={" ml-auto"}>
-                    {isAdmin &&<button onClick={() => addNonOffMatch()} className="btn  btn-primary">Ajouter un match hors Championnat</button>}
+                    {isAdmin &&<button onClick={() => addNonOffMatch()} className="btn  btn-outline-danger">Ajouter un match hors Championnat</button>}
                 </div>
             </div>
             <h3 className={"text-center"}>{name}</h3>
-            <table className="mt-5 table table-hover text-center container">
+            <table className="mt-5 table table-hover text-center whiteBorder">
                 <thead className={""}>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-2"}>Date</th>
                     <th className={"col-3"}>Domicile</th>
                     <th className={"col-3"}>Extérieur</th>
@@ -177,7 +177,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                 </thead>
                 <tbody>
                 {matchTeamRonvau.map((mtr, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         {mtr.date != null &&
                         <td className={"col-2"}>{DateFunctions.dateFormatFrDM(mtr.date)} &nbsp;
                             {mtr.date != null &&
@@ -194,9 +194,9 @@ const RonvauTeamCalendarUnOffPage = props => {
                         || isAdmin &&
                         <>
                             <button onClick={() => editMatchDate(mtr)}
-                                    className="btn btn-sm btn-success">Date du match
+                                    className="btn btn-sm btn-danger">Date du match
                             </button>
-                            <Link to={"/unOffMatch/"+mtr.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>
+                            <Link to={"/unOffMatch/"+mtr.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>
                         </>
                         ||
                         ""
@@ -205,19 +205,19 @@ const RonvauTeamCalendarUnOffPage = props => {
                         {isAdmin &&
                         <td className={"col-2"}>
                             <Link to={"/unOffMatch/" + mtr.id + "/encode"}
-                                  className={"btn btn-sm btn-secondary"}>Encodage</Link>
+                                  className={"btn btn-sm btn-warning"}>Encodage</Link>
                         </td>
                         ||
                         mtr.isOver &&
                         <td className={"col-2"}>
                             <button onClick={() => detailsMatch(mtr)}
-                                    className="btn btn-sm btn-secondary">Détails
+                                    className="btn btn-sm btn-warning">Détails
                             </button>
                         </td>
                             ||
                         <td className={"col-2"}>
                             <button onClick={() => convoc(mtr.id)}
-                                    className="btn btn-sm btn-secondary">Liste des convoqués
+                                    className="btn btn-sm btn-warning">Liste des convoqués
                             </button>
                         </td>
                         }
@@ -232,7 +232,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                 <Modal.Body className={""}>
                     <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                     <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
-                    <button onClick={submitDateMatch} className="btn btn-success">Enregistrer</button>
+                    <button onClick={submitDateMatch} className="btn btn-danger">Enregistrer</button>
                 </Modal.Body>
             </Modal>
             <Modal show={show[1]} onHide={() => handleClose(1)}>
@@ -292,7 +292,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                         <input type="checkbox" className="custom-control-input" name={"isHome"} id={"isHome"} checked={newMatch.isHome} onChange={handleChangeNewMatch}/>
                         <label className="custom-control-label" htmlFor={"isHome"}>Se joue à domicile</label>
                     </div>
-                    <button onClick={() => createMatch()} className="btn btn-primary float-right">Valider</button>
+                    <button onClick={() => createMatch()} className="btn btn-danger float-right">Valider</button>
                 </Modal.Body>
             </Modal>
             <Modal show={show[3]} onHide={() => handleClose(3)}>

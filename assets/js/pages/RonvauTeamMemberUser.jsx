@@ -95,7 +95,7 @@ const RonvauTeamMemberUser = props => {
 
     return(
         <>
-            <Link to={"/equipeRonvau/"} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+            <Link to={"/equipeRonvau/"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"></i></Link>
             <div className="row">
                 <div className="col-8">
                     <h3>Membres de l'équipe : {ronvauTeam.category}</h3>
@@ -105,30 +105,30 @@ const RonvauTeamMemberUser = props => {
                 </div>
             </div>
             <h5 className={"mt-5"}>Coachs</h5>
-            <table className="table table-hover text-center">
+            <table className="table table-hover text-center whiteBorder col-8">
                 <thead>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-4"}>Nom</th>
-                    <th className={"col-2"}>Adresse email</th>
-                    <th className={"col-2"}>Telephone</th>
+                    <th className={"col-4"}>Adresse email</th>
+                    <th className={"col-4"}>Telephone</th>
                 </tr>
                 </thead>
                 <tbody>
                 {ronvauTeam.coachs.map((p, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-4"}>
                             <Link to={"/profil/"+p.id} className={"nav-link"}>{p.name}</Link>
                         </td>
-                        <td className={"col-2"}>{p.email}</td>
-                        <td className={"col-2"}>{p.tel}</td>
+                        <td className={"col-4"}>{p.email}</td>
+                        <td className={"col-4"}>{p.tel}</td>
                     </tr>
                 )}
                 </tbody>
             </table>
             <h5 className={"mt-5"}>Joueurs</h5>
-            <table className="table table-hover text-center">
+            <table className="table table-hover text-center whiteBorder">
                 <thead>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-4"}>Nom</th>
                     <th className={"col-2"}>Matchs joués</th>
                     <th className={"col-1"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
@@ -139,7 +139,7 @@ const RonvauTeamMemberUser = props => {
                 </thead>
                 <tbody>
                 {ronvauTeam.players.map((p, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-4"}>
                             <Link to={"/profil/"+p.id} className={"nav-link"}>{p.name}</Link>
                         </td>

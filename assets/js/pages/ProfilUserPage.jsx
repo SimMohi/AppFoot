@@ -58,11 +58,12 @@ const ProfilUserPage = props => {
 
             <div className="container">
                 <div className="row">
-                    <div className="col-8">
+                    <div className="col-4 whiteBorder p-3">
                         <h5>{user.firstName + " " + user.lastName}</h5>
                         <p>{user.email}</p>
                         <p>{user.gsm}</p>
                     </div>
+                    <div className="col-4"></div>
                     <div className="col-4">
                         <ReactSearchBox
                             placeholder="Rechercher quelqu'un"
@@ -80,9 +81,9 @@ const ProfilUserPage = props => {
                 </div>
             </div>
             <h5 className={"mt-5"}>Ces statistiques</h5>
-            <table className="table table-hover mt-5 text-center container">
+            <table className="table table-hover mt-5 text-center container whiteBorder">
                 <thead>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-4"}>Equipe</th>
                     <th className={"col-2"}>Matchs joués</th>
                     <th className={"col-2"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
@@ -92,7 +93,7 @@ const ProfilUserPage = props => {
                 </thead>
                 <tbody>
                 {info.map((team, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-4"}>{team.team}</td>
                         <td className={"col-2"}>{team.played}</td>
                         <td className={"col-2"}>{team.goal}</td>

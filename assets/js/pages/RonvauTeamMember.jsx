@@ -97,11 +97,11 @@ const RonvauTeamMember = props => {
 
     return(
         <>
-            <Link to={"/equipeRonvau/"+ id} className={"btn btn-info mr-3 mb-5"}>Retour</Link>
+            <Link to={"/equipeRonvau/"+ id} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
             <div className="row">
                 <div className="col-8">
                     <h4>Liste des membres de cette équipe</h4>
-                    <table className="mt-5 table table-hover text-center">
+                    <table className="mt-5 table table-hover text-center whiteBorder">
                         <thead>
                         <tr>
                             <th>Nom</th>
@@ -124,9 +124,9 @@ const RonvauTeamMember = props => {
                         </tbody>
                     </table>
                 </div>
-                <div className="col-4">
-                    <h6>Ajouter un membre à l'équipe</h6>
-                    <div className="mt-5 p-0">
+                <div className="col-4 whiteBorder pt-3">
+                    <h6 className={"pt-5"}>Ajouter un membre à l'équipe</h6>
+                    <div className="mt-5 p-0 ">
                         <ReactSearchBox
                             placeholder="Ajouter un utilisateur à l'équipe"
                             data={users}
@@ -146,9 +146,9 @@ const RonvauTeamMember = props => {
                         <option value={1}>Coach</option>
                         <option value={2}>Coach - Joueur</option>
                     </select>
-                    <div className={"mt-3 mb-5"}>
+                    <div className={"mt-3"}>
                         <button type={"button"} onClick={() => AddUserTeam()}
-                                className="btn btn-primary ml-auto d-block">Ajouter
+                                className="btn btn-warning ml-auto d-block mb-0">Ajouter
                         </button>
                     </div>
                 </div>

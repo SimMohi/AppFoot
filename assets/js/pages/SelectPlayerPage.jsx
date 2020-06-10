@@ -107,7 +107,7 @@ const SelectPlayerMatchPage = props => {
 
     return(
         <>
-            <button onClick={() =>  window.history.back()} className={"btn btn-info mr-3 mb-5"}>Retour</button>
+            <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
             <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
             <div className="">
                 <div className="row">
@@ -131,7 +131,7 @@ const SelectPlayerMatchPage = props => {
                             )}
                             </tbody>
                         </table>
-                        <button onClick={callFunction} className="btn btn-primary">Convoquer</button>
+                        <button onClick={callFunction} className="btn btn-warning">Convoquer</button>
                     </div>
                     <div className="col-1"></div>
                     <div className="col-8">

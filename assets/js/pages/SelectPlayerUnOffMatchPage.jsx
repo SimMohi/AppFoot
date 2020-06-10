@@ -77,6 +77,7 @@ const SelectPlayerUnOffMatchPage = props => {
 
     return(
         <>
+            <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
             <h3 className={"mb-5"}>Convocations pour le macth {match.name}</h3>
             <div className="">
                 <div className="row">
@@ -100,7 +101,7 @@ const SelectPlayerUnOffMatchPage = props => {
                             )}
                             </tbody>
                         </table>
-                        <button onClick={callFunction} className="btn btn-primary">Convoquer</button>
+                        <button onClick={callFunction} className="btn btn-danger">Convoquer</button>
                     </div>
                     <div className="col-1"></div>
                     <div className="col-8">

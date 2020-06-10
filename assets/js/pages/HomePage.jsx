@@ -141,13 +141,13 @@ const HomePage = props => {
         if (event.type == "training"){
             if (!(event.staff == false && event.player == false)){
                 if (event.abs == true){
-                    buttons.push(<button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-success">Annuler mon absence</button>);
+                    buttons.push(<button onClick={() => deleteAbsence(event.id)} className="btn btn-sm btn-warning">Annuler mon absence</button>);
                 } else {
                     buttons.push(<button onClick={() => handleShow(0)} className="btn btn-sm btn-danger">Prévenir une absence</button>);
                 }
                 if (event.staff == true){
-                    buttons.push(<button onClick={() => findTraining(event.id)} className="btn btn-sm btn-primary">Encoder présences </button>);
-                    buttons.push(<button onClick={() => modalEditTraining(event)} className="btn btn-sm btn-secondary">Modifier l'entrainement </button>);
+                    buttons.push(<button onClick={() => findTraining(event.id)} className="btn btn-sm btn-outline-danger">Encoder présences </button>);
+                    buttons.push(<button onClick={() => modalEditTraining(event)} className="btn btn-sm btn-warning">Modifier l'entrainement </button>);
                 }
             }
             const description =
@@ -172,13 +172,13 @@ const HomePage = props => {
             }
         } else if (event.type == "Match"){
             if (event.staff == true){
-                buttons.push(<Link to={"/match/"+event.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>);
-                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
+                buttons.push(<Link to={"/match/"+event.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>);
+                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-danger">Date du match</button>);
             } else {
                 if (event.isOver){
-                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-success">Details</button>);
+                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-warning">Details</button>);
                 } else {
-                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-success">Liste des convoqués</button>);
+                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-warning">Liste des convoqués</button>);
                 }
             }
             const description =
@@ -230,19 +230,19 @@ const HomePage = props => {
                 presences: [],
             }
             if (event.sub === false){
-                buttons.push(<button onClick={() => subscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-primary mr-3"}>S'inscrire</button>);
+                buttons.push(<button onClick={() => subscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-warning mr-3"}>S'inscrire</button>);
             } else {
                 buttons.push(<button onClick={() => unSubscribeEvent(event.eventTeamId)} className={"btn btn-sm btn-danger mr-3"}>Se désinscrire</button>);
             }
         } else if (event.type == "Amical"){
             if (event.staff == true){
-                buttons.push(<Link to={"/unOffMatch/"+event.id+"/select"} className={"btn btn-sm btn-primary mr-3"}>Convocations</Link>);
-                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-success">Date du match</button>);
+                buttons.push(<Link to={"/unOffMatch/"+event.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>);
+                buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-sm btn-danger">Date du match</button>);
             } else {
                 if (event.isOver){
-                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-success">Details</button>);
+                    buttons.push(<button onClick={() => handleShow(5)} className="btn btn-sm btn-warning">Details</button>);
                 } else {
-                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-success">Liste des convoqués</button>);
+                    buttons.push(<button onClick={() => handleShow(6)} className="btn btn-sm btn-warning">Liste des convoqués</button>);
                 }
             }
             const description =
@@ -496,9 +496,10 @@ const HomePage = props => {
 
     return (
       <>
+          <h3 className={"text-center mb-4"}>Mon calendrier pour mes différentes équipes</h3>
           <div className="">
               <div className="row">
-                  <div style={{ height: 700 }} className={"col-9"}>
+                  <div style={{ height: 700 }} className={"col-8 whiteBorder pt-3 pb-3 mr-5"}>
                       <Calendar
                           onSelectEvent={event => test(event)}
                           selectable={true}
@@ -509,7 +510,7 @@ const HomePage = props => {
                           defaultDate={new Date()}
                       />
                   </div>
-                  <div className="col-3 text-center">
+                  <div className="col-3 text-center whiteBorder pt-3 ml-5">
                       {selectedEvent.title != "" &&
                         <h6>{selectedEvent.title} du {DateFunctions.dateFormatFr(selectedEvent.day)}</h6>
                       }
@@ -558,7 +559,7 @@ const HomePage = props => {
                           <label className="custom-control-label" htmlFor={"presence"+index}>{user.name}</label>
                       </div>
                   )}
-                  <button onClick={() => submitPresence()} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitPresence()} className="btn btn-warning">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[2]} onHide={() => handleClose(2)}>
@@ -569,7 +570,7 @@ const HomePage = props => {
                   <Field name={"date"} label={"Jour de l'entrainement"} type={"date"} value={editTraining.date} onChange={handleChangeTraining} />
                   <Field name={"start"} label={"Heure de début"} type={"time"} value={editTraining.start} onChange={handleChangeTraining} />
                   <Field name={"end"} label={"Heure de fin"} type={"time"} value={editTraining.end} onChange={handleChangeTraining} />
-                  <button onClick={() => submitTraining(selectedEvent)} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitTraining(selectedEvent)} className="btn btn-warning">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[3]} onHide={() => handleClose(3)}>
@@ -579,7 +580,7 @@ const HomePage = props => {
               <Modal.Body className={""}>
                   <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                   <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
-                  <button onClick={() => submitDateMatch()} className="btn btn-success">Enregistrer</button>
+                  <button onClick={() => submitDateMatch()} className="btn btn-warning">Enregistrer</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[4]} onHide={() => handleClose(4)}>
@@ -594,7 +595,7 @@ const HomePage = props => {
                           <label className="custom-control-label" htmlFor={"customRadio"+index}>{player.name}</label>
                       </div>
                   )}
-                  <button onClick={() => submitPlayerOfTheMatch()} className="btn btn-success mt-5">Valider</button>
+                  <button onClick={() => submitPlayerOfTheMatch()} className="btn btn-warning mt-5">Valider</button>
               </Modal.Body>
           </Modal>
           <Modal show={show[5]} onHide={() => handleClose(5)}>

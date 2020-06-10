@@ -5,6 +5,7 @@ import {toast} from "react-toastify";
 import axios from "axios";
 import {API_URL, CARS_API, PASSENGERS_API} from "../config";
 import DateFunctions from "../services/DateFunctions";
+import {Link} from "react-router-dom";
 
 
 const CovoitPage = props => {
@@ -69,6 +70,8 @@ const CovoitPage = props => {
         for (let i = 0; i < car["carPassengers"].length; i++){
             copyCar["carPassengers"][i] =  car["carPassengers"][i]["@id"];
         }
+        copyCar["date"] = new Date(car.date + " " + car.time);
+
         try {
             const response = await CovoitAPI.create(copyCar);
             if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
@@ -157,7 +160,9 @@ const CovoitPage = props => {
 
     return(
         <>
-            <form onSubmit={handleSubmit}>
+            <Link to={"/covoit"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
+            <form onSubmit={handleSubmit} className={"whiteBorder p-5"}>
+                <h4 className={"mb-5"}>Modification de mon covoiturage</h4>
                 <div className="row">
                     <div className={"col-6"}>
                         <div className="row">
@@ -225,7 +230,7 @@ const CovoitPage = props => {
                                 <td>{pass["numberPassenger"]}</td>
                                 <td><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
                                 <td>
-                                    {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-success mr-3">Accepter</button>}
+                                    {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-warning mr-3">Accepter</button>}
                                     <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
                                 </td>
                             </tr>
@@ -233,7 +238,7 @@ const CovoitPage = props => {
                     </tbody>
                 </table>
                 <div className="from-group">
-                    <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                    <button type={"submit"} className="btn btn-outline-warning float-right">Enregistrer</button>
                 </div>
             </form>
         </>

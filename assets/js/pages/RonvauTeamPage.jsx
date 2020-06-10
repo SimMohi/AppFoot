@@ -248,24 +248,23 @@ const RonvauTeamPage = props => {
 
     return  (
         <>
-            <Link to={"/equipeRonvau"} className={"btn btn-info mb-5"}>Retour à la liste</Link>
-            <Link to={"/equipeRonvau/"+ id+"/userAdmin"} className={"btn btn-lg btn-primary mb-5 mr-3 float-right"}>Gestion des joueurs</Link>
+            <Link to={"/equipeRonvau"} className={"btn btn-danger mb-5"}><i className="fas fa-arrow-left"/></Link>
+            <Link to={"/equipeRonvau/"+ id+"/userAdmin"} className={"btn btn-lg btn-outline-danger mb-5 mr-3 float-right"}>Gestion des joueurs</Link>
             <div className="row">
                 <div className="col-9">
                     {!editing && <h1 className={"mb-5"}>Création d'une nouvelle équipe</h1> || <h1 className={"mb-5"}>Modification d'une équipe</h1>}
                 </div>
                 <div className="col-3">
-
                 </div>
             </div>
             <div className={""}>
                 <form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-7">
-                            <div className="row">
-                                <div className="col-8">
+                            <div className="row  ">
+                                <div className="col-8 ml-5 whiteBorder p-3">
                                     <Field name={"category"} label={"Catégorie de l'équipe"} type={"text"} value={ronvauTeam.category} onChange={handleChange} error={errors.category}/>
-                                    <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                                    <button type={"submit"} className="btn btn-warning float-right">Enregistrer</button>
                                 </div>
                                 <div className="col-4">
                                     <div className="from-group mt-4">
@@ -276,7 +275,7 @@ const RonvauTeamPage = props => {
                             {editing &&
                                 <>
                                     <h5 className={"mt-5"}>Programmation des entraînements</h5>
-                                    <div className={"m-4 container"}>
+                                    <div className={"m-4 container whiteBorder"}>
                                         <table className="mt-5 table table-hover text-center">
                                             <thead className={"container"}>
                                                 <tr className={"row"}>
@@ -325,7 +324,7 @@ const RonvauTeamPage = props => {
                                                                value={selectTraining["hourEnd"]} onChange={handleChangeSelectTraining}/>
                                                     </td>
                                                     <td className={"col-3"}>
-                                                        <button type={"button"} onClick={submitTraining} className="btn btn-sm btn-success">Ajouter un entraînement</button>
+                                                        <button type={"button"} onClick={submitTraining} className="btn btn-sm btn-warning">Ajouter un entraînement</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -334,8 +333,8 @@ const RonvauTeamPage = props => {
                                 </>
                             }
                         </div>
-                        <div className="col-5">
-                            <div className="col">
+                        <div className="col-4">
+                            <div className="col whiteBorder p-3">
                                 {editing &&
                                 <>
                                     {(typeof ronvauTeam["team"] == 'undefined' || ronvauTeam["team"] == "" ) &&

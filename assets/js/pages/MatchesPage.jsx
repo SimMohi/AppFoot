@@ -209,14 +209,15 @@ const MatchPages = props => {
 
     return(
         <>
+            <Link to={"/competition/"+id+"/view"} className={"btn btn-danger mb-5 ml-3"}><i className="fas fa-arrow-left"/></Link>
             <div className="form-group w-25">
                 <select className="form-control" id="matchDay" name={"matchDay"} onChange={changeMatchDay}>
                     {createOptions(matchDayNumber)}
                 </select>
             </div>
-            <table className="table table-hover text-center">
+            <table className="table table-hover text-center whiteBorder">
                 <thead className={"container"}>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3 "}>
                     <th className={"col-1"}>Date</th>
                     <th className={"col-3"}>Equipe à domicile</th>
                     <th className={'col-1'}></th>
@@ -227,7 +228,7 @@ const MatchPages = props => {
                 </thead>
                 <tbody className={"container"}>
                     {matchOfDay.map((m, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row  ml-3 mr-3 "}>
                         <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(m.date, 1)}</td>
                         <td className={"col-3"}><div>{m.homeTeam.club.name}</div></td>
                         <td className={"col-1"}>
@@ -251,10 +252,10 @@ const MatchPages = props => {
                         </td>
                         <td className="col-2">
                             {m.isOver &&
-                            <button onClick={() => modalScore(m)} className="btn btn-sm btn-primary">Modifier
+                            <button onClick={() => modalScore(m)} className="btn btn-sm btn-warning">Modifier
                                 score</button>
                             ||
-                            <button onClick={() => openModal(m)} className="btn btn-sm btn-secondary">Modifier
+                            <button onClick={() => openModal(m)} className="btn btn-sm btn-warning">Modifier
                                 Date</button>
                             }
                             </td>
@@ -262,9 +263,8 @@ const MatchPages = props => {
                     )}
                 </tbody>
             </table>
-            <hr/>
             <h3 className="m-3">Ajouter un match</h3>
-            <div className={"row"}>
+            <div className={"row whiteBorder p-3"}>
                 <div className={"col-4"}>
                     <ReactSearchBox
                         placeholder="Sélectionner une équipe"
@@ -300,11 +300,10 @@ const MatchPages = props => {
                     </div>
                 </div>
                 <div>
-                    <button onClick={addMatch} className="btn btn-success float-right">Ajouter match</button>
+                    <button onClick={addMatch} className="btn btn-warning float-right">Ajouter match</button>
                 </div>
             </div>
-            <Link to={"/competition/"+id+"/view"} className={"btn btn-primary float-right ml-3"}>Retour à la compétition </Link>
-            <button onClick={handleSubmit} className="btn btn-success float-right">Enregistrer</button>
+            <button onClick={handleSubmit} className="btn btn-danger mt-3 mb-5 float-right">Enregistrer</button>
             <Modal show={show[0]} onHide={() => handleClose(0)}>
                 <Modal.Header closeButton>
                     Modifier la date et l'heure du match
@@ -312,7 +311,7 @@ const MatchPages = props => {
                 <Modal.Body className={""}>
                     <Field name={"date"} label={"Date du match"} min={DateFunctions.addYears(-1)} max={DateFunctions.addYears(3)} type={"date"} value={editMatch.date} onChange={handleChangeDate} />
                     <Field name={"hour"} label={"Heure du match"} type={"time"} value={editMatch.hour} onChange={handleChangeDate} />
-                    <button onClick={() => submitDateMatch()} className="btn btn-success">Enregistrer</button>
+                    <button onClick={() => submitDateMatch()} className="btn btn-warning">Enregistrer</button>
                 </Modal.Body>
             </Modal>
             <Modal show={show[1]} onHide={() => handleClose(1)}>
@@ -336,7 +335,7 @@ const MatchPages = props => {
                             <Field name={"number"} min={0} name={"goalB"} type={"number"} value={editMatch.goalB} onChange={handleChangeDate} />
                         </div>
                     </div>
-                    <button onClick={() => submitScore()} className="btn btn-success">Enregistrer</button>
+                    <button onClick={() => submitScore()} className="btn btn-warning">Enregistrer</button>
                 </Modal.Body>
             </Modal>
         </>

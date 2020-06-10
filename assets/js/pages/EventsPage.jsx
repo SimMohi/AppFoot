@@ -49,9 +49,9 @@ const EventsPage = props => {
     }
 
     return ( <>
-        <Link to={"/events/new"} className={"btn btn-primary float-right"}>Créer un événement</Link>
+        <Link to={"/events/new"} className={"btn btn-warning float-right"}>Créer un événement</Link>
         <h3 className={"mb-5"}>Liste des différents événements</h3>
-        <table className="table table-hover">
+        <table className="table table-hover whiteBorder p-5">
             <thead>
             <tr>
                 <th>Nom</th>
@@ -67,8 +67,8 @@ const EventsPage = props => {
                     <td>{event.description}</td>
                     <td>{DateFunctions.dateFormatFr(event.date)}{typeof event.endDate != 'undefined' && " au " + DateFunctions.dateFormatFr(event.endDate)}</td>
                     <td>
-                        <Link to={"/events/"+event.id+"/inscrit"} className={"btn btn-sm btn-success mr-3"}>Liste des inscrits</Link>
-                        <Link to={"/events/"+event.id} className={"btn btn-sm btn-outline-primary mr-3"}>Modifier l'événement</Link>
+                        <Link to={"/events/"+event.id+"/inscrit"} className={"btn btn-sm btn-outline-danger mr-3"}>Liste des inscrits</Link>
+                        <Link to={"/events/"+event.id} className={"btn btn-sm btn-warning mr-3"}>Modifier l'événement</Link>
                         <button onClick={() => openModal(event)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>

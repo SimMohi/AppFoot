@@ -67,6 +67,8 @@ const ChatPage = () => {
     }
 
     const changeRoom = (index) => {
+        const objDiv = document.getElementById("message-list");
+        objDiv.scrollTop = objDiv.scrollHeight;
         for (let i = 0; i < messages.length; i++){
             if (messages[i]["channelId"] == rooms[index]["id"]){
                 setActiveMessage(messages[i]["messages"]);
@@ -127,7 +129,7 @@ const ChatPage = () => {
 
     return(
         <div id="root">
-            <div className="app">
+            <div className="app whiteBorder">
                 <div className="rooms-list">
                     <ul>
                         <h3>Vos Salons</h3>
@@ -146,7 +148,7 @@ const ChatPage = () => {
                 {(activeRoom.id == null) &&
                 <>
                     <div className="message-list">
-                        <div className="join-room">
+                        <div className="join-room bg-danger">
                             Choissisez un salon
                         </div>
                     </div>

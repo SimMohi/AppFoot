@@ -103,22 +103,22 @@ const CovoitsPage = props => {
 
         for(var i = 0; i < passengers.length; i++){
             if (passengers[i]["user"]["@id"] == userConnected["@id"]){
-                return <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm btn-primary mr-3">Se désinscrire</button>;
+                return <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm btn-danger mr-3">Se désinscrire</button>;
             }
         }
         if (placeRemaining == 0){
-            return <button className="btn btn-sm btn-success mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+            return <button className="btn btn-sm btn-warning mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
         if (covoit.userId["@id"] == userConnected["@id"]){
             return (
             <>
-                <Link to={"/covoit/"+covoit.id} className="btn btn-primary btn-sm mr-3">
+                <Link to={"/covoit/"+covoit.id} className="btn btn-warning btn-sm mr-3">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
                 </Link>
                 <button onClick={() => handleDelete(covoit.id)} className={"btn btn-danger btn-sm"}>Supprimer</button>
             </>)
         }
-        return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-success mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-warning mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
 
     const getUserConnected = async () => {
@@ -219,29 +219,30 @@ const CovoitsPage = props => {
     return(
         <>
             <h1>Espace covoiturage </h1>
-            <Button className="btn btn-primary float-right mb-3" onClick={() => handleShow("new",0)}>
+            <button onClick={() => handleShow("new",0)}
+                    className="btn btn btn-danger float-right mb-3">
                 Nouveau covoiturage
-            </Button>
-            <table className="table table-hover text-center">
+            </button>
+            <table className="table table-hover text-center whiteBorder p-3">
                 <thead>
-                <tr className={"row"}>
+                <tr className={"row ml-3 mr-3"}>
                     <th className={"col-2"}>Conducteur</th>
                     <th className={"col-2"}>Titre</th>
-                    <th className={"col-2"}>Date et heure</th>
+                    <th className={"col-1"}>Date et heure</th>
                     <th className={"col-1"}>places restantes</th>
                     <th className={"col-3"}>Adresse de départ</th>
-                    <th className={"col-2"}></th>
+                    <th className={"col-3"}></th>
                 </tr>
                 </thead>
                 <tbody>
                 {covoits.map((covoit, index) =>
-                    <tr key={index} className={"row"}>
+                    <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-2"}>{covoit.userId["firstName"]+" "+covoit.userId["lastName"]}</td>
                         <td className={"col-2"}>{covoit.title}</td>
-                        <td className={"col-2"}>{DateFunctions.dateFormatFrDMHM(covoit.date)}</td>
+                        <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(covoit.date, 1)}</td>
                         <td className={"col-1"}>{covoit.placeRemaining}</td>
                         <td className={"col-3"}>{adresseFormat(covoit.departureAddress)}</td>
-                        <td className={"col-2"}>
+                        <td className={"col-3"}>
                             {chooseButton(covoit)}
                         </td>
                     </tr>

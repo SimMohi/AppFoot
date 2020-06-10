@@ -133,24 +133,24 @@ const CompetitionPage = props => {
 
     return  (
         <>
-            <Link to={"/competition"} className={"btn btn-primary float-right"}>Retour à la liste</Link>
+            <Link to={"/competition"} className={"btn btn-danger"}><i className="fas fa-arrow-left"/></Link>
             <div className="row">
-                <div className="col-5">
-                    {!editing && <h1>Création d'une nouvelle Compétition</h1> ||
+                <div className="col-5 mt-3">
+                    {!editing && <h1 className={"mb-5"}>Création d'une nouvelle Compétition</h1> ||
                     <div className={"container"}>
                         <div className="row">
-                            <h1 className={"col-8 mb-3"}>Modification d'une Compétition</h1>
+                            <h1 className={"col-8 mb-5"}>Modification d'une Compétition</h1>
                             <div className="col-4">
                             </div>
                         </div>
                     </div>
                     }
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className={" whiteBorder p-3"}>
                         <Field name={"name"} label={"Nom de la compétition"} type={"text"} value={competition.name} onChange={handleChangeCompet}
                                error={errors.name}></Field>
                         <Field name={"season"} label={"Saison pendant laquelle se déroule la compétition"} type={"text"} value={competition.season} onChange={handleChangeCompet} error={errors.season}/>
                         <div className="from-group ">
-                            <button type={"submit"} className="btn btn-success">Enregistrer</button>
+                            <button type={"submit"} className="btn btn-warning">Enregistrer</button>
                         </div>
                     </form>
                 </div>
@@ -158,15 +158,15 @@ const CompetitionPage = props => {
                 {editing &&
                 <div className="col-6">
                     <h3 className={"mt-5"}>Gestion des équipes</h3>
-                    <table className="table table-hover text-center mt-5">
+                    <table className="table table-hover text-center mt-5 p-3 whiteBorder">
                         <thead className={"container"}>
-                        <tr className={"row"}>
+                        <tr className={"row ml-3 mr-3"}>
                             <th className={"col-8"}>Equipe</th>
                             <th className={"col-4"}></th>
                         </tr>
                         </thead>
                         <tbody className={"container"}>
-                        <tr className={"row"}>
+                        <tr className={"row ml-3 mr-3"}>
                             <td className={"col-8"}>
                                 <ReactSearchBox
                                     placeholder="Ajouter une équipe à la compétition"
@@ -182,11 +182,11 @@ const CompetitionPage = props => {
                                 />
                             </td>
                             <td className="col-4">
-                                <button type={"button"} onClick={addTeam} className="btn btn-success">Ajouter</button>
+                                <button type={"button"} onClick={addTeam} className="btn btn-warning">Ajouter</button>
                             </td>
                         </tr>
                         {competition["teams"].map((team, index) =>
-                            <tr key={team.id} className="row">
+                            <tr key={team.id} className="row ml-3 mr-3">
                                 <td className="col-8">
                                     {team.club.name}
                                 </td>
