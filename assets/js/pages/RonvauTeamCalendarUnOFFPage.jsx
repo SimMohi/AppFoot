@@ -193,10 +193,11 @@ const RonvauTeamCalendarUnOffPage = props => {
                         <td className={"col-2"}>{mtr.isOver && (mtr["teamAGoal"]+"-"+mtr["teamBGoal"])
                         || isAdmin &&
                         <>
-                            <button onClick={() => editMatchDate(mtr)}
-                                    className="btn btn-sm btn-danger">Date du match
-                            </button>
-                            <Link to={"/unOffMatch/"+mtr.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>
+                            {/*<button onClick={() => editMatchDate(mtr)}*/}
+                            {/*        className="btn btn-sm btn-danger">Date du match*/}
+                            {/*</button>*/}
+                            {/*<Link to={"/unOffMatch/"+mtr.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>*/}
+                            -
                         </>
                         ||
                         ""

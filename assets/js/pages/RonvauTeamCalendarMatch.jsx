@@ -148,15 +148,15 @@ const RonvauTeamCalendarMatch = props => {
                         <td className={"col-3"}>{mtr.homeTeam.club.name}</td>
                         <td className={"col-3"}>{mtr.visitorTeam.club.name}</td>
                         <td className={"col-2"}>{mtr.isOver && (mtr.homeTeamGoal+"-"+mtr.visitorTeamGoal)
-                        || isAdmin &&
-                            <>
-                                <button onClick={() => editMatchDate(mtr)}
-                                        className="btn btn-sm btn-outline-danger">Date du match
-                                </button>
-                                <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-btn-warning mr-3"}>Convocations</Link>
-                            </>
+                        // || isAdmin &&
+                        //     <>
+                        //         <button onClick={() => editMatchDate(mtr)}
+                        //                 className="btn btn-sm btn-outline-danger">Date du match
+                        //         </button>
+                        //         <Link to={"/match/"+mtr.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Convocations</Link>
+                        //     </>
                             ||
-                            ""
+                            " - "
                         }
                         </td>
                         <td className={"col-2"}>

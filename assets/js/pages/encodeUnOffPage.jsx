@@ -18,7 +18,6 @@ const EncodeUnOffMatchPage = props => {
         try{
             const response = await UnOfficialMatchAPI.find(id);
             setMatch(response);
-
         } catch (e) {
             console.log(e.response);
         }

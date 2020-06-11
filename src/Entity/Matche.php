@@ -81,6 +81,12 @@ class Matche
      */
     private $isOver;
 
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"matchs_read",})
+     */
+    private $appointmentHour;
+
     public function __construct()
     {
         $this->playerMatches = new ArrayCollection();
@@ -203,6 +209,18 @@ class Matche
     public function setIsOver(bool $isOver): self
     {
         $this->isOver = $isOver;
+
+        return $this;
+    }
+
+    public function getAppointmentHour(): ?\DateTimeInterface
+    {
+        return $this->appointmentHour;
+    }
+
+    public function setAppointmentHour(?\DateTimeInterface $appointmentHour): self
+    {
+        $this->appointmentHour = $appointmentHour;
 
         return $this;
     }

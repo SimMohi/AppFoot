@@ -365,6 +365,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["staff"] = $userTeam->getIsStaff();
                 $matchRes["teamId"] = $teamR->getId();
                 $matchRes["teamCat"] = $teamR->getCategory();
+                $matchRes["appointment"] = $home->getAppointmentHour();
                 $address = $home->getHomeTeam()->getClub()->getAddress();
                 if ($address !== null){
                     $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
@@ -411,6 +412,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["called"] = [];
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $visitor->getId();
+                $matchRes["appointment"] = $visitor->getAppointmentHour();
                 $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName()."-".$visitor->getVisitorTeam()->getClub()->getName();
                 $matchRes["start"] = $visitor->getDate();
                 $matchRes["end"] = $visitor->getDate();
@@ -477,6 +479,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["players"] = [];
                 $matchRes["called"] = [];
                 $matchRes["start"] = $unofficialMatch->getDate();
+                $matchRes["appointment"] = $unofficialMatch->getAppointmentHour();
                 $matchRes["end"] = $unofficialMatch->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
                 $matchRes["teamId"] = $teamR->getId();

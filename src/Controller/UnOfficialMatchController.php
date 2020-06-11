@@ -27,6 +27,7 @@ class UnOfficialMatchController extends AbstractController
         $response["called"] = [];
         $response["notCalled"] = [];
         $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $id]);
+        $response["appointment"] = $match->getAppointmentHour();
         $response["id"] =  $match->getId();
 
         if ($match->getIsHome()){
@@ -166,7 +167,9 @@ class UnOfficialMatchController extends AbstractController
         $data = $request->getContent();
         $data = json_decode($data, true);
         $calls = $data["call"];
+        $appointment = new \DateTime($data["appointment"]);
         $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $data["match"]]);
+        $match->setAppointmentHour($appointment);
         if ($match->getIsHome()){
             $name = "FC Ronvau Chaumont - ". $match->getOpponent()->getName();
         } else {
@@ -180,9 +183,11 @@ class UnOfficialMatchController extends AbstractController
                 $newPlayer->setUserTeam($userTeam);
                 $newPlayer->setUnOfficialMatch($match);
                 $this->getDoctrine()->getManager()->persist($newPlayer);
-                $this->getDoctrine()->getManager()->flush();
             }
         }
+        $this->getDoctrine()->getManager()->persist($match);
+        $this->getDoctrine()->getManager()->flush();
+
         return $this->json($data["call"]);
     }
 

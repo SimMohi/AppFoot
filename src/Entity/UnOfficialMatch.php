@@ -64,6 +64,11 @@ class UnOfficialMatch
      */
     private $isOver;
 
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $appointmentHour;
+
     public function __construct()
     {
         $this->playerUnofficialMatches = new ArrayCollection();
@@ -186,6 +191,18 @@ class UnOfficialMatch
     public function setIsOver(bool $isOver): self
     {
         $this->isOver = $isOver;
+
+        return $this;
+    }
+
+    public function getAppointmentHour(): ?\DateTimeInterface
+    {
+        return $this->appointmentHour;
+    }
+
+    public function setAppointmentHour(?\DateTimeInterface $appointmentHour): self
+    {
+        $this->appointmentHour = $appointmentHour;
 
         return $this;
     }

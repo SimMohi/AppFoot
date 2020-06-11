@@ -4,11 +4,14 @@ import RonvauTeamAPI from "../services/RonvauTeamAPI";
 import {toast} from "react-toastify";
 import PlayerMatchAPI from "../services/PlayerMatchAPI";
 import {Link} from "react-router-dom";
+import Field from "../components/forms/Fields";
+import DateFunctions from "../services/DateFunctions";
 const SelectPlayerMatchPage = props => {
 
     const {id} = props.match.params;
     const [match, setMatch] = useState({
         teams: "",
+        appointment: "",
     })
     const [notCall, setNotCall] = useState([]);
     const [call, setCall] = useState([]);
@@ -20,8 +23,14 @@ const SelectPlayerMatchPage = props => {
 
     const fetchMatch = async () => {
         const responseMatch = await MatcheAPI.find(id);
+        console.log(responseMatch);
+        let appointment = "18:00";
+        if (typeof responseMatch["appointmentHour"] !== 'undefined'){
+            appointment =  DateFunctions.getHoursHM(responseMatch["appointmentHour"]);
+        }
         let matchRes ={
-            teams: responseMatch["homeTeam"]["club"]["name"]+" - " +  responseMatch["visitorTeam"]["club"]["name"]
+            teams: responseMatch["homeTeam"]["club"]["name"]+" - " +  responseMatch["visitorTeam"]["club"]["name"],
+            appointment: appointment,
         }
         let newUsers = [];
         if (typeof responseMatch["homeTeam"]["teamRonvau"] !== 'undefined'){
@@ -83,7 +92,8 @@ const SelectPlayerMatchPage = props => {
         try{
             let post = {
                 call: notCall,
-                match: id
+                match: id,
+                appointment: match.appointment
             }
             await MatcheAPI.postCallMatch(post);
         }catch (e) {
@@ -101,6 +111,12 @@ const SelectPlayerMatchPage = props => {
         setReload(reload+1);
     }
 
+
+    const handleChange = ({currentTarget}) => {
+        const { name, value } = currentTarget;
+        setMatch({...match, [name]: value});
+    }
+
     useEffect( () => {
         fetchMatch();
     }, [reload]);
@@ -108,20 +124,26 @@ const SelectPlayerMatchPage = props => {
     return(
         <>
             <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
-            <h3 className={"mb-5"}>Convocations pour le macth {match.teams}</h3>
+            <h3 className={"mb-5"}>Convocations pour le macth amical {match.teams}</h3>
+            <div className="d-flex mb-3">
+                <h6 className={"mt-5"}>Heure de rendez-vous sur place : </h6>
+                <div className="col-2 mt-2">
+                    <Field type={"time"} name={"appointment"} value={match.appointment} onChange={handleChange}/>
+                </div>
+            </div>
             <div className="">
                 <div className="row">
-                    <div className="col-3">
-                        <table className="mt-5 table table-hover text-center">
+                    <div className="col-4">
+                        <table className="table table-hover text-center whiteBorder p-3">
                             <thead>
-                            <tr className={"row"}>
+                            <tr className={"row ml-3 mr-3"}>
                                 <th className={"col-6"}>Nom</th>
                                 <th className={"col-6"}>Convoquer</th>
                             </tr>
                             </thead>
                             <tbody>
                             {notCall.map((user, index) =>
-                                <tr className={"row"} key={user.id}>
+                                <tr className={"row ml-3 mr-3"} key={user.id}>
                                     <td className="col-6">{user.userId.lastName + " " + user.userId.firstName}</td>
                                     <td className="custom-control custom-checkbox col-6">
                                         <input type="checkbox" className="custom-control-input" id={"notCall"+index} onChange={changeCheckBoxNotCall} checked={user.called}/>
@@ -133,9 +155,8 @@ const SelectPlayerMatchPage = props => {
                         </table>
                         <button onClick={callFunction} className="btn btn-warning">Convoquer</button>
                     </div>
-                    <div className="col-1"></div>
-                    <div className="col-8">
-                        <div>{answer.accepted+" réponses positive sur "+answer.total}</div>
+                    <div className="col-8 whiteBorder p-3">
+                        <div>{answer.accepted+" réponses positives sur "+answer.total}</div>
                         <table className="mt-5 table table-hover text-center">
                             <thead>
                             <tr className={"row"}>
@@ -164,7 +185,7 @@ const SelectPlayerMatchPage = props => {
                                         {user["refusedJustification"]}
                                     </td>
                                     <td className="col-2">
-                                        <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                                        <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Annuler</button>
                                     </td>
                                 </tr>
                             )}

@@ -165,6 +165,22 @@ function getHoursHM(date, convert = 0) {
     return hours+":"+minutes;
 }
 
+function getHoursHMV2(date, convert = 0) {
+    let d = new Date(date);
+    if (convert == 1){
+        d = convertUTCDateToLocalDate(d);
+    }
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    if (hours < 10){
+        hours = "0"+hours;
+    }
+    if (minutes < 10){
+        minutes = "0"+minutes;
+    }
+    return hours+"h"+minutes;
+}
+
 function getHoursFRHM(date, convert = 0) {
     let d = new Date(date);
     if (convert == 1){
@@ -201,5 +217,5 @@ function convertUTCDateToLocalDate(date) {
 
 
 export default {
-    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM, dateFormatYMDHMArr, convertUTCDateToLocalDate, orderByDate, getHoursFRHM, hourWh
+    addYears, todayFormatYMD, dateFormatFr, dateFormatYMD, getHoursHM, dateFormatFrDM, dateFormatFrDMHM, dateFormatYMDHMArr, convertUTCDateToLocalDate, orderByDate, getHoursFRHM, hourWh, getHoursHMV2
 }

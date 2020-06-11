@@ -25,12 +25,16 @@ class MatchController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      * @Route ("/postCallMatch")
+     * @throws \Exception
      */
     public function postCallMatch(Request $request)
     {
         $data = $request->getContent();
         $data = json_decode($data, true);
         $users = $data["call"];
+        $appointment = new \DateTime($data["appointment"]);
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["match"]]);
+        $match->setAppointmentHour($appointment);
         $response = array();
         foreach ($users as $user) {
             if ($user["called"] == false) continue;
@@ -38,12 +42,12 @@ class MatchController extends AbstractController
             $userTeam = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['id' => $user["id"]]);
             $matchPlayer->setIdUserTeam($userTeam);
 
-            $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["match"]]);
             $matchPlayer->setIdMatch($match);
 
             $this->getDoctrine()->getManager()->persist($matchPlayer);
             $response[] = $matchPlayer->getId();
         }
+        $this->getDoctrine()->getManager()->persist($match);
         $this->getDoctrine()->getManager()->flush();
 
         return $this->json($response);

@@ -142,6 +142,7 @@ const HomePage = props => {
                     called: response[i]["called"],
                     score: response[i]["score"],
                     compet: response[i]["compet"],
+                    appointment: response[i]["appointment"]
                 }
                 if (response[i]["staff"] == true){
                     obj["absences"] = response[i]["absences"];
@@ -215,16 +216,17 @@ const HomePage = props => {
             }
             const description =
                 <div>
-                    <span className={"mr-3"}>{event.compet}</span><span className={"ml-3"}>{event.team}</span>
+                    <span className={"mr-3 mt-2"}>{event.compet}</span><span className={"ml-3"}>{event.team}</span>
                     {event.isOver &&
                         event.goalA != null && event.goalB != null &&
                             <p><b>Score</b> : {event.goalA}-{event.goalB}</p>
                     }
                     {!event.isOver &&
                         <>
-                        <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                        <p className={"mt-2"}><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                        <p className={"mt-2"}><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
                         <p>{event.perso}</p>
-                        <p>{event.address}</p>
+                        <p><b>Adresse : </b>{event.address}</p>
                         </>
                     }
                 </div>
@@ -240,7 +242,8 @@ const HomePage = props => {
                 description: description,
                 players: event.players,
                 details: event.details,
-                called: event.called
+                called: event.called,
+                appointment: event.appointment
             }
             let radioMOTM = [];
             for (let i = 0; i < event.players.length; i++){
@@ -293,6 +296,7 @@ const HomePage = props => {
                         ||
                         <>
                         <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                        <p><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
                         <p>{event.perso}</p>
                         <p><b>Adresse : </b>{event.address}</p>
                         </>
@@ -313,6 +317,8 @@ const HomePage = props => {
                 details: event.details,
                 called: event.called,
                 score: event.score,
+                appointment: event.appointment
+
             }
             let radioMOTM = [];
             for (let i = 0; i < event.players.length; i++){
