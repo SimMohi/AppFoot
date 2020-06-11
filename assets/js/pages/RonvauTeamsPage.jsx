@@ -97,7 +97,7 @@ const RonvauTeamsPage = () => {
                     <td>{ronvauTeam["userTeams"].length}</td>
                     <td>
                         <Link to={"/equipeRonvau/"+ronvauTeam.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Sélectionner</Link>
-                        <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-secondary mr-3"}>Editer</Link>
+                        <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-outline-warning mr-3"}>Editer</Link>
                         <button onClick={() => handleDelete(ronvauTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>

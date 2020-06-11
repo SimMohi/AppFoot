@@ -76,9 +76,11 @@ class CompetitionsController extends AbstractController
 
         $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['competition' => $competition]);
         $response = array();
+        $response["name"] = $competition->getName();
+        $response["matchs"] = [];
         $double = array();
         for ($i = 1; $i < 2*(count($teams)-1); $i++){
-            $response[$i] = [];
+            $response["matchs"][$i] = [];
         }
         if (count($teams) >= 0){
             foreach ($teams as $team){
@@ -94,7 +96,7 @@ class CompetitionsController extends AbstractController
                     $add["date"] = $matchA->getDate();
                     if (!in_array($add["id"], $double)){
                         $double[] = $add["id"];
-                        $response[$matchA->getMatchDay()][] = $add;
+                        $response["matchs"][$matchA->getMatchDay()][] = $add;
                     }
                 }
             }
@@ -114,6 +116,8 @@ class CompetitionsController extends AbstractController
 
         $teams = $competition->getTeams();
         $response = array();
+        $response["name"] = $competition->getName();
+        $response["rank"] = [];
         foreach ($teams as $team){
             $teamRes = array();
             $teamRes["id"] = $team->getId();
@@ -143,7 +147,7 @@ class CompetitionsController extends AbstractController
             }
             $teamRes["points"] = $teamRes["won"] *3 + $teamRes["drawn"];
             $teamRes["played"] = $teamRes["won"] + $teamRes["drawn"] + $teamRes["lost"];
-            $response[] = $teamRes;
+            $response["rank"][] = $teamRes;
         }
         return $this->json($response);
     }

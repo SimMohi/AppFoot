@@ -55,6 +55,14 @@ class ProfilController extends AbstractController
                 $response["redCard"] += $userMatch->getRedCard();
                 $response["played"] += $userMatch->getPlayed();
             }
+            $trainings = $userTeam->getPlayerTrainings();
+            $trainingN = 0;
+            foreach ($trainings as $training) {
+                if ($training->getWasPresent()) {
+                    $trainingN += 1;
+                }
+            }
+            $response['training'] = $trainingN;
             $return["infos"][] = $response;
         }
 

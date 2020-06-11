@@ -19,6 +19,7 @@ const MatchPages = props => {
     const [selectedMatchDay, setSelectedMatchDay] = useState(1);
     const [matchOfDay, setMatchOfDay] = useState([]);
     const [clubs, setClubs] = useState([]);
+    const [name, setName] = useState("");
     const [newMatch, setNewMatch] = useState({
         a: "",
         b: "",
@@ -76,8 +77,9 @@ const MatchPages = props => {
 
     const findMatches = async () => {
         const match = await MatcheAPI.findCompetMatchDay(id);
-        setAllMatchs(match);
-        setMatchOfDay(match[selectedMatchDay]);
+        setName(match["name"]);
+        setAllMatchs(match["matchs"]);
+        setMatchOfDay(match["matchs"][selectedMatchDay]);
     }
 
     const FindTeams = async () => {
@@ -209,7 +211,8 @@ const MatchPages = props => {
 
     return(
         <>
-            <Link to={"/competition/"+id+"/view"} className={"btn btn-danger mb-5 ml-3"}><i className="fas fa-arrow-left"/></Link>
+            <Link to={"/competition/"+id+"/view"} className={"btn btn-danger ml-3"}><i className="fas fa-arrow-left"/></Link>
+            <h4 className={"mb-5 text-center"}>Matchs {name}</h4>
             <div className="form-group w-25">
                 <select className="form-control" id="matchDay" name={"matchDay"} onChange={changeMatchDay}>
                     {createOptions(matchDayNumber)}

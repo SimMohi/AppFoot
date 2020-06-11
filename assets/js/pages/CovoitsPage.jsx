@@ -289,7 +289,7 @@ const CovoitsPage = props => {
                         <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numberPassenger"} min={1} max={modalParam.placeRemaining}
                                onChange={handleChange} value={newPassengers["numberPassenger"]}/>
                         <div className="from-group">
-                            <button type={"submit"} className="btn btn-success float-right">Enregistrer</button>
+                            <button type={"submit"} className="btn btn-danger float-right">Enregistrer</button>
                         </div>
                     </form>
                 </Modal.Body>

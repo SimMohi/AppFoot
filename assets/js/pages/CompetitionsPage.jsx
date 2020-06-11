@@ -59,7 +59,7 @@ const CompetitionsPage = props => {
                         <td>{competition.name}</td>
                         <td>{competition.season}</td>
                         <td>
-                            <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-secondary mr-3"}>Sélectionner</Link>
+                            <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-outline-warning mr-3"}>Sélectionner</Link>
                             <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-warning mr-3"}>Editer</Link>
                             {competition.visible &&
                             <button onClick={() => visible(competition.id, false)}

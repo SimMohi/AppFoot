@@ -46,6 +46,10 @@ function getTeamMember(id){
         .then(response => response.data);
 }
 
+function addAction(data){
+    return axios.post(API_URL + "/addAction", data);
+}
+
 export default {
-    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo, getTeamMember
+    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo, getTeamMember, addAction
 }

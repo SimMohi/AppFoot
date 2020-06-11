@@ -102,6 +102,10 @@ const RonvauTeamMemberUser = props => {
                 </div>
                 <div className="col-4 d-flex align-items-end flex-column">
                     <Link to={"/equipeRonvau/"+id+"/matchCalendar"} className={"btn btn-warning mr-3"}>Calendrier des matchs</Link><br/>
+                    {isAdmin &&
+                    <Link to={"/equipeRonvau/" + id + "/training"} className={"btn btn-danger mr-3 mb-5"}>Présences aux
+                        entrainements</Link>
+                    }
                 </div>
             </div>
             <h5 className={"mt-5"}>Coachs</h5>
@@ -177,7 +181,7 @@ const RonvauTeamMemberUser = props => {
                         <input type="checkbox" className="custom-control-input" name={"isHome"} id={"isHome"} checked={newMatch.isHome} onChange={handleChangeNewMatch}/>
                         <label className="custom-control-label" htmlFor={"isHome"}>Se joue à domicile</label>
                     </div>
-                    <button onClick={() => createMatch()} className="btn btn-primary float-right">Valider</button>
+                    <button onClick={() => createMatch()} className="btn btn-danger float-right">Valider</button>
                 </Modal.Body>
             </Modal>
         </>

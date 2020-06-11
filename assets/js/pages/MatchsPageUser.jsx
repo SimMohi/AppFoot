@@ -11,12 +11,14 @@ const MatchPages = props => {
     const [matchs, setMatchs] = useState();
     const [matchDay, setMatchDay] = useState([]);
     const [selectedDay, setSelectedDay] = useState(1);
+    const [name, setName] = useState('');
 
     const findMatchs = async () => {
         try {
             const response = await CompetitionsAPI.getMatchCompet(id);
-            setMatchDay(Object.keys(response));
-            setMatchs(response);
+            setName(response["name"]);
+            setMatchDay(Object.keys(response["team"]));
+            setMatchs(response["team"]);
         } catch (e) {
             console.log(e);
         }
@@ -33,7 +35,8 @@ const MatchPages = props => {
 
     return(
         <>
-            <Link to={"/competition"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
+            <Link to={"/competition"} className={"btn btn-danger mr-3"}><i className="fas fa-arrow-left"/></Link>
+            <h3 className={"text-center mb-5"}>Calendrier {name}</h3>
             <div className="w-50 m-auto">
                 <select className="form-control w-50" id="matchDay" name={"matchDay"} onChange={selectMatchDay}>
                     {matchDay.map((opt,index) =>

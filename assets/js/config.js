@@ -30,4 +30,7 @@ export const NOTIFICATIONS_API = API_URL + "/api/notifications";
 
 export const PLAYER_UNOFFICIAL_MATCHES_API = API_URL + "/api/player_unofficial_matches";
 
+export const TRAININGS_API = API_URL + "/api/trainings";
+
+
 

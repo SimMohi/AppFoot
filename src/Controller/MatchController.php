@@ -58,7 +58,7 @@ class MatchController extends AbstractController
     {
         $data = $request->getContent();
         $data = json_decode($data, true);
-        $users = $data;
+        $users = $data["player"];
         $response = array();
         foreach ($users as $user) {
             $matchPlayer = $this->getDoctrine()->getRepository(PlayerMatch::class)->findOneBy(['id' => $user["id"]]);
@@ -82,6 +82,12 @@ class MatchController extends AbstractController
 
             $this->getDoctrine()->getManager()->persist($matchPlayer);
             $response[] = $matchPlayer->getId();
+        }
+        if ($match !== null){
+            $match->setIsOver(true);
+            $match->setHomeTeamGoal($data["goalA"]);
+            $match->setVisitorTeamGoal($data["goalB"]);
+            $this->getDoctrine()->getManager()->persist($match);
         }
         $this->getDoctrine()->getManager()->flush();
 
@@ -145,10 +151,12 @@ class MatchController extends AbstractController
         $teams = $competition->getTeams();
 
         $response = array();
+        $response["name"] = $competition->getName();
+        $response["team"] = [];
         foreach ($teams as $team) {
             $matchAs = $team->getMatchA();
             foreach ($matchAs as $matchA) {
-                $response[$matchA->getMatchDay()][] = $matchA;
+                $response["team"][$matchA->getMatchDay()][] = $matchA;
             }
         }
 

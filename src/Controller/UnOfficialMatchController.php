@@ -323,4 +323,34 @@ class UnOfficialMatchController extends AbstractController
 
         return $this->json("OK");
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @Route ("/deleteUnOff")
+     */
+    public function deleteUnOff(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $match = $this->getDoctrine()->getRepository(UnOfficialMatch::class)->findOneBy(["id" => $data["id"]]);
+        $isHome = $match->getIshome();
+        if ($isHome){
+            $name = "Le match amical FC Ronvau Chaumont - ". $match->getOpponent()->getName(). " a été annulé";
+        } else {
+            $name = "Le match amical ".$match->getOpponent()->getName(). " - FC Ronvau Chaumont a été annulé ";
+        }
+        $teamR = $match->getTeamRonvau();
+        $uts = $teamR->getUserTeams();
+        foreach ($uts as $ut){
+            $not = new Notification();
+            $not->setUser($ut->getUserId());
+            $not->setMessage($name);
+            $this->getDoctrine()->getManager()->persist($not);
+        }
+        $this->getDoctrine()->getManager()->remove($match);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("ok");
+    }
 }

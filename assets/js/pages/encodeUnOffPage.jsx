@@ -116,7 +116,7 @@ const EncodeUnOffMatchPage = props => {
                 <h5 className={"mt-5"}>Encoder les statistiques des joueurs</h5>
                 <table className="mt-5 table table-hover text-center whiteBorder">
                     <thead>
-                    <tr className={"row"}>
+                    <tr className={"row ml-3 mr-3"}>
                         <th className={"col-4"}>Nom</th>
                         <th className={"col-2"}>A joué</th>
                         <th className={"col-2"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
@@ -126,7 +126,7 @@ const EncodeUnOffMatchPage = props => {
                     </thead>
                     <tbody>
                     {match["called"].map((playerMatch, index) =>
-                        <tr key={playerMatch.id} className={"row"}>
+                        <tr key={playerMatch.id} className={"row ml-3 mr-3"}>
                             <td className={"col-4"}>{playerMatch.name}</td>
                             <td className={"custom-control custom-checkbox col-2"}>
                                 <input type="checkbox" className="custom-control-input" id={"play"+index} onChange={changeCheckBoxPlay} checked={playerMatch.played}/>

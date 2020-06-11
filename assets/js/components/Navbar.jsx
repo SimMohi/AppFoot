@@ -13,6 +13,7 @@ import NotificationAPI from "../services/NotificationAPI";
 import UnOfficialMatchAPI from "../services/UnOfficialMatchAPI";
 import DateFunctions from "../services/DateFunctions";
 import Field from "./forms/Fields";
+import useInterval from "./UseInterval";
 
 
 const Navbar = ({ history }) => {
@@ -144,6 +145,10 @@ const Navbar = ({ history }) => {
         })
     }
 
+    useInterval(() => {
+        fetchNotifications();
+    }, 60000);
+
     useEffect(() => {
         fetchNotifications();
     }, [reload]);
@@ -167,7 +172,7 @@ const Navbar = ({ history }) => {
                 </button>
 
                 <div className="collapse navbar-collapse" id="navbarColor01">
-                    <ul className="navbar-nav mr-auto">
+                    <ul className="navbar-nav ml-auto mr-5">
                         {isAuthenticated &&
                             <>
                                 {/*<li className="nav-item active">*/}
@@ -215,6 +220,9 @@ const Navbar = ({ history }) => {
                                 {/*        Chat*/}
                                 {/*    </NavLink>*/}
                                 {/*</li>*/}
+                                <li className={ "ml-auto"}>
+                                    <h3 className={"nameNav"}>FC Ronvau Chaumont</h3>
+                                </li>
                             </>
                         }
                     </ul>

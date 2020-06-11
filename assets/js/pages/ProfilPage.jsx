@@ -198,20 +198,22 @@ const ProfilPage = props => {
                 <thead>
                 <tr className={"row ml-3 mr-3"}>
                     <th className={"col-4"}>Equipe</th>
-                    <th className={"col-2"}>Matchs joués</th>
-                    <th className={"col-2"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
-                    <th className={"col-2"}><img src="img/Carton_jaune.png" alt="jaune" className={"imgEncode"}/></th>
-                    <th className={"col-2"}><img src="img/Carton_rouge.png" alt="rouge" className={"imgEncode"}/></th>
+                    <th className={"col-1"}>Matchs joués</th>
+                    <th className={"col-1"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
+                    <th className={"col-1"}><img src="img/Carton_jaune.png" alt="jaune" className={"imgEncode"}/></th>
+                    <th className={"col-1"}><img src="img/Carton_rouge.png" alt="rouge" className={"imgEncode"}/></th>
+                    <th className={"col-1"}>Entrainements</th>
                 </tr>
                 </thead>
                 <tbody>
                 {info.map((team, index) =>
                     <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-4"}>{team.team}</td>
-                        <td className={"col-2"}>{team.played}</td>
-                        <td className={"col-2"}>{team.goal}</td>
-                        <td className={"col-2"}>{team.yellowCard}</td>
-                        <td className={"col-2"}>{team.redCard}</td>
+                        <td className={"col-1"}>{team.played}</td>
+                        <td className={"col-1"}>{team.goal}</td>
+                        <td className={"col-1"}>{team.yellowCard}</td>
+                        <td className={"col-1"}>{team.redCard}</td>
+                        <td className={"col-1"}>{team.training}</td>
                     </tr>
                 )}
                 </tbody>

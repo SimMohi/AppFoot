@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import PlayerMatchAPI from "../services/PlayerMatchAPI";
 import MatcheAPI from "../services/MatcheAPI";
-import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
+import Field from "../components/forms/Fields";
 
 const EncodeMatchPage = props => {
 
@@ -45,13 +44,23 @@ const EncodeMatchPage = props => {
 
     const handleSubmit = async () => {
         let playerMatch = JSON.parse(JSON.stringify(match["playerMatches"]));
+        const post = {
+            player: playerMatch,
+            goalA: match.homeTeamGoal,
+            goalB: match.visitorTeamGoal,
+        }
         try {
-            await MatcheAPI.postEncodeMatch(playerMatch);
+            await MatcheAPI.postEncodeMatch(post);
             toast.success("Les statistiques ont bien été enregistrées");
         }catch (e) {
             toast.error("Les statistiques n'ont pas été enregistrées");
         }
 
+    }
+
+    const handleChangeScore = ({currentTarget}) => {
+        const { name, value } = currentTarget;
+        setMatch({ ...match, [name]: value });
     }
 
     useEffect( () => {
@@ -64,6 +73,19 @@ const EncodeMatchPage = props => {
             <>
                 <button onClick={() =>  window.history.back()} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></button>
                 <h3>{match.homeTeam.club.name} - {match.visitorTeam.club.name} </h3>
+                {typeof match.homeTeamGoal != "undefined" && typeof match.visitorTeamGoal &&
+                    <div className={"d-flex"}>
+                        <div>
+                            <h4 className={"mt-5"}>Score</h4>
+                        </div>
+                        <div className="col-1 mt-3">
+                            <Field type={"number"} value={match.homeTeamGoal} name={"homeTeamGoal"} onChange={handleChangeScore}/>
+                        </div>
+                        <div className="col-1 mt-3">
+                            <Field type={"number"} value={match.visitorTeamGoal} name={"visitoTeamGoal"} onChange={handleChangeScore}/>
+                        </div>
+                    </div>
+                }
                 <h5 className={"mt-5"}>Encoder les statistiques des joueurs</h5>
                 <table className="mt-5 table table-hover text-center container">
                     <thead>

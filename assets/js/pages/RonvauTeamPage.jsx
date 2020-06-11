@@ -358,7 +358,7 @@ const RonvauTeamPage = props => {
                                             </div>
                                             <div className={"mt-3 mb-5"}>
                                                 <button type={"button"} onClick={() => AddCompetTeam()}
-                                                        className="btn btn-primary ml-auto d-block">Ajouter
+                                                        className="btn btn-danger ml-auto d-block">Ajouter
                                                 </button>
                                             </div>
                                         </>

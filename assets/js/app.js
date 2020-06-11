@@ -50,6 +50,7 @@ import RonvauTeamMember from "./pages/RonvauTeamMember";
 import EncodeUnOffMatchPage from "./pages/encodeUnOffPage";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
+import TrainingResumePage from "./pages/TrainingResumePage";
 
 require("../css/app.css");
 
@@ -216,6 +217,7 @@ const App = () => {
                         <PrivateRoute path={"/match/:id/select"} component={SelectPlayerMatchPage}/>
                         <PrivateRoute path={"/unOffMatch/:id/select"} component={SelectPlayerUnOffMatchPage}/>
                         {isAdmin && <PrivateRoute path={"/equipeRonvau/:id/userAdmin"} component={RonvauTeamMember}/>}
+                        <PrivateRoute path={"/equipeRonvau/:id/training"} component={TrainingResumePage}/>
                         <PrivateRoute path={"/equipeRonvau/:id/user"} component={RonvauTeamMemberUser}/>
                         <PrivateRoute path={"/equipeRonvau/:id/select"} component={RonvauTeamMemberUser}/>
                         <PrivateRoute path={"/equipeRonvau/:id/calendar"} component={RonvauTeamCalendar}/>

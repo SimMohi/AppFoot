@@ -147,13 +147,13 @@ const UsersPage = () => {
                             {user.isAccepted == false &&
                             <>
                                 <button onClick={() => Accept(user.id)}
-                                        className="btn btn-sm btn-success mr-3">Accepter</button>
+                                        className="btn btn-sm btn-warning mr-3">Accepter</button>
                                 <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Refuser</button>
                             </>
                             ||
                             <>
                                 <button onClick={() => Accept(user.id)}
-                                        className="btn btn-sm btn-success mr-3" disabled={true}>Accepter</button>
+                                        className="btn btn-sm btn-warning  mr-3" disabled={true}>Accepter</button>
                                 <button onClick={() => openModal(user)} className="btn btn-sm btn-danger">Supprimer</button>
                             </>
                             }

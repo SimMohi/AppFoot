@@ -1,5 +1,5 @@
 import axios from "axios";
-import {API_URL} from "../config";
+import {API_URL, TRAININGS_API} from "../config";
 
 function findAllTrainingDay(teamRonvau) {
     return axios
@@ -38,8 +38,17 @@ function editTraining(post){
     return axios.post(API_URL +"/editTraining", post);
 }
 
+function delTraining(id){
+    return axios.post(API_URL+ "/delTraining", id);
+}
+
+function getTrainingResume(id){
+    return axios
+        .get(API_URL +"/getTrainingResume/"+id)
+        .then(response => response.data);
+}
 
 
 export default {
-    findAllTrainingDay, createTrainingDay, deleteTrainingDay, postAbsence, remAbsence, getPlayerTrainings, postPresence, editTraining
+    findAllTrainingDay, createTrainingDay, deleteTrainingDay, postAbsence, remAbsence, getPlayerTrainings, postPresence, editTraining, delTraining, getTrainingResume
 }

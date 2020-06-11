@@ -125,7 +125,7 @@ const ChatPage = () => {
 
     useInterval(() => {
         getNewMessage();
-    }, 10000);
+    }, 5000);
 
     return(
         <div id="root">

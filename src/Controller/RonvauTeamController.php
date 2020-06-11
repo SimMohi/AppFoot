@@ -4,19 +4,23 @@
 namespace App\Controller;
 
 
+use App\Entity\Club;
 use App\Entity\Event;
 use App\Entity\EventsTeam;
 use App\Entity\Matche;
+use App\Entity\Notification;
 use App\Entity\PlayerMatch;
 use App\Entity\PlayerOfTheMatch;
 use App\Entity\PlayerTraining;
 use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\Training;
+use App\Entity\UnOfficialMatch;
 use App\Entity\User;
 use App\Entity\UserTeam;
 use App\Entity\UserTeamEvent;
 use App\Repository\TrainingRepository;
+use Cassandra\Date;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -269,8 +273,16 @@ class RonvauTeamController extends AbstractController
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $response =  [];
+        $response["staff"] = [];
+        $response["infos"] = [];
         foreach ($userTeams as $userTeam){
             $teamR = $userTeam->getTeamRonvauId();
+            if ($userTeam->getIsStaff()){
+                $teamArr = [];
+                $teamArr["id"] = $teamR->getId();
+                $teamArr["name"] = $teamR->getCategory();
+                $response["staff"][] = $teamArr;
+            }
             $team = $teamR->getTeam();
             $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR]);
 
@@ -317,7 +329,7 @@ class RonvauTeamController extends AbstractController
                 if ($isAbs !== null){
                     $trainingRes["abs"] = $isAbs->getIsAbsent();
                 }
-                $response[] = $trainingRes;
+                $response["infos"][] = $trainingRes;
             }
             $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
             foreach ($eventsTeams as $eventsTeam){
@@ -337,13 +349,14 @@ class RonvauTeamController extends AbstractController
                 if ($userTeamEvent === null){
                     $eventRes["sub"] = false;
                 }
-                $response[] = $eventRes;
+                $response["infos"][] = $eventRes;
             }
 
             $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
             $matchesTeamV = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
             foreach ($matchesTeamA as $home){
                 $matchRes = [];
+                $matchRes["compet"] = $home->getHomeTeam()->getCompetition()->getName();
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $home->getId();
                 $matchRes["title"] = $home->getHomeTeam()->getClub()->getName()."-".$home->getVisitorTeam()->getClub()->getName();
@@ -354,7 +367,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["teamCat"] = $teamR->getCategory();
                 $address = $home->getHomeTeam()->getClub()->getAddress();
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 if ($home->getIsOver()) {
                     $matchRes["goalA"] = $home->getHomeTeamGoal();
@@ -388,10 +401,11 @@ class RonvauTeamController extends AbstractController
                         $matchRes["players"][] = $newPlayer;
                     }
                 }
-                $response[] = $matchRes;
+                $response["infos"][] = $matchRes;
             }
             foreach ($matchesTeamV as $visitor){
                 $matchRes = [];
+                $matchRes["compet"] = $visitor->getHomeTeam()->getCompetition()->getName();
                 $matchRes["details"] = [];
                 $matchRes["players"] = [];
                 $matchRes["called"] = [];
@@ -405,7 +419,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["teamCat"] = $teamR->getCategory();
                 $address = $visitor->getHomeTeam()->getClub()->getAddress();
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 if ($visitor->getIsOver()){
                     $matchRes["isOver"] = $visitor->getIsOver();
@@ -436,7 +450,7 @@ class RonvauTeamController extends AbstractController
                     $newPlayer["name"] = $name;
                     $matchRes["players"][] = $newPlayer;
                 }
-                $response[] = $matchRes;
+                $response["infos"][] = $matchRes;
             }
             $unofficialMatchs = $teamR->getUnOfficialMatches();
             foreach ($unofficialMatchs as $unofficialMatch){
@@ -451,11 +465,13 @@ class RonvauTeamController extends AbstractController
                 }
                 if ($unofficialMatch->getIsHome()){
                     $address = $unofficialMatch->getTeamRonvau()->getTeam()->getClub()->getAddress();
+                    $matchRes["score"] = $unofficialMatch->getRonvauTeamGoal(). " - " . $unofficialMatch->getOpponentGoal();
                 } else {
                     $address = $unofficialMatch->getOpponent()->getAddress();
+                    $matchRes["score"] = $unofficialMatch->getOpponentGoal(). " - " . $unofficialMatch->getRonvauTeamGoal();
                 }
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet().", ". $address->getNumber(). " ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 $matchRes["details"] = [];
                 $matchRes["players"] = [];
@@ -491,7 +507,7 @@ class RonvauTeamController extends AbstractController
                     $newPlayer["name"] = $name;
                     $matchRes["unOffPlayers"][] = $newPlayer;
                 }
-                $response[] = $matchRes;
+                $response["infos"][] = $matchRes;
             }
         }
 
@@ -741,6 +757,212 @@ class RonvauTeamController extends AbstractController
                 $response["supporters"][] = $utArr;
             }
         }
+
+        return $this->json($response);
+    }
+
+    /**
+     * @Route("/addAction")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addAction (Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $data["teamId"]]);
+        $start = explode(":", $data["start"]);
+        $end = explode(":", $data["end"]);
+        $date = new \DateTime($data["date"]);
+        $startDate = clone $date;
+        if ($data["type"] == 3){
+            $endDate = new \DateTime($data["endDate"]);
+        } else{
+            $endDate = clone $date;
+            $startDate->setTime($start[0], $start[1], 0);
+            $endDate->setTime($end[0], $end[1], 0);
+        }
+        if ($data["type"] == 1){
+            $newTraining = new Training();
+            $newTraining->setStart($startDate);
+            $newTraining->setEnd($endDate);
+            $newTraining->setTeamRonvau($teamR);
+            $userTs = $teamR->getUserTeams();
+            foreach ($userTs as $userT){
+                if ($userT->getIsPlayer()){
+                    $newPT = new PlayerTraining();
+                    $newPT->setIdTraining($newTraining);
+                    $newPT->setIdUserTeam($userT);
+                    $this->getDoctrine()->getManager()->persist($newPT);
+                }
+                $notif = new Notification();
+                $notif->setUser($userT->getUserId());
+                switch ($startDate->format("m")) {
+                    case "01":
+                        $month = "Janvier";
+                        break;
+                    case "02":
+                        $month = "Février";
+                        break;
+                    case "03":
+                        $month = "Mars";
+                        break;
+                    case "04":
+                        $month = "Avril";
+                        break;
+                    case "05":
+                        $month = "Mai";
+                        break;
+                    case "06":
+                        $month = "Juin";
+                        break;
+                    case "07":
+                        $month = "Juillet";
+                        break;
+                    case "08":
+                        $month = "Août";
+                        break;
+                    case "09":
+                        $month = "Septembre";
+                        break;
+                    case "10":
+                        $month = "Octobre";
+                        break;
+                    case "11":
+                        $month = "Novembre";
+                        break;
+                    case "12":
+                        $month = "Décembre";
+                        break;
+                }
+                $notif->setMessage('Un entrainement a été ajouté le '. $startDate->format('d')." ".$month. " à ". $startDate->format("H")."h".$startDate->format("i"). " pour ". $teamR->getCategory());
+                $this->getDoctrine()->getManager()->persist($notif);
+            }
+            $this->getDoctrine()->getManager()->persist($newTraining);
+        } elseif ($data["type"] == 2){
+            $newUnOff = new UnOfficialMatch();
+            $newUnOff->setTeamRonvau($teamR);
+            $opponent = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['id' => $data["clubId"]]);
+            $newUnOff->setOpponent($opponent);
+            $newUnOff->setIsHome($data["isHome"]);
+            $newUnOff->setDate($startDate);
+            $this->getDoctrine()->getManager()->persist($newUnOff);
+        } elseif ($data["type"] == 3) {
+            $event = new Event();
+            $event->setDate($startDate);
+            $event->setEndDate($endDate);
+            $event->setName($data["name"]);
+            $event->setDescription($data["description"]);
+            $eventTeam = new EventsTeam();
+            $eventTeam->setIdEvents($event);
+            $eventTeam->setIdTeamRonvau($teamR);
+            $this->getDoctrine()->getManager()->persist($event);
+            $this->getDoctrine()->getManager()->persist($eventTeam);
+        }
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+    }
+
+    /**
+     * @Route("/delTraining")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function delTraining (Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $training = $this->getDoctrine()->getRepository(Training::class)->findOneBy(['id' => $data["id"]]);
+        $start = $training->getStart();
+        switch ($start->format("m")) {
+            case "01":
+                $month = "Janvier";
+                break;
+            case "02":
+                $month = "Février";
+                break;
+            case "03":
+                $month = "Mars";
+                break;
+            case "04":
+                $month = "Avril";
+                break;
+            case "05":
+                $month = "Mai";
+                break;
+            case "06":
+                $month = "Juin";
+                break;
+            case "07":
+                $month = "Juillet";
+                break;
+            case "08":
+                $month = "Août";
+                break;
+            case "09":
+                $month = "Septembre";
+                break;
+            case "10":
+                $month = "Octobre";
+                break;
+            case "11":
+                $month = "Novembre";
+                break;
+            case "12":
+                $month = "Décembre";
+                break;
+        }
+        $userTeams = $training->getTeamRonvau()->getUserTeams();
+        foreach ($userTeams as $userTeam){
+            $user = $userTeam->getUserId();
+            $notif = new Notification();
+            $notif->setMessage('L\' entrainement du '. $start->format('d')." ".$month. " à ". $start->format("H")."h".$start->format("i"). " pour ". $training->getTeamRonvau()->getCategory().
+                " a été supprimé");
+            $notif->setUser($user);
+            $this->getDoctrine()->getManager()->persist($notif);
+        }
+        $this->getDoctrine()->getManager()->remove($training);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+    }
+
+    /**
+     * @Route("/getTrainingResume/{id}")
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getTrainingResume(int $id){
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $id]);
+        $trainings = $teamR->getTrainings();
+        $today =  new \DateTime();
+        $minus =  new \DateTime('-3 week');
+        $response = [];
+        $response["trainings"] = [];
+        $userTeams = $teamR->getUserTeams();
+        foreach ($userTeams as $userTeam){
+            $userArr = [];
+            $userArr["name"] = $userTeam->getUserId()->getLastName(). " " . $userTeam->getUserId()->getFirstName();
+            $userArr["trainings"] = [];
+            foreach ($trainings as $training){
+                if ($training->getStart() < $today && $training->getEnd() > $minus){
+                    $trainingArr = [];
+                    $trainingP = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy(['idUserTeam' => $userTeam, 'idTraining' => $training]);
+                    $trainingArr["date"] = $training->getStart();
+                    if ($trainingP !== null){
+                        $trainingArr["date"] = $training->getStart();
+                        $trainingArr["present"] = $trainingP->getWasPresent();
+                    }
+                    $userArr["trainings"][] = $trainingArr;
+                }
+            }
+            $response["trainings"][] = $userArr;
+        }
+
 
         return $this->json($response);
     }

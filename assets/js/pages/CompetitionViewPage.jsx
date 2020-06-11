@@ -9,13 +9,14 @@ const  CompetitionViewPage = props => {
 
     const {id} = props.match.params;
     const isAdmin = authAPI.getIsAdmin();
-
+    const [name, setName] = useState("");
     const [teams, setTeams] = useState([]);
 
     const getTeams = async () => {
         try{
             const teamsCompet = await CompetitionsAPI.getRanking(id);
-            setTeams(teamsCompet);
+            setName(teamsCompet["name"]);
+            setTeams(teamsCompet["rank"]);
         } catch (error) {
             console.log(error.response);
         }
@@ -43,7 +44,8 @@ const  CompetitionViewPage = props => {
 
     return (
       <>
-          <Link to={"/competition"} className={"btn btn-danger mb-5"}><i className="fas fa-arrow-left"/></Link>
+          <Link to={"/competition"} className={"btn btn-danger "}><i className="fas fa-arrow-left"/></Link>
+          <h3 className={"text-center mb-5"}>Classement {name}</h3>
           <table className="table table-hover whiteBorder">
               <thead>
               <tr>

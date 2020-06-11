@@ -60,7 +60,11 @@ function calledPlayerUnOffMatch(id) {
         .then(response => response.data);
 }
 
+function deleteUnOff(data){
+    return axios.post(API_URL + "/deleteUnOff", data);
+}
+
 
 export default {
-    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl, editDateUnOffMatch, updatePlayer, deletePlayerUnOffMatch, postEncodeUnOffMatch, calledPlayerUnOffMatch
+    findAll, find, create, update, deleteUnOffMatch, selectUnoff, delUnOffPl, editDateUnOffMatch, updatePlayer, deletePlayerUnOffMatch, postEncodeUnOffMatch, calledPlayerUnOffMatch, deleteUnOff
 }
