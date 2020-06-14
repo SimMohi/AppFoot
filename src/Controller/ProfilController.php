@@ -121,4 +121,32 @@ class ProfilController extends AbstractController
         }
         return $this->json($return);
     }
+
+    /**
+     * @Route("/postTokenMobile")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function postTokenMobile(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findBy(['id' => $data["id"]]);
+
+        $user->setTokenMobile($data["token"]);
+        $this->getDoctrine()->getManager()->persist($user);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("ok");
+    }
+
+    /**
+     * @Route("/getTokenMobile/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getTokenMobile(int $id){
+        $user = $this->getDoctrine()->getRepository(User::class)->findBy(['id' => $id]);
+
+        return $this->json($user->getTokenMobile());
+    }
 }
