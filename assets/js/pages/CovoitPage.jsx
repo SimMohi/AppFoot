@@ -114,7 +114,7 @@ const CovoitPage = props => {
                 <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
                 <div className={"custom-control custom-checkbox mb-3"}>
                     <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
-                    <label className="custom-control-label" htmlFor={"home"}>Départ de mon domcicile</label>
+                    <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
                 </div>
                 {!car.fromHome &&
                     <>

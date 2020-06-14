@@ -224,7 +224,10 @@ const HomePage = props => {
                     {!event.isOver &&
                         <>
                         <p className={"mt-2"}><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
-                        <p className={"mt-2"}><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
+                        {event.appointment != null &&
+                            <p className={"mt-2"}><b>Heure de RDV sur
+                            place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
+                        }
                         <p>{event.perso}</p>
                         <p><b>Adresse : </b>{event.address}</p>
                         </>
@@ -296,7 +299,9 @@ const HomePage = props => {
                         ||
                         <>
                         <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                        {event.appointment != null &&
                         <p><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
+                        }
                         <p>{event.perso}</p>
                         <p><b>Adresse : </b>{event.address}</p>
                         </>
@@ -650,19 +655,21 @@ const HomePage = props => {
           {staff.length > 0 &&
             <button onClick={addAction} className="btn btn-danger "><i className="fas fa-plus"></i></button>
           }
-          <h3 className={"text-center mb-4"}>Mon calendrier pour mes différentes équipes</h3>
           <div className="">
               <div className="d-flex">
-                  <div style={{ height: 700 }} className={"col-8 whiteBorder pt-3 pb-3 mr-5"}>
-                      <Calendar
-                          onSelectEvent={event => test(event)}
-                          selectable={true}
-                          localizer={Localizer}
-                          events={calendarInfos}
-                          step={60}
-                          views={allViews}
-                          defaultDate={new Date()}
-                      />
+                  <div className={"col-8 whiteBorder "}>
+                      <h3 className={"text-center mb-4 roboto pt-3"}>Mon calendrier</h3>
+                      <div style={{ height: 700 }} className={"pt-3 pb-3 mr-5"}>
+                          <Calendar
+                              onSelectEvent={event => test(event)}
+                              selectable={true}
+                              localizer={Localizer}
+                              events={calendarInfos}
+                              step={60}
+                              views={allViews}
+                              defaultDate={new Date()}
+                          />
+                      </div>
                   </div>
                   {selectedEvent.id != 0 &&
                   <div className="col-3 text-center whiteBorder pt-3 ml-5 align-self-start">
@@ -807,7 +814,7 @@ const HomePage = props => {
           </Modal>
           <Modal show={show[7]} onHide={() => handleClose(7)}>
               <Modal.Header closeButton>
-                  Que souhaitez vous ajouter ?
+                  Que souhaitez-vous ajouter ?
               </Modal.Header>
               <Modal.Body className={""}>
                   <div className="form-group">

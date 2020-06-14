@@ -368,7 +368,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["appointment"] = $home->getAppointmentHour();
                 $address = $home->getHomeTeam()->getClub()->getAddress();
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = $address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 if ($home->getIsOver()) {
                     $matchRes["goalA"] = $home->getHomeTeamGoal();
@@ -421,7 +421,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["teamCat"] = $teamR->getCategory();
                 $address = $visitor->getHomeTeam()->getClub()->getAddress();
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = $address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 if ($visitor->getIsOver()){
                     $matchRes["isOver"] = $visitor->getIsOver();
@@ -473,7 +473,7 @@ class RonvauTeamController extends AbstractController
                     $matchRes["score"] = $unofficialMatch->getOpponentGoal(). " - " . $unofficialMatch->getRonvauTeamGoal();
                 }
                 if ($address !== null){
-                    $matchRes["address"] = "Rue ".$address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
+                    $matchRes["address"] = $address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
                 }
                 $matchRes["details"] = [];
                 $matchRes["players"] = [];

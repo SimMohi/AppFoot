@@ -229,7 +229,7 @@ const CovoitsPage = props => {
                     <th className={"col-2"}>Conducteur</th>
                     <th className={"col-2"}>Titre</th>
                     <th className={"col-1"}>Date et heure</th>
-                    <th className={"col-1"}>places restantes</th>
+                    <th className={"col-1"}>Places restantes</th>
                     <th className={"col-3"}>Adresse de départ</th>
                     <th className={"col-3"}></th>
                 </tr>

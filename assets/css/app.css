@@ -1,7 +1,11 @@
+@import url(https://fr.allfont.net/allfont.css?fonts=caviar-dreams);
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 #app{
     background-color: #f6f6f6;
     width: 100%;
     min-height: 100%;
+    font-family: 'Roboto', sans-serif;
+
 }
 
 .rbc-event{
@@ -38,4 +42,18 @@
 
 .nameNav{
     color: white;
+}
+
+.caviar {
+    font-family: 'Caviar Dreams', arial;
+}
+
+.roboto {
+    font-family: 'Roboto', sans-serif;
+    font-size: 40px;
+    color: #919191;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color : #5c5959;
 }

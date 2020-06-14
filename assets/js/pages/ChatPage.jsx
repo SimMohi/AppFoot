@@ -39,10 +39,14 @@ const ChatPage = () => {
         let selectRoom = {};
         for (let i = 0; i < response.length; i++){
             if (i == 0){
-                selectRoom ={
-                    id: response[i]["channelId"],
-                    name: response[i]["channel"]
+                if (activeRoom.id == null){
+                    selectRoom = {
+                        id: response[i]["channelId"],
+                        name: response[i]["channel"],
+                    }
+                    setActiveRoom(selectRoom);
                 }
+
             }
             channel.push({
                 name: response[i]["channel"],
@@ -61,7 +65,6 @@ const ChatPage = () => {
         const objDiv = document.getElementById("message-list");
         objDiv.scrollTop = objDiv.scrollHeight;
         setDisabled(false);
-        setActiveRoom(selectRoom);
         setMessages(messagesArr);
         setRooms(channel);
     }

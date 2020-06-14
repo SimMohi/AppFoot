@@ -124,6 +124,11 @@ class User implements UserInterface
      */
     private $notifications;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $tokenMobile;
+
 
     public function __construct()
     {
@@ -436,6 +441,18 @@ class User implements UserInterface
                 $notification->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTokenMobile(): ?string
+    {
+        return $this->tokenMobile;
+    }
+
+    public function setTokenMobile(?string $tokenMobile): self
+    {
+        $this->tokenMobile = $tokenMobile;
 
         return $this;
     }

@@ -20,7 +20,7 @@ class JWTCreatedListener
     public function onJWTCreated(JWTCreatedEvent $event)
     {
         $user = $event->getUser();
-        $expiration = new \DateTime('+1 day');
+        $expiration = new \DateTime('+7 day');
         $expiration->setTime(2, 0, 0);
 
         $payload = $event->getData();

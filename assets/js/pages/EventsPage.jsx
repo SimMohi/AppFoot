@@ -55,8 +55,8 @@ const EventsPage = props => {
             <thead>
             <tr>
                 <th>Nom</th>
-                <th>description</th>
-                <th>date</th>
+                <th>Description</th>
+                <th>Date</th>
                 <th></th>
             </tr>
             </thead>

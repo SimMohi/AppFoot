@@ -171,8 +171,9 @@ const Navbar = ({ history }) => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
 
-                <div className="collapse navbar-collapse" id="navbarColor01">
-                    <ul className="navbar-nav ml-auto mr-5">
+                <div className="collapse navbar-collapse d-flex justify-content-between" id="navbarColor01">
+                    <div></div>
+                    <ul className="navbar-nav">
                         {isAuthenticated &&
                             <>
                                 {/*<li className="nav-item active">*/}
@@ -220,13 +221,13 @@ const Navbar = ({ history }) => {
                                 {/*        Chat*/}
                                 {/*    </NavLink>*/}
                                 {/*</li>*/}
-                                <li className={ "ml-auto"}>
-                                    <h3 className={"nameNav"}>FC Ronvau Chaumont</h3>
+                                <li className={"ml-5"}>
+                                    <h3 className={"nameNav caviar"}>FC Ronvau Chaumont</h3>
                                 </li>
                             </>
                         }
                     </ul>
-                    <ul className="navbar-nav ml-auto">
+                    <ul className="navbar-nav">
                         {!isAuthenticated && <>
                             <li className="nav-item">
                                 <NavLink to={"/register"} className="btn btn-light ml-2 mr-2 ">
