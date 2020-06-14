@@ -131,7 +131,7 @@ class ProfilController extends AbstractController
         $data = $request->getContent();
         $data = json_decode($data, true);
 
-        $user = $this->getDoctrine()->getRepository(User::class)->findBy(['id' => $data["id"]]);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["id"]]);
 
         $user->setTokenMobile($data["token"]);
         $this->getDoctrine()->getManager()->persist($user);
@@ -145,7 +145,7 @@ class ProfilController extends AbstractController
      * @return JsonResponse
      */
     public function getTokenMobile(int $id){
-        $user = $this->getDoctrine()->getRepository(User::class)->findBy(['id' => $id]);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
 
         return $this->json($user->getTokenMobile());
     }
