@@ -193,9 +193,10 @@ const CovoitsPage = props => {
         for(var i = 0; i < copyCovoit["carPassengers"].length; i++){
             copyCovoit["carPassengers"][i] = copyCovoit["carPassengers"][i]["@id"];
         }
+        delete copyCovoit["departureAddress"];
         try {
             axios.all([
-                //axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
+                axios.put("http://localhost:8000/api/cars/" + idCovoit, copyCovoit),
                 axios.delete(PASSENGERS_API + "/"+ id),
                 ])
         } catch (e) {
@@ -263,7 +264,7 @@ const CovoitsPage = props => {
                     <form onSubmit={handleSubmit}>
                         <div className={"custom-control custom-checkbox mb-4"}>
                             <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={newPassengers.fromHome} onChange={handleChange}/>
-                            <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
+                            <label className="custom-control-label" htmlFor={"home"}>Me chercher à mon domicile</label>
                         </div>
                         {!newPassengers.fromHome &&
                         <>
