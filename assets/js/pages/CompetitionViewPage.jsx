@@ -45,6 +45,9 @@ const  CompetitionViewPage = props => {
     return (
       <>
           <Link to={"/competition"} className={"btn btn-danger "}><i className="fas fa-arrow-left"/></Link>
+          {isAdmin &&
+          <Link to={"/competition/" + id + "/matchs"} className={"btn btn-warning float-right"}>Ajouter des matchs</Link>
+          }
           <h3 className={"text-center mb-5"}>Classement {name}</h3>
           <table className="table table-hover whiteBorder">
               <thead>
@@ -72,9 +75,6 @@ const  CompetitionViewPage = props => {
               )}
               </tbody>
           </table>
-          {isAdmin &&
-              <Link to={"/competition/" + id + "/matchs"} className={"btn btn-warning float-right"}>Ajouter des matchs</Link>
-          }
       </>
     );
 }

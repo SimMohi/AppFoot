@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {TEAMS_API} from "../config";
+import {API_URL, TEAMS_API} from "../config";
 
 function findAll() {
     return axios
@@ -13,10 +13,16 @@ function find(id){
         .then(response => response.data);
 }
 
+// function findCompet(idCompet){
+//     return axios
+//         .get(TEAMS_API +"/?competition="+idCompet)
+//         .then(response => response.data["hydra:member"]);
+// }
+
 function findCompet(idCompet){
     return axios
-        .get(TEAMS_API +"/?competition="+idCompet)
-        .then(response => response.data["hydra:member"]);
+        .get(API_URL + "/getTeamCompet/"+idCompet)
+        .then(response => response.data);
 }
 
 function create(team){

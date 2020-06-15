@@ -155,42 +155,44 @@ const SelectPlayerMatchPage = props => {
                         </table>
                         <button onClick={callFunction} className="btn btn-warning">Convoquer</button>
                     </div>
-                    <div className="col-8 whiteBorder p-3">
-                        <div>{answer.accepted+" réponses positives sur "+answer.total}</div>
-                        <table className="mt-5 table table-hover text-center">
-                            <thead>
-                            <tr className={"row"}>
-                                <th className={"col-3"}>Nom</th>
-                                <th className={"col-1"}>Réponse</th>
-                                <th className={"col-6"}>Justification</th>
-                                <th className={"col-2"}></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {call.map((user) =>
-                                <tr className={"row"} key={user.id}>
-                                    <td className="col-3">{user.userId.lastName + " " + user.userId.firstName}</td>
-                                    <td className="custom-control custom-checkbox col-1">
-                                        {user["hasConfirmed"] == true &&
-                                            <i className="fas fa-check"></i>
-                                        }
-                                        {user["hasRefused"] == true &&
-                                            <i className="fas fa-times"></i>
-                                        }
-                                        {(user["hasRefused"] == false && user["hasConfirmed"] == false) &&
-                                            <i className="far fa-clock"></i>
-                                        }
-                                    </td>
-                                    <td className="col-6">
-                                        {user["refusedJustification"]}
-                                    </td>
-                                    <td className="col-2">
-                                        <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Annuler</button>
-                                    </td>
+                    <div className="col-8">
+                        <div className={" whiteBorder p-3"}>
+                            <div>{answer.accepted+" réponses positives sur "+answer.total}</div>
+                            <table className="mt-5 table table-hover text-center">
+                                <thead>
+                                <tr className={"row"}>
+                                    <th className={"col-3"}>Nom</th>
+                                    <th className={"col-1"}>Réponse</th>
+                                    <th className={"col-6"}>Justification</th>
+                                    <th className={"col-2"}></th>
                                 </tr>
-                            )}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {call.map((user) =>
+                                    <tr className={"row"} key={user.id}>
+                                        <td className="col-3">{user.userId.lastName + " " + user.userId.firstName}</td>
+                                        <td className="custom-control custom-checkbox col-1">
+                                            {user["hasConfirmed"] == true &&
+                                                <i className="fas fa-check"></i>
+                                            }
+                                            {user["hasRefused"] == true &&
+                                                <i className="fas fa-times"></i>
+                                            }
+                                            {(user["hasRefused"] == false && user["hasConfirmed"] == false) &&
+                                                <i className="far fa-clock"></i>
+                                            }
+                                        </td>
+                                        <td className="col-6">
+                                            {user["refusedJustification"]}
+                                        </td>
+                                        <td className="col-2">
+                                            <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Annuler</button>
+                                        </td>
+                                    </tr>
+                                )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

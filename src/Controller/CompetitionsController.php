@@ -28,7 +28,7 @@ class CompetitionsController extends AbstractController
         $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['name' => "F.C. Ronvau Chaumont"]);
         $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['club' => $ronvau->getId()]);
         $response = array();
-        foreach ($teams as $team){
+        foreach ($teams as $team) {
             $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $team->getCompetition()->getId()]);
             $add = array();
             $add["id"] = $competition->getId();
@@ -70,7 +70,8 @@ class CompetitionsController extends AbstractController
      * @param int $idCompet
      * @return JsonResponse
      */
-    public function getMatchCompetition(int $idCompet){
+    public function getMatchCompetition(int $idCompet)
+    {
 
         $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
 
@@ -79,13 +80,13 @@ class CompetitionsController extends AbstractController
         $response["name"] = $competition->getName();
         $response["matchs"] = [];
         $double = array();
-        for ($i = 1; $i < 2*(count($teams)-1); $i++){
+        for ($i = 1; $i < 2 * (count($teams) - 1); $i++) {
             $response["matchs"][$i] = [];
         }
-        if (count($teams) >= 0){
-            foreach ($teams as $team){
+        if (count($teams) >= 0) {
+            foreach ($teams as $team) {
                 $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
-                foreach ($matchAs as $matchA){
+                foreach ($matchAs as $matchA) {
                     $add = array();
                     $add["id"] = $matchA->getId();
                     $add["homeTeam"] = $matchA->getHomeTeam();
@@ -94,7 +95,7 @@ class CompetitionsController extends AbstractController
                     $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
                     $add["isOver"] = $matchA->getIsOver();
                     $add["date"] = $matchA->getDate();
-                    if (!in_array($add["id"], $double)){
+                    if (!in_array($add["id"], $double)) {
                         $double[] = $add["id"];
                         $response["matchs"][$matchA->getMatchDay()][] = $add;
                     }
@@ -110,7 +111,8 @@ class CompetitionsController extends AbstractController
      * @param int $idCompet
      * @return JsonResponse
      */
-    public function getRankingCompetition(int $idCompet){
+    public function getRankingCompetition(int $idCompet)
+    {
 
         $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
 
@@ -118,7 +120,7 @@ class CompetitionsController extends AbstractController
         $response = array();
         $response["name"] = $competition->getName();
         $response["rank"] = [];
-        foreach ($teams as $team){
+        foreach ($teams as $team) {
             $teamRes = array();
             $teamRes["id"] = $team->getId();
             $teamRes["name"] = $team->getClub()->getName();
@@ -127,25 +129,25 @@ class CompetitionsController extends AbstractController
             $teamRes["lost"] = 0;
             $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team, 'isOver' => true]);
             $matchBs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team, 'isOver' => true]);
-            foreach ($matchAs as $matchA){
-                if ($matchA->getHomeTeamGoal() > $matchA->getVisitorTeamGoal()){
-                    $teamRes["won"] = $teamRes["won"] +1;
-                } elseif ($matchA->getHomeTeamGoal() < $matchA->getVisitorTeamGoal()){
-                    $teamRes["lost"] = $teamRes["lost"] +1;
-                } elseif ($matchA->getHomeTeamGoal() == $matchA->getVisitorTeamGoal()){
-                    $teamRes["drawn"] = $teamRes["drawn"] +1;
+            foreach ($matchAs as $matchA) {
+                if ($matchA->getHomeTeamGoal() > $matchA->getVisitorTeamGoal()) {
+                    $teamRes["won"] = $teamRes["won"] + 1;
+                } elseif ($matchA->getHomeTeamGoal() < $matchA->getVisitorTeamGoal()) {
+                    $teamRes["lost"] = $teamRes["lost"] + 1;
+                } elseif ($matchA->getHomeTeamGoal() == $matchA->getVisitorTeamGoal()) {
+                    $teamRes["drawn"] = $teamRes["drawn"] + 1;
                 }
             }
-            foreach ($matchBs as $matchB){
-                if ($matchB->getHomeTeamGoal() < $matchB->getVisitorTeamGoal()){
-                    $teamRes["won"] = $teamRes["won"] +1;
-                } elseif ($matchB->getHomeTeamGoal() > $matchB->getVisitorTeamGoal()){
-                    $teamRes["lost"] = $teamRes["lost"] +1;
-                } elseif ($matchB->getHomeTeamGoal() == $matchB->getVisitorTeamGoal()){
-                    $teamRes["drawn"] = $teamRes["drawn"] +1;
+            foreach ($matchBs as $matchB) {
+                if ($matchB->getHomeTeamGoal() < $matchB->getVisitorTeamGoal()) {
+                    $teamRes["won"] = $teamRes["won"] + 1;
+                } elseif ($matchB->getHomeTeamGoal() > $matchB->getVisitorTeamGoal()) {
+                    $teamRes["lost"] = $teamRes["lost"] + 1;
+                } elseif ($matchB->getHomeTeamGoal() == $matchB->getVisitorTeamGoal()) {
+                    $teamRes["drawn"] = $teamRes["drawn"] + 1;
                 }
             }
-            $teamRes["points"] = $teamRes["won"] *3 + $teamRes["drawn"];
+            $teamRes["points"] = $teamRes["won"] * 3 + $teamRes["drawn"];
             $teamRes["played"] = $teamRes["won"] + $teamRes["drawn"] + $teamRes["lost"];
             $response["rank"][] = $teamRes;
         }
@@ -157,7 +159,8 @@ class CompetitionsController extends AbstractController
      * @Route("/getRonvauTeamMatch/{idRTeam}")
      * @param int $idRTeam
      */
-    public function getRonvauTeamMatch(int $idRTeam){
+    public function getRonvauTeamMatch(int $idRTeam)
+    {
         $ronvauTeam = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $idRTeam]);
         $category = $ronvauTeam->getCategory();
         $team = $ronvauTeam->getTeam();
@@ -169,8 +172,8 @@ class CompetitionsController extends AbstractController
         $matchBs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
         $response = array();
         $response["cat"] = $category;
-        if (count($matchAs) > 0){
-            foreach ($matchAs as $matchA){
+        if (count($matchAs) > 0) {
+            foreach ($matchAs as $matchA) {
                 $add = array();
                 $add["id"] = $matchA->getId();
                 $add["homeTeam"] = $matchA->getHomeTeam();
@@ -183,8 +186,8 @@ class CompetitionsController extends AbstractController
                 $response["matchs"][] = $add;
             }
         }
-        if (count($matchBs) > 0){
-            foreach ($matchBs as $matchB){
+        if (count($matchBs) > 0) {
+            foreach ($matchBs as $matchB) {
                 $add = array();
                 $add["id"] = $matchB->getId();
                 $add["homeTeam"] = $matchB->getHomeTeam();
@@ -198,5 +201,17 @@ class CompetitionsController extends AbstractController
             }
         }
         return $this->json($response);
+    }
+
+    /**
+     * Get the matches for the ronvauTeam
+     * @Route("/getTeamCompet/{id}")
+     * @param int $idRTeam
+     */
+    public function getTeamCompet(int $id)
+    {
+        $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $id]);
+
+        return $this->json($competition->getTeams());
     }
 }
