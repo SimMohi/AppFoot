@@ -26,7 +26,7 @@ const SelectPlayerMatchPage = props => {
         console.log(responseMatch);
         let appointment = "18:00";
         if (typeof responseMatch["appointmentHour"] !== 'undefined'){
-            appointment =  DateFunctions.getHoursHM(responseMatch["appointmentHour"]);
+            appointment =  DateFunctions.getHoursHM(responseMatch["appointmentHour"], 2);
         }
         let matchRes ={
             teams: responseMatch["homeTeam"]["club"]["name"]+" - " +  responseMatch["visitorTeam"]["club"]["name"],

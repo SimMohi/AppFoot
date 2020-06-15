@@ -475,8 +475,8 @@ const HomePage = props => {
         let obj = {
             id: event.id,
             date: DateFunctions.dateFormatYMD(event.start),
-            start: DateFunctions.getHoursHM(event.start),
-            end: DateFunctions.getHoursHM(event.end),
+            start: DateFunctions.getHoursHM(event.start, 1),
+            end: DateFunctions.getHoursHM(event.end, 1),
         }
         setEditTraining(obj);
         handleShow(2);
@@ -524,7 +524,7 @@ const HomePage = props => {
         let editMatchObj = {
             id: match.id,
             date: DateFunctions.dateFormatYMD(match.start),
-            hour:  DateFunctions.getHoursHM(match.start),
+            hour:  DateFunctions.getHoursHM(match.start, 1),
         }
         setEditMatch(editMatchObj);
         handleShow(3);
