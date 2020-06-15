@@ -124,32 +124,34 @@ const RonvauTeamMember = props => {
                         </tbody>
                     </table>
                 </div>
-                <div className="col-4 whiteBorder pt-3">
-                    <h6 className={"pt-5"}>Ajouter un membre à l'équipe</h6>
-                    <div className="mt-5 p-0 ">
-                        <ReactSearchBox
-                            placeholder="Ajouter un utilisateur à l'équipe"
-                            data={users}
-                            onSelect={record => setSelectUser({...selectUser, ["id"]: record["key"]})}
-                            onFocus={() => {
-                            }}
-                            onChange={() => {}}
-                            fuseConfigs={{
-                                threshold: 0.05,
-                            }}
-                        />
-                    </div>
-                    <select className="form-control mt-3" name={"role"} value={selectUser["role"]}
-                            onChange={handleChangeSelect}>
-                        <option value={3}>Supporter</option>
-                        <option value={0}>Joueur</option>
-                        <option value={1}>Coach</option>
-                        <option value={2}>Coach - Joueur</option>
-                    </select>
-                    <div className={"mt-3"}>
-                        <button type={"button"} onClick={() => AddUserTeam()}
-                                className="btn btn-warning ml-auto d-block mb-0">Ajouter
-                        </button>
+                <div className="col-4">
+                    <h6 className={"mb-5"}>Ajouter un membre à l'équipe</h6>
+                    <div className=" whiteBorder p-3">
+                        <div className="mt-5 p-0 ">
+                            <ReactSearchBox
+                                placeholder="Ajouter un utilisateur à l'équipe"
+                                data={users}
+                                onSelect={record => setSelectUser({...selectUser, ["id"]: record["key"]})}
+                                onFocus={() => {
+                                }}
+                                onChange={() => {}}
+                                fuseConfigs={{
+                                    threshold: 0.05,
+                                }}
+                            />
+                        </div>
+                        <select className="form-control mt-3" name={"role"} value={selectUser["role"]}
+                                onChange={handleChangeSelect}>
+                            <option value={3}>Supporter</option>
+                            <option value={0}>Joueur</option>
+                            <option value={1}>Coach</option>
+                            <option value={2}>Coach - Joueur</option>
+                        </select>
+                        <div className={"mt-3"}>
+                            <button type={"button"} onClick={() => AddUserTeam()}
+                                    className="btn btn-warning ml-auto d-block mb-0">Ajouter
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -56,31 +56,29 @@ const ProfilUserPage = props => {
     return(
         <>
 
-            <div className="container">
-                <div className="row">
-                    <div className="col-4 whiteBorder p-3">
-                        <h5>{user.firstName + " " + user.lastName}</h5>
-                        <p>{user.email}</p>
-                        <p>{user.gsm}</p>
+            <div className="">
+                <h3 className={"text-center mb-5"}>Profil de {user.firstName + " " + user.lastName}</h3>
+                <div className="row justify-content-center ">
+                    <div className=" whiteBorder p-3">
+                        <p><b>Email : </b>{user.email}</p>
+                        <p><b>Téléphone : </b>{user.gsm}</p>
                     </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <ReactSearchBox
-                            placeholder="Rechercher quelqu'un"
-                            data={allUsers}
-                            onSelect={record => goToProfile(record["key"])}
-                            onFocus={() => {
-                            }}
-                            onChange={() => {
-                            }}
-                            fuseConfigs={{
-                                threshold: 0.05,
-                            }}
-                        />
-                    </div>
+                    {/*<div className="col-4">*/}
+                    {/*    <ReactSearchBox*/}
+                    {/*        placeholder="Rechercher quelqu'un"*/}
+                    {/*        data={allUsers}*/}
+                    {/*        onSelect={record => goToProfile(record["key"])}*/}
+                    {/*        onFocus={() => {*/}
+                    {/*        }}*/}
+                    {/*        onChange={() => {*/}
+                    {/*        }}*/}
+                    {/*        fuseConfigs={{*/}
+                    {/*            threshold: 0.05,*/}
+                    {/*        }}*/}
+                    {/*    />*/}
                 </div>
             </div>
-            <h5 className={"mt-5"}>Ces statistiques</h5>
+            <h5 className={"mt-5 text-center"}>Ces statistiques</h5>
             <table className="table table-hover mt-5 text-center container whiteBorder">
                 <thead>
                 <tr className={"row ml-3 mr-3"}>

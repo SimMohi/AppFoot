@@ -263,13 +263,37 @@ class RonvauTeamController extends AbstractController
     }
 
     /**
+     * @Route("/getCalendarWeek/{id}")
+     * @param int $id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getCalendarWeek(int $id){
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
+        $response =  [];
+        $today = new \DateTime();
+        $week = clone $today;
+        $week->modify('+7 day');
+        $weekTraining = [];
+        foreach ($userTeams as $userTeam) {
+            $teamR = $userTeam->getTeamRonvauId();
+            $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR,]);
+            foreach ($trainings as $training){
+                if ($training->getStart() > $today && $training->getStart() < $week ){
+                    $weekTraining[] = $training;
+                }
+            }
+        }
+    }
+
+    /**
      * @Route("/getPersonnalCalendarInfo/{userId}")
      * @param $userId
      * @return JsonResponse
      * @throws \Exception
      */
     public function getPersonnalCalendarInfo (int $userId){
-
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $userId]);
         $userTeams = $this->getDoctrine()->getRepository(UserTeam::class)->findBy(['userId' => $user]);
         $response =  [];

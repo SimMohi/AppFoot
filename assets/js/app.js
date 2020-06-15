@@ -64,6 +64,7 @@ const App = () => {
 
     const isAdmin = authAPI.getIsAdmin();
     const NavBarWIthRouter = withRouter(NavBar);
+    const [expanded, setExpanded] = useState(false);
 
 
     return (
@@ -73,6 +74,7 @@ const App = () => {
                 {isAuthenticated &&
                 <SideNav
                     onSelect={(selected) => {
+                        setExpanded(!expanded);
                     }}
                 >
                     <SideNav.Toggle/>

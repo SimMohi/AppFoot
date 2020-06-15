@@ -183,12 +183,33 @@ class UnOfficialMatchController extends AbstractController
                 $newPlayer->setUserTeam($userTeam);
                 $newPlayer->setUnOfficialMatch($match);
                 $this->getDoctrine()->getManager()->persist($newPlayer);
+                $notif = new Notification();
+                $user = $userTeam->getUserId();
+                $notif->setUser($user);
+                $message = "Vous avez été convoqué pour le match ".$name;
+                $notif->setMessage($message);
+                $token = $userTeam->getUserId()->getTokenMobile();
+                if ($token != null){
+                    $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+                    $url = "https://notif-tfe.herokuapp.com/";
+                    $fields = [
+                        "token" => $token,
+                        "mess" => $message
+                    ];
+                    $fields_string = http_build_query($fields);
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_POST, true);
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                    $result = curl_exec($ch);
+                }
+
             }
         }
         $this->getDoctrine()->getManager()->persist($match);
         $this->getDoctrine()->getManager()->flush();
 
-        return $this->json($data["call"]);
+        return $this->json("ok");
     }
 
     /**

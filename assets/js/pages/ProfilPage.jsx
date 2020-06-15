@@ -129,7 +129,7 @@ const ProfilPage = props => {
             <h1 className={"text-center"}>Mon Profil</h1>
             <div className="container">
                 <div className="row">
-                    <div className="col-8">
+                    <div className="col-12">
                         <form onSubmit={handleSubmit} className={"container mt-5 p-3 whiteBorder"}>
                             <div className="row">
                                 <div className="col-6">
@@ -177,43 +177,29 @@ const ProfilPage = props => {
                             </div>
                         </form>
                     </div>
-                    <div className="col-4">
-                        <ReactSearchBox
-                            placeholder="Rechercher quelqu'un"
-                            data={allUsers}
-                            onSelect={record => goToProfile(record["key"])}
-                            onFocus={() => {
-                            }}
-                            onChange={() => {
-                            }}
-                            fuseConfigs={{
-                                threshold: 0.05,
-                            }}
-                        />
-                    </div>
                 </div>
             </div>
-            <h5 className={"mt-5"}>Vos statistiques</h5>
+            <h5 className={"mt-5 text-center"}>Vos statistiques</h5>
             <table className="table table-hover mt-5 text-center container whiteBorder">
                 <thead>
                 <tr className={"row ml-3 mr-3"}>
-                    <th className={"col-4"}>Equipe</th>
-                    <th className={"col-1"}>Matchs joués</th>
-                    <th className={"col-1"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
-                    <th className={"col-1"}><img src="img/Carton_jaune.png" alt="jaune" className={"imgEncode"}/></th>
-                    <th className={"col-1"}><img src="img/Carton_rouge.png" alt="rouge" className={"imgEncode"}/></th>
-                    <th className={"col-1"}>Entrainements</th>
+                    <th className={"col-2"}>Equipe</th>
+                    <th className={"col-2"}>Matchs joués</th>
+                    <th className={"col-2"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
+                    <th className={"col-2"}><img src="img/Carton_jaune.png" alt="jaune" className={"imgEncode"}/></th>
+                    <th className={"col-2"}><img src="img/Carton_rouge.png" alt="rouge" className={"imgEncode"}/></th>
+                    <th className={"col-2"}>Entrainements</th>
                 </tr>
                 </thead>
                 <tbody>
                 {info.map((team, index) =>
                     <tr key={index} className={"row ml-3 mr-3"}>
-                        <td className={"col-4"}>{team.team}</td>
-                        <td className={"col-1"}>{team.played}</td>
-                        <td className={"col-1"}>{team.goal}</td>
-                        <td className={"col-1"}>{team.yellowCard}</td>
-                        <td className={"col-1"}>{team.redCard}</td>
-                        <td className={"col-1"}>{team.training}</td>
+                        <td className={"col-2"}>{team.team}</td>
+                        <td className={"col-2"}>{team.played}</td>
+                        <td className={"col-2"}>{team.goal}</td>
+                        <td className={"col-2"}>{team.yellowCard}</td>
+                        <td className={"col-2"}>{team.redCard}</td>
+                        <td className={"col-2"}>{team.training}</td>
                     </tr>
                 )}
                 </tbody>
