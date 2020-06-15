@@ -217,8 +217,11 @@ const EventPage = props => {
                         ||
                         <div className={"mb-5 col-12 whiteBorder p-3"}>
                             <Field name={"name"} label={"Nom de l'événement"} type={"text"} value={event.name} onChange={handleChange} error={errors.name}/>
-
-
+                            <div className="form-group">
+                                <label htmlFor="exampleTextarea">Description de l'événement</label>
+                                <textarea className="form-control" id="exampleTextarea" rows="3" name={"description"}
+                                          value={event.description} onChange={handleChange}/>
+                            </div>
                             <div className="row">
                                 <div className="col-6">
                                     <Field name={"date"} min={DateFunctions.todayFormatYMD()} max={DateFunctions.addYears(3)} label={"Date de début de l'événement"} type={"date"} value={event.date} onChange={handleChange} error={errors.date}/>
