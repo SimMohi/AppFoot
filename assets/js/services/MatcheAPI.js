@@ -3,7 +3,7 @@ import {API_URL, MATCHES_API} from "../config";
 
 function findAll() {
     return axios
-        .get("http://localhost:8000/api/matches/")
+        .get(MATCHES_API)
         .then(response => response.data["hydra:member"]);
 }
 

@@ -89,16 +89,17 @@ class CompetitionsController extends AbstractController
                 foreach ($matchAs as $matchA) {
                     $add = array();
                     $add["id"] = $matchA->getId();
+                    if (in_array($add["id"], $double)) {
+                        continue;
+                    }
                     $add["homeTeam"] = $matchA->getHomeTeam();
                     $add["visitorTeam"] = $matchA->getVisitorTeam();
                     $add["homeTeamGoal"] = $matchA->getHomeTeamGoal();
                     $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
                     $add["isOver"] = $matchA->getIsOver();
                     $add["date"] = $matchA->getDate();
-                    if (!in_array($add["id"], $double)) {
-                        $double[] = $add["id"];
-                        $response["matchs"][$matchA->getMatchDay()][] = $add;
-                    }
+                    $double[] = $add["id"];
+                    $response["matchs"][$matchA->getMatchDay()][] = $add;
                 }
             }
         }

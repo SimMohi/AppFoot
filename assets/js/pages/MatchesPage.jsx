@@ -80,7 +80,6 @@ const MatchPages = props => {
         setName(match["name"]);
         setAllMatchs(match["matchs"]);
         const i = selectedMatchDay;
-        console.log(i);
         let copy = JSON.parse(JSON.stringify(match["matchs"]));
         for (let j = 0; j < copy[i].length; j++){
             if (copy[i][j]["homeTeamGoal"] !== null ){
@@ -94,6 +93,7 @@ const MatchPages = props => {
                 copy[i][j]["originalVisitorTeamGoal"] = null;
             }
         }
+        copy[selectedMatchDay].sort(DateFunctions.orderByDate);
         setMatchOfDay(copy[selectedMatchDay]);
     }
 
