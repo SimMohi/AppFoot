@@ -53,6 +53,21 @@ class NotificationController extends AbstractController
                 $notification = new Notification();
                 $notification->setUser($user);
                 $notification->setMessage($data["message"]);
+                $token = $user->getTokenMobile();
+                if ($token != null){
+                    $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+                    $url = "https://notif-tfe.herokuapp.com/";
+                    $fields = [
+                        "token" => $token,
+                        "mess" => $data["message"]
+                    ];
+                    $fields_string = http_build_query($fields);
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_POST, true);
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                    $result = curl_exec($ch);
+                }
                 $this->getDoctrine()->getManager()->persist($notification);
             }
         }
@@ -75,7 +90,23 @@ class NotificationController extends AbstractController
         $user = $car->getUserId();
         $notification = new Notification();
         $notification->setUser($user);
-        $notification->setMessage("Vous avez une demande de ".$userPass->getFirstName(). " " . $userPass->getLastName()." pour votre covoiturage nommé ". $car->getTitle());
+        $message = "Vous avez une demande de ".$userPass->getFirstName(). " " . $userPass->getLastName()." pour votre covoiturage nommé ". $car->getTitle();
+        $notification->setMessage($message);
+        $token = $user->getTokenMobile();
+        if ($token != null){
+            $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+            $url = "https://notif-tfe.herokuapp.com/";
+            $fields = [
+                "token" => $token,
+                "mess" => $message
+            ];
+            $fields_string = http_build_query($fields);
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_POST, true);
+            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+            $result = curl_exec($ch);
+        }
         $this->getDoctrine()->getManager()->persist($notification);
         $this->getDoctrine()->getManager()->flush();
         return $this->json("Notification envoyée");
@@ -100,7 +131,23 @@ class NotificationController extends AbstractController
         }
         $notification = new Notification();
         $notification->setUser($user);
-        $notification->setMessage("Votre demande pour le covoiturage nommé ". $car->getTitle(). " a été ".$accepte);
+        $message = "Votre demande pour le covoiturage nommé ". $car->getTitle(). " a été ".$accepte;
+        $notification->setMessage($message);
+        $token = $user->getTokenMobile();
+        if ($token != null){
+            $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+            $url = "https://notif-tfe.herokuapp.com/";
+            $fields = [
+                "token" => $token,
+                "mess" => $message
+            ];
+            $fields_string = http_build_query($fields);
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_POST, true);
+            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+            $result = curl_exec($ch);
+        }
         $this->getDoctrine()->getManager()->persist($notification);
         $this->getDoctrine()->getManager()->flush();
         return $this->json("Notification envoyée");

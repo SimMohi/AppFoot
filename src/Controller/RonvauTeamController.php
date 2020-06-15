@@ -954,8 +954,24 @@ class RonvauTeamController extends AbstractController
                         $month = "Décembre";
                         break;
                 }
-                $notif->setMessage('Un entrainement a été ajouté le '. $startDate->format('d')." ".$month. " à ". $startDate->format("H")."h".$startDate->format("i"). " pour ". $teamR->getCategory());
+                $message = 'Un entrainement a été ajouté le '. $startDate->format('d')." ".$month. " à ". $startDate->format("H")."h".$startDate->format("i"). " pour ". $teamR->getCategory();
+                $notif->setMessage($message);
                 $this->getDoctrine()->getManager()->persist($notif);
+                $token = $userT->getUserId()->getTokenMobile();
+                if ($token != null){
+                    $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+                    $url = "https://notif-tfe.herokuapp.com/";
+                    $fields = [
+                        "token" => $token,
+                        "mess" => $message
+                    ];
+                    $fields_string = http_build_query($fields);
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL, $url);
+                    curl_setopt($ch,CURLOPT_POST, true);
+                    curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                    $result = curl_exec($ch);
+                }
             }
             $this->getDoctrine()->getManager()->persist($newTraining);
         } elseif ($data["type"] == 2){
@@ -1038,9 +1054,26 @@ class RonvauTeamController extends AbstractController
         foreach ($userTeams as $userTeam){
             $user = $userTeam->getUserId();
             $notif = new Notification();
-            $notif->setMessage('L\' entrainement du '. $start->format('d')." ".$month. " à ". $start->format("H")."h".$start->format("i"). " pour ". $training->getTeamRonvau()->getCategory().
-                " a été supprimé");
+            $message = 'L\' entrainement du '. $start->format('d')." ".$month. " à ". $start->format("H")."h".$start->format("i"). " pour ". $training->getTeamRonvau()->getCategory().
+                " a été supprimé";
+            $notif->setMessage($message);
+            $token = $user->getTokenMobile();
+            if ($token != null){
+                $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+                $url = "https://notif-tfe.herokuapp.com/";
+                $fields = [
+                    "token" => $token,
+                    "mess" => $message
+                ];
+                $fields_string = http_build_query($fields);
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_POST, true);
+                curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                $result = curl_exec($ch);
+            }
             $notif->setUser($user);
+
             $this->getDoctrine()->getManager()->persist($notif);
         }
         $this->getDoctrine()->getManager()->remove($training);

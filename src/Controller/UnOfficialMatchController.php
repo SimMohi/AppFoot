@@ -232,7 +232,23 @@ class UnOfficialMatchController extends AbstractController
 
         $notif = new Notification();
         $notif->setUser($userTeam->getUserId());
-        $notif->setMessage("Votre sélection pour le match ".$name. ' a été annulée');
+        $message =  "Votre sélection pour le match ".$name. ' a été annulée';
+        $notif->setMessage($message);
+        $token = $userTeam->getUserId()->getTokenMobile();
+        if ($token != null){
+            $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+            $url = "https://notif-tfe.herokuapp.com/";
+            $fields = [
+                "token" => $token,
+                "mess" => $message
+            ];
+            $fields_string = http_build_query($fields);
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_POST, true);
+            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+            $result = curl_exec($ch);
+        }
 
         $this->getDoctrine()->getManager()->persist($notif);
         $this->getDoctrine()->getManager()->remove($player);
@@ -261,7 +277,23 @@ class UnOfficialMatchController extends AbstractController
 
         $notif = new Notification();
         $notif->setUser($userTeam->getUserId());
-        $notif->setMessage("Votre sélection pour le match ".$name. ' a été annulée');
+        $message ="Votre sélection pour le match ".$name. ' a été annulée';
+        $notif->setMessage($message);
+        $token = $userTeam->getUserId()->getTokenMobile();
+        if ($token != null){
+            $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+            $url = "https://notif-tfe.herokuapp.com/";
+            $fields = [
+                "token" => $token,
+                "mess" => $message
+            ];
+            $fields_string = http_build_query($fields);
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL, $url);
+            curl_setopt($ch,CURLOPT_POST, true);
+            curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+            $result = curl_exec($ch);
+        }
 
         $this->getDoctrine()->getManager()->persist($notif);
         $this->getDoctrine()->getManager()->remove($player);
@@ -373,6 +405,21 @@ class UnOfficialMatchController extends AbstractController
             $not = new Notification();
             $not->setUser($ut->getUserId());
             $not->setMessage($name);
+            $token = $ut->getUserId()->getTokenMobile();
+            if ($token != null){
+                $token = "ExponentPushToken[DHjFUSLcYJ9ijIo5jSLK7u]";
+                $url = "https://notif-tfe.herokuapp.com/";
+                $fields = [
+                    "token" => $token,
+                    "mess" => $name
+                ];
+                $fields_string = http_build_query($fields);
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL, $url);
+                curl_setopt($ch,CURLOPT_POST, true);
+                curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+                $result = curl_exec($ch);
+            }
             $this->getDoctrine()->getManager()->persist($not);
         }
         $this->getDoctrine()->getManager()->remove($match);
