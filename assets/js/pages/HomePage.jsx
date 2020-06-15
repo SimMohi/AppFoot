@@ -257,8 +257,8 @@ const HomePage = props => {
             const description =
                 <div>
                     <p><b>Description</b>: {event.description}</p>
-                    <p><b>Début</b>: {DateFunctions.dateFormatFrDMHM(event.start, 1)}</p>
-                    <p><b>fin</b>: {DateFunctions.dateFormatFrDMHM(event.end, 1)}</p>
+                    <p><b>Début</b>: {DateFunctions.dateFormatFrDMHM(event.start)}</p>
+                    <p><b>fin</b>: {DateFunctions.dateFormatFrDMHM(event.end)}</p>
                 </div>
             obj = {
                 id: event.id,
