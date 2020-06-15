@@ -275,16 +275,108 @@ class RonvauTeamController extends AbstractController
         $today = new \DateTime();
         $week = clone $today;
         $week->modify('+7 day');
-        $weekTraining = [];
         foreach ($userTeams as $userTeam) {
             $teamR = $userTeam->getTeamRonvauId();
             $trainings = $this->getDoctrine()->getRepository(Training::class)->findBy([ 'teamRonvau' => $teamR,]);
             foreach ($trainings as $training){
+                $trainingArr = [];
                 if ($training->getStart() > $today && $training->getStart() < $week ){
-                    $weekTraining[] = $training;
+                    $trainingArr["type"] = "Training";
+                    $trainingArr["id"] = $training->getId();
+                    $trainingArr["title"] = "Entraînement ".$teamR->getCategory();
+                    $trainingArr["start"] = $training->getStart();
+                    $trainingArr["end"] = $training->getEnd();
+                    $isAbs = $this->getDoctrine()->getRepository(PlayerTraining::class)->findOneBy([ 'idTraining' => $training, 'idUserTeam' => $userTeam]);
+                    $trainingArr["abs"] = false;
+                    if ($isAbs !== null){
+                        $trainingArr["abs"] = $isAbs->getIsAbsent();
+                    }
+                    $response[$training->getStart()->format("Y-m-d")][] = $trainingArr;
+                }
+            }
+            $eventsTeams = $this->getDoctrine()->getRepository(EventsTeam::class)->findBy(['idTeamRonvau' => $teamR]);
+            foreach ($eventsTeams as $eventsTeam){
+                $eventRes = [];
+                $event = $eventsTeam->getIdEvents();
+                if ($event->getDate() > $today && $event->getDate() < $week ){
+                    $eventRes["type"] = "Event";
+                    $eventRes["id"] = $event->getId();
+                    $eventRes["title"] = $event->getName(). " pour ".$teamR->getCategory();
+                    $eventRes["start"] = $event->getDate();
+                    $eventRes["end"] = $event->getEndDate();
+                    $eventRes["description"] = $event->getDescription();
+                    $userTeamEvent = $this->getDoctrine()->getRepository(UserTeamEvent::class)->findOneBy(['userTeam' => $userTeam, 'event' => $event]);
+                    if ($userTeamEvent === null){
+                        $eventRes["sub"] = false;
+                    } else {
+                        $eventRes["sub"] = true;
+                    }
+                    $response[$event->getDate()->format("Y-m-d")][] = $eventRes;
+                }
+            }
+            $team = $teamR->getTeam();
+            $matchesTeamA = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
+            $matchesTeamV = $this->getDoctrine()->getRepository(Matche::class)->findBy(['visitorTeam' => $team]);
+            foreach ($matchesTeamA as $home) {
+                if ($home->getDate() > $today && $home->getDate() < $week ){
+                    $matchRes = [];
+                    $matchRes["compet"] = $home->getHomeTeam()->getCompetition()->getName();
+                    $matchRes["type"] = "Match";
+                    $matchRes["id"] = $home->getId();
+                    $matchRes["title"] = $home->getHomeTeam()->getClub()->getName() . "-" . $home->getVisitorTeam()->getClub()->getName();
+                    $matchRes["start"] = $home->getDate();
+                    $response[$home->getDate()->format("Y-m-d")][] = $matchRes;
+                }
+            }
+            foreach ($matchesTeamV as $visitor) {
+                if ($visitor->getDate() > $today && $visitor->getDate() < $week ) {
+                    $matchRes = [];
+                    $matchRes["compet"] = $visitor->getHomeTeam()->getCompetition()->getName();
+                    $matchRes["type"] = "Match";
+                    $matchRes["id"] = $visitor->getId();
+                    $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName() . "-" . $visitor->getVisitorTeam()->getClub()->getName();
+                    $matchRes["start"] = $visitor->getDate();
+                    if ($visitor->getHomeTeamGoal() != null && $visitor->getVisitorTeamGoal() != null){
+                        $matchRes["score"] = $visitor->getHomeTeamGoal(). " - ". $visitor->getVisitorTeamGoal();
+                    }
+                    $response[$visitor->getDate()->format("Y-m-d")][] = $matchRes;
+                }
+            }
+            $unofficialMatchs = $teamR->getUnOfficialMatches();
+            foreach ($unofficialMatchs as $unofficialMatch) {
+                if ($unofficialMatch->getDate() > $today && $unofficialMatch->getDate() < $week) {
+                    $matchRes = [];
+                    $matchRes["type"] = "Amical";
+                    $matchRes["id"] = $unofficialMatch->getId();
+                    if ($unofficialMatch->getIsHome()) {
+                        $matchRes["title"] = "Fc Ronvau Chaumont" . "-" . $unofficialMatch->getOpponent()->getName();
+                    } else {
+                        $matchRes["title"] = $unofficialMatch->getOpponent()->getName() . "-" . "Fc Ronvau Chaumont";
+                    }
+                    if ($unofficialMatch->getIsHome()) {
+                        $address = $unofficialMatch->getTeamRonvau()->getTeam()->getClub()->getAddress();
+                        $matchRes["score"] = $unofficialMatch->getRonvauTeamGoal() . " - " . $unofficialMatch->getOpponentGoal();
+                    } else {
+                        $address = $unofficialMatch->getOpponent()->getAddress();
+                        $matchRes["score"] = $unofficialMatch->getOpponentGoal() . " - " . $unofficialMatch->getRonvauTeamGoal();
+                    }
+                    if ($address !== null) {
+                        $matchRes["address"] = $address->getStreet() . " " . $address->getNumber() . ", " . $address->getCode() . " " . $address->getCity();
+                    }
+                    $matchRes["details"] = [];
+                    $matchRes["players"] = [];
+                    $matchRes["called"] = [];
+                    $matchRes["start"] = $unofficialMatch->getDate();
+                    $matchRes["appointment"] = $unofficialMatch->getAppointmentHour();
+                    $matchRes["end"] = $unofficialMatch->getDate();
+                    $matchRes["staff"] = $userTeam->getIsStaff();
+                    $matchRes["teamId"] = $teamR->getId();
+                    $matchRes["teamCat"] = $teamR->getCategory();
+                    $response[$unofficialMatch->getDate()->format('Y-m-d')][] = $matchRes;
                 }
             }
         }
+        return $this->json($response);
     }
 
     /**
