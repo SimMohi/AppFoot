@@ -300,7 +300,7 @@ class RonvauTeamController extends AbstractController
                 $event = $eventsTeam->getIdEvents();
                 if ($event->getDate() > $today && $event->getDate() < $week ){
                     $eventRes["type"] = "Event";
-                    $eventRes["id"] = $event->getId();
+                    $eventRes["id"] = $eventsTeam->getId();
                     $eventRes["title"] = $event->getName(). " pour ".$teamR->getCategory();
                     $eventRes["start"] = $event->getDate();
                     $eventRes["end"] = $event->getEndDate();

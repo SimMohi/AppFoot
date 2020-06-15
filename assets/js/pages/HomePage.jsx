@@ -182,7 +182,7 @@ const HomePage = props => {
             }
             const description =
                 <div>
-                    <p><b>Début</b>: {DateFunctions.getHoursHM(event.start)} <b>fin</b>: {DateFunctions.getHoursHM(event.end)}</p>
+                    <p><b>Début</b>: {DateFunctions.getHoursHM(event.start, 1)} <b>fin</b>: {DateFunctions.getHoursHM(event.end, 1)}</p>
                 </div>
             obj = {
                 id: event.id,
