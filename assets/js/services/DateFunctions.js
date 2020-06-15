@@ -171,6 +171,8 @@ function getHoursHMV2(date, convert = 0) {
     let hours = d.getHours();
     if (convert == 1){
         hours = hours - 2;
+    } else if (convert == 2){
+        hours = hours-1;
     }
     let minutes = d.getMinutes();
     if (hours < 10){

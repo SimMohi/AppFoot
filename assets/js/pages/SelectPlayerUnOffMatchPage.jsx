@@ -126,9 +126,9 @@ const SelectPlayerUnOffMatchPage = props => {
                         <button onClick={callFunction} className="btn btn-danger">Convoquer</button>
                     </div>
                     <div className="col-8">
-                        <div className="">
+                        <div className="whiteBorder p-3">
                             <div>{match.accepted+" réponses positive sur "+match.total}</div>
-                            <table className="mt-5 table table-hover text-center whiteBorder p-3">
+                            <table className="mt-5 table table-hover text-center ">
                                 <thead>
                                 <tr className={"row"}>
                                     <th className={"col-3"}>Nom</th>

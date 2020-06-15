@@ -226,7 +226,7 @@ const HomePage = props => {
                         <p className={"mt-2"}><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
                         {event.appointment != null &&
                             <p className={"mt-2"}><b>Heure de RDV sur
-                            place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
+                            place</b>: {DateFunctions.getHoursHMV2(event.appointment, 2)}</p>
                         }
                         <p>{event.perso}</p>
                         <p><b>Adresse : </b>{event.address}</p>
@@ -300,7 +300,7 @@ const HomePage = props => {
                         <>
                         <p><b>Début</b>: {DateFunctions.getHoursHMV2(event.start, 1)}</p>
                         {event.appointment != null &&
-                        <p><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
+                        <p><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment, 2)}</p>
                         }
                         <p>{event.perso}</p>
                         <p><b>Adresse : </b>{event.address}</p>
