@@ -106,9 +106,6 @@ const CovoitsPage = props => {
                 return <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm btn-danger mr-3">Se désinscrire</button>;
             }
         }
-        if (placeRemaining == 0){
-            return <button className="btn btn-sm btn-warning mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
-        }
         if (covoit.userId["@id"] == userConnected["@id"]){
             return (
             <>
@@ -117,6 +114,9 @@ const CovoitsPage = props => {
                 </Link>
                 <button onClick={() => handleDelete(covoit.id)} className={"btn btn-danger btn-sm"}>Supprimer</button>
             </>)
+        }
+        if (placeRemaining == 0){
+            return <button className="btn btn-sm btn-warning mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
         return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-warning mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
@@ -239,7 +239,7 @@ const CovoitsPage = props => {
                     <tr key={index} className={"row ml-3 mr-3"}>
                         <td className={"col-2"}>{covoit.userId["firstName"]+" "+covoit.userId["lastName"]}</td>
                         <td className={"col-2"}>{covoit.title}</td>
-                        <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(covoit.date, 1)}</td>
+                        <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(covoit.date)}</td>
                         <td className={"col-1"}>{covoit.placeRemaining}</td>
                         <td className={"col-3"}>{adresseFormat(covoit.departureAddress)}</td>
                         <td className={"col-3"}>

@@ -131,7 +131,6 @@ function dateFormatFrDMHM (date, convert = 0){
 
 function dateFormatYMDHMArr (date){
     let d = new Date(date);
-    d = convertUTCDateToLocalDate(d);
     const year = d.getFullYear();
     let month = d.getMonth()+1;
     const day = d.getDate();

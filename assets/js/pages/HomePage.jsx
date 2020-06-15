@@ -653,7 +653,7 @@ const HomePage = props => {
     return (
       <>
           {staff.length > 0 &&
-            <button onClick={addAction} className="btn btn-danger "><i className="fas fa-plus"></i></button>
+            <button onClick={addAction} className="btn btn-danger mb-3 "><i className="fas fa-plus"></i></button>
           }
           <div className="">
               <div className="d-flex">
