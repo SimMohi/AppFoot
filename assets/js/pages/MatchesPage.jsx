@@ -252,7 +252,7 @@ const MatchPages = props => {
                         <td className={"col-1"}>
                             {m.originalHomeTeamGoal === null  &&
                             <input type={"number"} className={"form-control"}
-                                   value={m.homeTeamGoal || 0} min={0} name={index}
+                                   value={m.homeTeamGoal} min={0} name={index}
                                    onChange={handleChangeGoalA}/>
                             ||
                             m.homeTeamGoal
@@ -262,7 +262,7 @@ const MatchPages = props => {
                         <td className={"col-1"}>
                             {m.originalVisitorTeamGoal === null &&
                             <input type={"number"} className={"form-control"}
-                                   value={m.visitorTeamGoal || 0} min={0} name={index}
+                                   value={m.visitorTeamGoal } min={0} name={index}
                                    onChange={handleChangeGoalB}/>
                             ||
                             m.visitorTeamGoal
