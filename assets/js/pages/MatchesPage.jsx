@@ -61,7 +61,7 @@ const MatchPages = props => {
         let copy = JSON.parse(JSON.stringify(allMatchs));
         for (let j = 0; j < copy[i].length; j++){
             if (copy[i][j]["homeTeamGoal"] !== null ){
-                copy[i][j]["originalHomeTeamGoal"] = copy[i][j]["homeTeamGoal"];
+                copy[i][j][""] = copy[i][j]["homeTeamGoal"];
             } else {
                 copy[i][j]["originalHomeTeamGoal"] = null;
             }
@@ -79,7 +79,22 @@ const MatchPages = props => {
         const match = await MatcheAPI.findCompetMatchDay(id);
         setName(match["name"]);
         setAllMatchs(match["matchs"]);
-        setMatchOfDay(match["matchs"][selectedMatchDay]);
+        const i = selectedMatchDay;
+        console.log(i);
+        let copy = JSON.parse(JSON.stringify(match["matchs"]));
+        for (let j = 0; j < copy[i].length; j++){
+            if (copy[i][j]["homeTeamGoal"] !== null ){
+                copy[i][j][""] = copy[i][j]["homeTeamGoal"];
+            } else {
+                copy[i][j]["originalHomeTeamGoal"] = null;
+            }
+            if (copy[i][j]["visitorTeamGoal"] !== null ){
+                copy[i][j]["originalVisitorTeamGoal"] = copy[i][j]["visitorTeamGoal"];
+            } else {
+                copy[i][j]["originalVisitorTeamGoal"] = null;
+            }
+        }
+        setMatchOfDay(copy[selectedMatchDay]);
     }
 
     const FindTeams = async () => {
@@ -156,7 +171,7 @@ const MatchPages = props => {
 
     const openModal = (match) => {
         let date = DateFunctions.dateFormatYMD(match.date);
-        let hour = DateFunctions.getHoursHM(match.date, 1);
+        let hour = DateFunctions.getHoursHM(match.date);
         setEditMatch({
             id: match.id,
             date: date,
@@ -180,7 +195,7 @@ const MatchPages = props => {
             id: editMatch.id,
             date: new Date(editMatch.date + " "+ editMatch.hour),
         }
-        await MatcheAPI.newDateMatch(data);
+        await MatcheAPI.newDateMatchOff(data);
         handleClose(0);
         setReload(reload+1);
     }
@@ -232,7 +247,7 @@ const MatchPages = props => {
                 <tbody className={"container"}>
                     {matchOfDay.map((m, index) =>
                     <tr key={index} className={"row  ml-3 mr-3 "}>
-                        <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(m.date, 1)}</td>
+                        <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(m.date)}</td>
                         <td className={"col-3"}><div>{m.homeTeam.club.name}</div></td>
                         <td className={"col-1"}>
                             {m.originalHomeTeamGoal === null  &&

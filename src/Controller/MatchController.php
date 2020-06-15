@@ -347,6 +347,26 @@ class MatchController extends AbstractController
     /**
      * @param Request $request
      * @return JsonResponse
+     * @Route ("/newDateMatchOff")
+     */
+    public function newDateMatchOff(Request $request)
+    {
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $match = $this->getDoctrine()->getRepository(Matche::class)->findOneBy(['id' => $data["id"]]);
+
+        $date = new \DateTime($data["date"]);
+        $match->setDate($date);
+        $this->getDoctrine()->getManager()->persist($match);
+        $this->getDoctrine()->getManager()->flush();
+        return $this->json("ok");
+
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
      * @Route ("/editScore")
      */
     public function editScore(Request $request)

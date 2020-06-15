@@ -99,7 +99,11 @@ function calledPlayerMatch(id) {
         .then(response => response.data);
 }
 
+function newDateMatchOff(date){
+    return axios.post(API_URL+ "/newDateMatchOff", date);
+}
+
 export default {
     findAll, find, findMatchDay, create, update, findCompetMatchDay, getRonvauTeamMatch, deleteMatche, postCallMatch, postEncodeMatch,
-    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails, scoreMatch, newMatch, newDateMatch, editDateUnOffMatch, editScore, calledPlayerMatch
+    editDateMatch, voteMOTM, getMatchDetails, getUnOfMatchCompet, getUnOfMatchDetails, scoreMatch, newMatch, newDateMatch, editDateUnOffMatch, editScore, calledPlayerMatch, newDateMatchOff
 }
