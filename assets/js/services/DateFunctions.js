@@ -166,10 +166,10 @@ function getHoursHM(date, convert = 0) {
 
 function getHoursHMV2(date, convert = 0) {
     let d = new Date(date);
+    let hours = d.getHours();
     if (convert == 1){
         hours = hours - 2;
     }
-    let hours = d.getHours();
     let minutes = d.getMinutes();
     if (hours < 10){
         hours = "0"+hours;
