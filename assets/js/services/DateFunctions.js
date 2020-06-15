@@ -151,10 +151,10 @@ function dateFormatYMDHMArr (date){
 
 function getHoursHM(date, convert = 0) {
     let d = new Date(date);
-    if (convert == 1){
-        d = convertUTCDateToLocalDate(d);
-    }
     let hours = d.getHours();
+    if (convert == 1){
+        hours = hours - 2;
+    }
     let minutes = d.getMinutes();
     if (hours < 10){
         hours = "0"+hours;
