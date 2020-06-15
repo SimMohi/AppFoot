@@ -167,7 +167,7 @@ function getHoursHM(date, convert = 0) {
 function getHoursHMV2(date, convert = 0) {
     let d = new Date(date);
     if (convert == 1){
-        d = convertUTCDateToLocalDate(d);
+        hours = hours - 2;
     }
     let hours = d.getHours();
     let minutes = d.getMinutes();

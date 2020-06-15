@@ -181,9 +181,7 @@ const RonvauTeamCalendarUnOffPage = props => {
                         {mtr.date != null &&
                         <td className={"col-2"}>{DateFunctions.dateFormatFrDM(mtr.date)} &nbsp;
                             {mtr.date != null &&
-                            <Moment format="HH:mm">
-                                {mtr.date}
-                            </Moment>
+                                DateFunctions.getHoursHMV2(mtr.date, 1)
                             }
                         </td>
                         || <td className={'col-1'}>Non défini</td>

@@ -325,6 +325,11 @@ class RonvauTeamController extends AbstractController
                     $matchRes["id"] = $home->getId();
                     $matchRes["title"] = $home->getHomeTeam()->getClub()->getName() . "-" . $home->getVisitorTeam()->getClub()->getName();
                     $matchRes["start"] = $home->getDate();
+                    $address = $home->getHomeTeam()->getClub()->getAddress();
+                    if ($address !== null){
+                        $matchRes["address"] = $address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
+                    }
+                    $matchRes["appointment"] = $home->getAppointmentHour();
                     $response[$home->getDate()->format("Y-m-d")][] = $matchRes;
                 }
             }
@@ -336,6 +341,11 @@ class RonvauTeamController extends AbstractController
                     $matchRes["id"] = $visitor->getId();
                     $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName() . "-" . $visitor->getVisitorTeam()->getClub()->getName();
                     $matchRes["start"] = $visitor->getDate();
+                    $address = $visitor->getHomeTeam()->getClub()->getAddress();
+                    if ($address !== null){
+                        $matchRes["address"] = $address->getStreet()." ". $address->getNumber(). ", ". $address->getCode().  " " . $address->getCity();
+                    }
+                    $matchRes["appointment"] = $visitor->getAppointmentHour();
                     if ($visitor->getHomeTeamGoal() != null && $visitor->getVisitorTeamGoal() != null){
                         $matchRes["score"] = $visitor->getHomeTeamGoal(). " - ". $visitor->getVisitorTeamGoal();
                     }

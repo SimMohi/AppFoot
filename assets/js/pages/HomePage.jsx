@@ -298,7 +298,7 @@ const HomePage = props => {
                         <p><b>Score : </b>{event.score}</p>
                         ||
                         <>
-                        <p><b>Début</b>: {DateFunctions.getHoursFRHM(event.start)}</p>
+                        <p><b>Début</b>: {DateFunctions.getHoursHMV2(event.start, 1)}</p>
                         {event.appointment != null &&
                         <p><b>Heure de RDV sur place</b>: {DateFunctions.getHoursHMV2(event.appointment)}</p>
                         }
