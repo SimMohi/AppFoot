@@ -20,7 +20,6 @@ const RGPDPage = (props)=> {
 
     const accept = async () => {
         let copy = JSON.parse(JSON.stringify(user));
-        copy["address"] = copy['address']["@id"];
         copy["rgpd"] = true;
         try{
             await usersAPI.update(id, copy);
