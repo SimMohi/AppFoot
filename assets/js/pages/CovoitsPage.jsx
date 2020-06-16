@@ -295,8 +295,8 @@ const CovoitsPage = props => {
                             </div>
                         </>
                         }
-                        <Field type={"text"} placeholder={"Commentaire pour le conducteur"} name={"comment"} value={newPassengers["comment"]} onChange={handleChange}/>
-                        <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} name={"numberPassenger"} min={1} max={modalParam.placeRemaining}
+                        <Field type={"text"} placeholder={"Commentaire pour le conducteur"} label={"commentaire"} name={"comment"} value={newPassengers["comment"]} onChange={handleChange}/>
+                        <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} label={"Nombre de passagers"} name={"numberPassenger"} min={1} max={modalParam.placeRemaining}
                                onChange={handleChange} value={newPassengers["numberPassenger"]}/>
                         <div className="from-group">
                             <button type={"submit"} className="btn btn-danger float-right">Enregistrer</button>
