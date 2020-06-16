@@ -8,6 +8,12 @@ function findAll() {
         .then(response => response.data["hydra:member"]);
 }
 
+function find(id) {
+    return axios
+        .get(USERS_API + "/" + id)
+        .then(response => response.data);
+}
+
 function findUnaccepted(){
     return axios
         .get(USERS_API+"?isAccepted=false")
@@ -49,5 +55,5 @@ function getNotifications(id){
 }
 
 export default {
-    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications, postProfile
+    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications, postProfile, find
 }

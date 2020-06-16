@@ -38,9 +38,13 @@ const LoginPage = ({ history}) => {
                 setError("L'utilisateur n'a pas encore été accepté par un administrateur");
                 authAPI.logout();
             } else {
+                if (secondResponse["data"]["hydra:member"][0]["rgpd"] == false){
+                    history.replace("/rgpd/"+secondResponse["data"]["hydra:member"][0]["id"]);
+                } else {
+                    setIsAuthenticated(true);
+                    history.replace("/");
+                }
                 setError("");
-                setIsAuthenticated(true);
-                history.replace("/");
             }
         } catch (e) {
             setError("Le nom d'utilisateur et le mot de passe ne correspondent pas");
@@ -49,17 +53,19 @@ const LoginPage = ({ history}) => {
 
     return (
         <>
-            <h1>Connexion à l'app</h1>
+            <h1 className={"text-center mb-5"}>Bienvenue sur la plateforme du FC Ronvau Chaumont</h1>
 
-            <form action="" onSubmit={handleSubmit}>
-                <Field label={"Adresse email"} name={"username"} value={credentials.username}
-                       placeholder={'Adresse email de Connexion'} onChange={handleChange} type={"email"} error={error}/>
-                <Field label={"Mot de passe"} name={"password"} value={credentials.password} onChange={handleChange}
-                       type={"password"} error={""}/>
-                <div className="form-group">
-                    <button type={"submit"} className={"btn btn-danger"}>Se connecter</button>
-                </div>
-            </form>
+            <div className="d-flex justify-content-center mt-5">
+                <form action="" onSubmit={handleSubmit} className={"col-6 whiteBorder p-3"}>
+                    <Field label={"Adresse email"} name={"username"} value={credentials.username}
+                           placeholder={'Adresse email de Connexion'} onChange={handleChange} type={"email"} error={error}/>
+                    <Field label={"Mot de passe"} name={"password"} value={credentials.password} onChange={handleChange}
+                           type={"password"} error={""}/>
+                    <div className="form-group">
+                        <button type={"submit"} className={"btn btn-danger float-right"}>Se connecter</button>
+                    </div>
+                </form>
+            </div>
         </>
     );
 };

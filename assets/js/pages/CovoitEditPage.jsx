@@ -212,23 +212,25 @@ const CovoitPage = props => {
                 <h3 className={"m-4"}>Demandes</h3>
                 <table className="table table-hover text-center">
                     <thead>
-                    <tr>
-                        <th>Etat</th>
-                        <th>Passagers</th>
-                        <th>commentaire</th>
-                        <th>place</th>
-                        <th>réponse</th>
+                    <tr className={"row"}>
+                        <th className={"col-1"}>Etat</th>
+                        <th className={"col-2"}>Passager</th>
+                        <th className={"col-2"}>Adresse</th>
+                        <th className={"col-2"}>Commentaire</th>
+                        <th className={"col-1"}>Place</th>
+                        <th className={"col-2"}>Réponse</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                         {carPass.map((pass, index) =>
-                            <tr key={index}>
-                                <td>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
-                                <td>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
-                                <td>{pass["comment"]}</td>
-                                <td>{pass["numberPassenger"]}</td>
-                                <td><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
+                            <tr key={index} className={'row'}>
+                                <td className={"col-1"}>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
+                                <td className={"col-2"}>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
+                                <td className="col-2">{"Rue " + pass.user.address.street + " " + pass.user.address.number + ", " + pass.user.address.code + " " + pass.user.address.city}</td>
+                                <td className={"col-2"}>{pass["comment"]}</td>
+                                <td className={"col-1"}>{pass["numberPassenger"]}</td>
+                                <td className={"col-2"}><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
                                 <td>
                                     {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-warning mr-3">Accepter</button>}
                                     <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>

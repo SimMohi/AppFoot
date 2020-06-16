@@ -103,7 +103,16 @@ const CovoitsPage = props => {
 
         for(var i = 0; i < passengers.length; i++){
             if (passengers[i]["user"]["@id"] == userConnected["@id"]){
-                return <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm btn-danger mr-3">Se désinscrire</button>;
+                console.log(passengers[i]);
+                return (
+                    <>
+                        {passengers[i].isAccepted == true &&
+                            <i className="fas fa-check mr-5"></i>
+                            ||
+                        <i className="far fa-clock mr-5"></i>
+                        }
+                        <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn  btn-danger mr-3">Se désinscrire</button>
+                    </>);
             }
         }
         if (covoit.userId["@id"] == userConnected["@id"]){
@@ -116,9 +125,9 @@ const CovoitsPage = props => {
             </>)
         }
         if (placeRemaining == 0){
-            return <button className="btn btn-sm btn-warning mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+            return <button className="btn  btn-warning mr-3" disabled={true}>&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
         }
-        return <button onClick={() => handleShow(covoit, 1)} className="btn btn-sm btn-warning mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
+        return <button onClick={() => handleShow(covoit, 1)} className="btn  btn-warning mr-3">&nbsp;&nbsp;&nbsp;&nbsp;S'inscire&nbsp;&nbsp;&nbsp;&nbsp;</button>;
     }
 
     const getUserConnected = async () => {

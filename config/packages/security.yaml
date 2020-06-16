@@ -18,7 +18,7 @@ security:
             pattern: ^/api/users
             anonymous: true
             stateless: true
-            methods: [POST]
+            methods: [POST, PUT, GET]
         login:
             pattern:  ^/api/login
             stateless: true
@@ -50,5 +50,5 @@ security:
         - {
             path: ^/api/users,
             roles: IS_AUTHENTICATED_FULLY,
-            methods: [GET, PUT, DELETE],
+            methods: [DELETE],
         }

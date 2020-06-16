@@ -174,6 +174,12 @@ const Navbar = ({ history }) => {
                 <div className="collapse navbar-collapse d-flex justify-content-between" id="navbarColor01">
                     <div></div>
                     <ul className="navbar-nav">
+                        <li className={"ml-5"}>
+                            <h3 className={"nameNav caviar mt-2"}>FC Ronvau Chaumont</h3>
+                        </li>
+                        <li>
+                            <img src="img/logo.png" alt="rouge" id={'logo'}/>
+                        </li>
                         {isAuthenticated &&
                             <>
                                 {/*<li className="nav-item active">*/}
@@ -221,9 +227,6 @@ const Navbar = ({ history }) => {
                                 {/*        Chat*/}
                                 {/*    </NavLink>*/}
                                 {/*</li>*/}
-                                <li className={"ml-5"}>
-                                    <h3 className={"nameNav caviar"}>FC Ronvau Chaumont</h3>
-                                </li>
                             </>
                         }
                     </ul>

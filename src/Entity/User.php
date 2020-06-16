@@ -129,6 +129,12 @@ class User implements UserInterface
      */
     private $tokenMobile;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $rgpd;
+
 
     public function __construct()
     {
@@ -453,6 +459,18 @@ class User implements UserInterface
     public function setTokenMobile(?string $tokenMobile): self
     {
         $this->tokenMobile = $tokenMobile;
+
+        return $this;
+    }
+
+    public function getRgpd(): ?bool
+    {
+        return $this->rgpd;
+    }
+
+    public function setRgpd(bool $rgpd): self
+    {
+        $this->rgpd = $rgpd;
 
         return $this;
     }

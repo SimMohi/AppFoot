@@ -132,7 +132,7 @@ const ChatPage = () => {
 
     return(
         <div id="root">
-            <div className="app whiteBorder">
+            <div className="app whiteBorder w-75 ml-auto mr-auto">
                 <div className="rooms-list">
                     <ul>
                         <h3>Vos Salons</h3>

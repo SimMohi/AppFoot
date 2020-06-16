@@ -51,6 +51,7 @@ import EncodeUnOffMatchPage from "./pages/encodeUnOffPage";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import TrainingResumePage from "./pages/TrainingResumePage";
+import RGPDPage from "./pages/RGPDPage";
 
 require("../css/app.css");
 
@@ -229,6 +230,7 @@ const App = () => {
                         {isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>}
                         {!isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPageUser}/>}
                         {isAdmin && <PrivateRoute path={"/userAccess"} component={UsersPage}/>}
+                        <Route path="/rgpd/:id" component={RGPDPage}/>
                         <PrivateRoute path="/" component={HomePage} />
                     </Switch>
                 </main>

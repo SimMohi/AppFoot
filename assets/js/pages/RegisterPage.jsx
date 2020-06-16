@@ -62,60 +62,64 @@ const RegisterPage = ({ history }) => {
 
     return (
         <>
-            <h1>Inscription</h1>
-            <form onSubmit={handleSubmit}>
-                <Field
-                    name="firstName"
-                    label="Prénom"
-                    placeholder="Votre prénom"
-                    error={errors.firstName}
-                    value={user.firstName}
-                    onChange={handleChange}
-                />
-                <Field
-                    name="lastName"
-                    label="Nom de famille"
-                    placeholder="Votre nom de famille"
-                    error={errors.lastName}
-                    value={user.lastName}
-                    onChange={handleChange}
-                />
-                <Field
-                    name="email"
-                    label="Adresse email"
-                    placeholder="Votre adresse email"
-                    type="email"
-                    error={errors.email}
-                    value={user.email}
-                    onChange={handleChange}
-                />
-                <Field
-                    name="password"
-                    label="Mot de passe"
-                    type="password"
-                    placeholder="Votre mot de passe ultra sécurisé"
-                    error={errors.password}
-                    value={user.password}
-                    onChange={handleChange}
-                />
-                <Field
-                    name="passwordConfirm"
-                    label="Confirmation de mot de passe"
-                    type="password"
-                    placeholder="Confirmez votre super mot de passe"
-                    error={errors.passwordConfirm}
-                    value={user.passwordConfirm}
-                    onChange={handleChange}
-                />
-                <div className="form-group">
-                    <button type="submit" className="btn btn-danger">
-                        Confirmation
-                    </button>
-                    <Link to="/login" className="btn text-warning">
-                        J'ai déjà un compte
-                    </Link>
+            <div className="d-flex justify-content-center">
+                <div className="whiteBorder p-5 col-6">
+                    <h1>Inscription</h1>
+                    <form onSubmit={handleSubmit}>
+                        <Field
+                            name="firstName"
+                            label="Prénom"
+                            placeholder="Votre prénom"
+                            error={errors.firstName}
+                            value={user.firstName}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="lastName"
+                            label="Nom de famille"
+                            placeholder="Votre nom de famille"
+                            error={errors.lastName}
+                            value={user.lastName}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="email"
+                            label="Adresse email"
+                            placeholder="Votre adresse email"
+                            type="email"
+                            error={errors.email}
+                            value={user.email}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="password"
+                            label="Mot de passe"
+                            type="password"
+                            placeholder="Votre mot de passe ultra sécurisé"
+                            error={errors.password}
+                            value={user.password}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="passwordConfirm"
+                            label="Confirmation de mot de passe"
+                            type="password"
+                            placeholder="Confirmez votre super mot de passe"
+                            error={errors.passwordConfirm}
+                            value={user.passwordConfirm}
+                            onChange={handleChange}
+                        />
+                        <div className="form-group">
+                            <button type="submit" className="btn btn-danger">
+                                Confirmation
+                            </button>
+                            <Link to="/login" className="btn text-warning">
+                                J'ai déjà un compte
+                            </Link>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </>
     );
 };
