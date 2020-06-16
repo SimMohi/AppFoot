@@ -40,8 +40,8 @@ const TrainingResumePage = props => {
             <h4 className={"mb-5"}>Présences aux entrainements lors des trois dernières semaines</h4>
             <table className="table table-hover whiteBorder">
                 <thead>
-                <tr className={"text-center"}>
-                    <th></th>
+                <tr className={"text-center row"}>
+                    <th className={"col-4"}>Joueur</th>
                     {trainings.map((tr, index) =>
                         <th key={index}>{DateFunctions.dateFormatFrDM(tr.date)}</th>
                     )}
