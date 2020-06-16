@@ -524,7 +524,11 @@ const HomePage = props => {
         let editMatchObj = {
             id: match.id,
             date: DateFunctions.dateFormatYMD(match.start),
-            hour:  DateFunctions.getHoursHM(match.start, 1),
+        }
+        if (match.type == "Amical"){
+            editMatchObj.hour =  DateFunctions.getHoursHM(match.start, 1);
+        } else {
+            editMatchObj.hour =  DateFunctions.getHoursHM(match.start);
         }
         setEditMatch(editMatchObj);
         handleShow(3);
