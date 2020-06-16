@@ -138,6 +138,7 @@ class User implements UserInterface
 
     public function __construct()
     {
+        $this->rgpd = false;
         $this->userTeams = new ArrayCollection();
         $this->playerOfTheMatches = new ArrayCollection();
         $this->cars = new ArrayCollection();
