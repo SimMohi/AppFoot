@@ -50,7 +50,7 @@ const TrainingResumePage = props => {
                 <tbody>
                     {players.map((p, index3) =>
                         <tr key={index3} className={"text-center"}>
-                            <td>{p.name}</td>
+                            <td className={"col-4"}>{p.name}</td>
                             {p["trainings"].map((t, index2) =>
                                 <td key={index2}>
                                     {t.present &&
