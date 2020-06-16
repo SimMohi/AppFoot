@@ -131,6 +131,7 @@ const CovoitPage = props => {
             toast.error("L'acceptation de la demande a échoué");
         }
         setReload(reload+1);
+        setCarPass([]);
     }
 
     const handleDelete =  (id, numberPassenger) => {
@@ -156,10 +157,13 @@ const CovoitPage = props => {
     };
 
     useEffect(() => {
+        console.log("eff");
         fetchCar(id);
     }, [id, reload]);
 
 
+
+    console.log(carPass);
 
     return(
         <>
