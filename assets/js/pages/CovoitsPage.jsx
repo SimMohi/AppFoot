@@ -111,7 +111,8 @@ const CovoitsPage = props => {
                             ||
                         <i className="far fa-clock mr-5"></i>
                         }
-                        <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn  btn-danger mr-3">Se désinscrire</button>
+                        <span className={"mr-3"}>{passengers[i]["answer"]}</span>
+                        <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm  btn-danger mr-3">Se désinscrire</button>
                     </>);
             }
         }
@@ -240,8 +241,8 @@ const CovoitsPage = props => {
                     <th className={"col-2"}>Titre</th>
                     <th className={"col-1"}>Date et heure</th>
                     <th className={"col-1"}>Places restantes</th>
-                    <th className={"col-3"}>Adresse de départ</th>
-                    <th className={"col-3"}></th>
+                    <th className={"col-2"}>Adresse de départ</th>
+                    <th className={"col-4"}></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -251,8 +252,8 @@ const CovoitsPage = props => {
                         <td className={"col-2"}>{covoit.title}</td>
                         <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(covoit.date)}</td>
                         <td className={"col-1"}>{covoit.placeRemaining}</td>
-                        <td className={"col-3"}>{adresseFormat(covoit.departureAddress)}</td>
-                        <td className={"col-3"}>
+                        <td className={"col-2"}>{adresseFormat(covoit.departureAddress)}</td>
+                        <td className={"col-4"}>
                             {chooseButton(covoit)}
                         </td>
                     </tr>

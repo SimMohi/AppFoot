@@ -71,9 +71,12 @@ const CovoitPage = props => {
             copyCar["carPassengers"][i] =  car["carPassengers"][i]["@id"];
         }
         copyCar["date"] = new Date(car.date + " " + car.time);
+        delete  copyCar.userId;
+        delete copyCar.departureAddress;
+        delete copyCar.carPassengers;
 
         try {
-            const response = await CovoitAPI.create(copyCar);
+            const response = await CovoitAPI.update(copyCar.id, copyCar);
             if (typeof response.data.violations != "undefined" && response.data.violations.length > 0){
                 const apiErrors = {};
                 response.data.violations.forEach(violation => {
