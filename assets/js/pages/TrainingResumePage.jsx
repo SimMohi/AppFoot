@@ -40,8 +40,8 @@ const TrainingResumePage = props => {
             <h4 className={"mb-5"}>Présences aux entrainements lors des trois dernières semaines</h4>
             <table className="table table-hover whiteBorder">
                 <thead>
-                <tr className={"text-center row"}>
-                    <th className={"col-4"}>Joueur</th>
+                <tr className={"text-center "}>
+                    <th>Joueur</th>
                     {trainings.map((tr, index) =>
                         <th key={index}>{DateFunctions.dateFormatFrDM(tr.date)}</th>
                     )}
@@ -49,8 +49,8 @@ const TrainingResumePage = props => {
                 </thead>
                 <tbody>
                     {players.map((p, index3) =>
-                        <tr key={index3} className={"text-center row"}>
-                            <td className={"col-4"}>{p.name}</td>
+                        <tr key={index3} className={"text-center"}>
+                            <td>{p.name}</td>
                             {p["trainings"].map((t, index2) =>
                                 <td key={index2}>
                                     {t.present &&
