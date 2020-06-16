@@ -25,6 +25,7 @@ const CovoitPage = props => {
     const fetchCar = async id => {
         try {
             const response = await CovoitAPI.find(id);
+            console.log(response);
             const datetime = DateFunctions.dateFormatYMDHMArr(response["date"]);
             response["date"] = datetime[0];
             response["time"] = datetime[1];
@@ -56,6 +57,8 @@ const CovoitPage = props => {
             setCar({...car, [name]: value});
         }
     }
+
+    console.log(car);
 
     const handleChangePass = ({ currentTarget }) => {
         const { name, value, id } = currentTarget;
@@ -120,6 +123,8 @@ const CovoitPage = props => {
         currentCar["departureAddress"] = currentCar["departureAddress"]["@id"];
         currentCarPass["user"] = currentCarPass["user"]["@id"];
         currentCarPass["isAccepted"] = true;
+        delete currentCar.date;
+        console.log(currentCar);
         try {
             axios.all([
                 axios.put(API_URL + currentCarPass["@id"], currentCarPass),
