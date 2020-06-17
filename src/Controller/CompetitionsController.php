@@ -80,10 +80,10 @@ class CompetitionsController extends AbstractController
         $response["name"] = $competition->getName();
         $response["matchs"] = [];
         $double = array();
-        for ($i = 1; $i < 2 * (count($teams) - 1); $i++) {
-            $response["matchs"][$i] = [];
-        }
-        if (count($teams) >= 0) {
+//        for ($i = 1; $i < 2 * (count($teams) - 1); $i++) {
+//            $response["matchs"][$i] = [];
+//        }
+        if (count($teams) > 0) {
             foreach ($teams as $team) {
                 $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
                 foreach ($matchAs as $matchA) {
