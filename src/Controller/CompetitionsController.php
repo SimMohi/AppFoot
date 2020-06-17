@@ -179,8 +179,8 @@ class CompetitionsController extends AbstractController
             foreach ($matchAs as $matchA) {
                 $add = array();
                 $add["id"] = $matchA->getId();
-                $add["homeTeam"] = $matchA->getHomeTeam();
-                $add["visitorTeam"] = $matchA->getVisitorTeam();
+                $add["homeTeam"] = $matchA->getHomeTeam()->getClub()->getName();
+                $add["visitorTeam"] = $matchA->getVisitorTeam()->getClub()->getName();
                 $add["homeTeamGoal"] = $matchA->getHomeTeamGoal();
                 $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
                 $add["isOver"] = $matchA->getIsOver();
@@ -193,8 +193,8 @@ class CompetitionsController extends AbstractController
             foreach ($matchBs as $matchB) {
                 $add = array();
                 $add["id"] = $matchB->getId();
-                $add["homeTeam"] = $matchB->getHomeTeam();
-                $add["visitorTeam"] = $matchB->getVisitorTeam();
+                $add["homeTeam"] = $matchB->getHomeTeam()->getClub()->getName();
+                $add["visitorTeam"] = $matchB->getVisitorTeam()->getClub()->getName();
                 $add["homeTeamGoal"] = $matchB->getHomeTeamGoal();
                 $add["visitorTeamGoal"] = $matchB->getVisitorTeamGoal();
                 $add["isOver"] = $matchB->getIsOver();

@@ -145,8 +145,8 @@ const RonvauTeamCalendarMatch = props => {
                             </td>
                         || <td className={'col-1'}>Non défini</td>
                         }
-                        <td className={"col-3"}>{mtr.homeTeam.club.name}</td>
-                        <td className={"col-3"}>{mtr.visitorTeam.club.name}</td>
+                        <td className={"col-3"}>{mtr.homeTeam}</td>
+                        <td className={"col-3"}>{mtr.visitorTeam}</td>
                         <td className={"col-2"}>{mtr.isOver && (mtr.homeTeamGoal+"-"+mtr.visitorTeamGoal)
                         // || isAdmin &&
                         //     <>
