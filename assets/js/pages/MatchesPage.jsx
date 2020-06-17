@@ -8,6 +8,8 @@ import Field from "../components/forms/Fields";
 import ReactSearchBox from "react-search-box";
 import Modal from "react-bootstrap/Modal";
 import DateFunctions from "../services/DateFunctions";
+import axios from "axios";
+import {API_URL, COMPETITIONS_API, USERS_API} from "../config";
 
 const MatchPages = props => {
 
@@ -50,12 +52,6 @@ const MatchPages = props => {
         setShow(showCopy);
     }
 
-    const FindMatchDayNumber = async () => {
-        const compet = await CompetitionsAPI.find(id);
-        let numberDay = 2 * (compet.teams.length -1);
-        setMatchDayNumber(numberDay);
-    }
-
     const changeMatchDay = ({ currentTarget }) => {
         const i = (currentTarget.value);
         let copy = JSON.parse(JSON.stringify(allMatchs));
@@ -75,40 +71,46 @@ const MatchPages = props => {
         setSelectedMatchDay(currentTarget.value);
     }
 
-    const findMatches = async () => {
-        const match = await MatcheAPI.findCompetMatchDay(id);
-        setName(match["name"]);
-        setAllMatchs(match["matchs"]);
-        const i = selectedMatchDay;
-        let copy = JSON.parse(JSON.stringify(match["matchs"]));
-        for (let j = 0; j < copy[i].length; j++){
-            if (copy[i][j]["homeTeamGoal"] !== null ){
-                copy[i][j][""] = copy[i][j]["homeTeamGoal"];
-            } else {
-                copy[i][j]["originalHomeTeamGoal"] = null;
-            }
-            if (copy[i][j]["visitorTeamGoal"] !== null ){
-                copy[i][j]["originalVisitorTeamGoal"] = copy[i][j]["visitorTeamGoal"];
-            } else {
-                copy[i][j]["originalVisitorTeamGoal"] = null;
-            }
-        }
-        copy[selectedMatchDay].sort(DateFunctions.orderByDate);
-        setMatchOfDay(copy[selectedMatchDay]);
-    }
-
     const FindTeams = async () => {
         try {
-            const data = await TeamsAPI.findCompet(id);
-            let clubsArr= [];
-            for (let i = 0; i < data.length; i++){
-                let club =  {
-                    "key": data[i]["club"].id,
-                    "value":  data[i]["club"].name,
+            axios.all([
+                    axios.get(API_URL + "/getMatchCompetition/"+id),
+                    axios.get(API_URL + "/getTeamCompet/"+id),
+                    axios.get(COMPETITIONS_API + "/" + id)
+            ]).then(axios.spread(async (...responses) => {
+                const compet = responses[2].data;
+                let numberDay = 2 * (compet.teams.length -1);
+                setMatchDayNumber(numberDay);
+                const match = responses[0].data;
+                const data = responses[1].data;
+                setName(match["name"]);
+                setAllMatchs(match["matchs"]);
+                const i = selectedMatchDay;
+                let copy = JSON.parse(JSON.stringify(match["matchs"]));
+                for (let j = 0; j < copy[i].length; j++){
+                    if (copy[i][j]["homeTeamGoal"] !== null ){
+                        copy[i][j][""] = copy[i][j]["homeTeamGoal"];
+                    } else {
+                        copy[i][j]["originalHomeTeamGoal"] = null;
+                    }
+                    if (copy[i][j]["visitorTeamGoal"] !== null ){
+                        copy[i][j]["originalVisitorTeamGoal"] = copy[i][j]["visitorTeamGoal"];
+                    } else {
+                        copy[i][j]["originalVisitorTeamGoal"] = null;
+                    }
                 }
-                clubsArr.push(club);
-            }
-            setClubs(clubsArr);
+                copy[selectedMatchDay].sort(DateFunctions.orderByDate);
+                setMatchOfDay(copy[selectedMatchDay]);
+                let clubsArr= [];
+                for (let i = 0; i < data.length; i++){
+                    let club =  {
+                        "key": data[i]["club"].id,
+                        "value":  data[i]["club"].name,
+                    }
+                    clubsArr.push(club);
+                }
+                setClubs(clubsArr);
+            }))
         } catch (error) {
             console.log(error.response);
         }
@@ -219,9 +221,7 @@ const MatchPages = props => {
     }
 
     useEffect( () => {
-        findMatches();
         FindTeams();
-        FindMatchDayNumber();
     }, [id, reload]);
 
     return(
