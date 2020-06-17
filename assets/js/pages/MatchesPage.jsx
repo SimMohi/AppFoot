@@ -74,7 +74,7 @@ const MatchPages = props => {
     const FindTeams = async () => {
         try {
             axios.all([
-                    axios.get(API_URL + "/getMatompetition/"+id),
+                    axios.get(API_URL + "/getMatCompetition/"+id),
                     axios.get(API_URL + "/getTeamCompet/"+id),
                     axios.get(COMPETITIONS_API + "/" + id)
             ]).then(axios.spread(async (...responses) => {
@@ -204,8 +204,8 @@ const MatchPages = props => {
 
     const modalScore = (match) => {
         setEditMatch({
-            teamA: match.homeTeam.club.name,
-            teamB: match.visitorTeam.club.name,
+            teamA: match.homeTeam.name,
+            teamB: match.visitorTeam.name,
             id: match.id,
             goalA: match.homeTeamGoal,
             goalB: match.visitorTeamGoal
@@ -248,7 +248,7 @@ const MatchPages = props => {
                     {matchOfDay.map((m, index) =>
                     <tr key={index} className={"row  ml-3 mr-3 "}>
                         <td className={"col-1"}>{DateFunctions.dateFormatFrDMHM(m.date)}</td>
-                        <td className={"col-3"}><div>{m.homeTeam.club.name}</div></td>
+                        <td className={"col-3"}><div>{m.homeTeam.name}</div></td>
                         <td className={"col-1"}>
                             {m.originalHomeTeamGoal === null  &&
                             <input type={"number"} className={"form-control"}
@@ -258,7 +258,7 @@ const MatchPages = props => {
                             m.homeTeamGoal
                             }
                         </td>
-                        <td className={"col-3"}><div>{m.visitorTeam.club.name}</div></td>
+                        <td className={"col-3"}><div>{m.visitorTeam.name}</div></td>
                         <td className={"col-1"}>
                             {m.originalVisitorTeamGoal === null &&
                             <input type={"number"} className={"form-control"}

@@ -92,8 +92,10 @@ class CompetitionsController extends AbstractController
                     if (in_array($add["id"], $double)) {
                         continue;
                     }
-                    $add["homeTeam"] = $matchA->getHomeTeam();
-                    $add["visitorTeam"] = $matchA->getVisitorTeam();
+                    $add["homeTeam"]["name"] = $matchA->getHomeTeam()->getClub()->getName();
+                    $add["visitorTeam"]["id"] = $matchA->getVisitorTeam()->getId();
+                    $add["homeTeam"]["id"] = $matchA->getHomeTeam()->getId();
+                    $add["visitorTeam"]["name"] = $matchA->getVisitorTeam()->getClub()->getName();
                     $add["homeTeamGoal"] = $matchA->getHomeTeamGoal();
                     $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
                     $add["isOver"] = $matchA->getIsOver();
