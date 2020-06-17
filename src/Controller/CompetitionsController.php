@@ -73,37 +73,37 @@ class CompetitionsController extends AbstractController
     public function getMatchCompetition(int $idCompet)
     {
 
-        $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
-
-        $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['competition' => $competition]);
-        $response = array();
-        $response["name"] = $competition->getName();
-        $response["matchs"] = [];
-        $double = array();
-//        for ($i = 1; $i < 2 * (count($teams) - 1); $i++) {
-//            $response["matchs"][$i] = [];
+//        $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
+//
+//        $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['competition' => $competition]);
+//        $response = array();
+//        $response["name"] = $competition->getName();
+//        $response["matchs"] = [];
+//        $double = array();
+////        for ($i = 1; $i < 2 * (count($teams) - 1); $i++) {
+////            $response["matchs"][$i] = [];
+////        }
+//        if (count($teams) > 0) {
+//            foreach ($teams as $team) {
+//                $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
+//                foreach ($matchAs as $matchA) {
+//                    $add = array();
+//                    $add["id"] = $matchA->getId();
+//                    if (in_array($add["id"], $double)) {
+//                        continue;
+//                    }
+//                    $add["homeTeam"] = $matchA->getHomeTeam();
+//                    $add["visitorTeam"] = $matchA->getVisitorTeam();
+//                    $add["homeTeamGoal"] = $matchA->getHomeTeamGoal();
+//                    $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
+//                    $add["isOver"] = $matchA->getIsOver();
+//                    $add["date"] = $matchA->getDate();
+//                    $double[] = $add["id"];
+//                    $response["matchs"][$matchA->getMatchDay()][] = $add;
+//                }
+//            }
 //        }
-        if (count($teams) > 0) {
-            foreach ($teams as $team) {
-                $matchAs = $this->getDoctrine()->getRepository(Matche::class)->findBy(['homeTeam' => $team]);
-                foreach ($matchAs as $matchA) {
-                    $add = array();
-                    $add["id"] = $matchA->getId();
-                    if (in_array($add["id"], $double)) {
-                        continue;
-                    }
-                    $add["homeTeam"] = $matchA->getHomeTeam();
-                    $add["visitorTeam"] = $matchA->getVisitorTeam();
-                    $add["homeTeamGoal"] = $matchA->getHomeTeamGoal();
-                    $add["visitorTeamGoal"] = $matchA->getVisitorTeamGoal();
-                    $add["isOver"] = $matchA->getIsOver();
-                    $add["date"] = $matchA->getDate();
-                    $double[] = $add["id"];
-                    $response["matchs"][$matchA->getMatchDay()][] = $add;
-                }
-            }
-        }
-        return $this->json($response);
+        return $this->json('$response');
     }
 
     /**
