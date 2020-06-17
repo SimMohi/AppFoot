@@ -74,7 +74,7 @@ const MatchPages = props => {
     const FindTeams = async () => {
         try {
             axios.all([
-                    axios.get(API_URL + "/getMatchCompetition/"+id),
+                    axios.get(API_URL + "/getMatompetition/"+id),
                     axios.get(API_URL + "/getTeamCompet/"+id),
                     axios.get(COMPETITIONS_API + "/" + id)
             ]).then(axios.spread(async (...responses) => {

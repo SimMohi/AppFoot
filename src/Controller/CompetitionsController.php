@@ -66,11 +66,11 @@ class CompetitionsController extends AbstractController
 
     /**
      * Get Matches for one competition and one matchDay
-     * @Route("/getMatchCompetition/{idCompet}")
+     * @Route("/getMatCompetition/{idCompet}")
      * @param int $idCompet
      * @return JsonResponse
      */
-    public function getMatchCompetition(int $idCompet)
+    public function getMatCompetition(int $idCompet)
     {
 
         $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $idCompet]);
