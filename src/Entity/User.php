@@ -135,6 +135,16 @@ class User implements UserInterface
      */
     private $rgpd;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $rgpdDate;
+
+    /**
+     * @ORM\OneToMany(targetEntity=CovoitChat::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $covoitChats;
+
 
     public function __construct()
     {
@@ -145,6 +155,7 @@ class User implements UserInterface
         $this->carPassengers = new ArrayCollection();
         $this->isAccepted = false;
         $this->notifications = new ArrayCollection();
+        $this->covoitChats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -472,6 +483,49 @@ class User implements UserInterface
     public function setRgpd(bool $rgpd): self
     {
         $this->rgpd = $rgpd;
+
+        return $this;
+    }
+
+    public function getRgpdDate(): ?\DateTimeInterface
+    {
+        return $this->rgpdDate;
+    }
+
+    public function setRgpdDate(\DateTimeInterface $rgpdDate): self
+    {
+        $this->rgpdDate = $rgpdDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CovoitChat[]
+     */
+    public function getCovoitChats(): Collection
+    {
+        return $this->covoitChats;
+    }
+
+    public function addCovoitChat(CovoitChat $covoitChat): self
+    {
+        if (!$this->covoitChats->contains($covoitChat)) {
+            $this->covoitChats[] = $covoitChat;
+            $covoitChat->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCovoitChat(CovoitChat $covoitChat): self
+    {
+        if ($this->covoitChats->contains($covoitChat)) {
+            $this->covoitChats->removeElement($covoitChat);
+            // set the owning side to null (unless already changed)
+            if ($covoitChat->getUser() === $this) {
+                $covoitChat->setUser(null);
+            }
+        }
 
         return $this;
     }

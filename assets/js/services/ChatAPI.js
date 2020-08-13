@@ -10,6 +10,15 @@ function sendMessage(data){
     return axios.post(API_URL + "/postMessage", data);
 }
 
+function getChatCovoit (id){
+    return axios.get(API_URL + "/getChatCovoit/"+ id)
+        .then(response => response["data"]);
+}
+
+function sendMessageCovoit(data){
+    return axios.post(API_URL + "/sendMessageCovoit", data);
+}
+
 export default {
-    getChatInfo, sendMessage
+    getChatInfo, sendMessage, getChatCovoit, sendMessageCovoit
 }

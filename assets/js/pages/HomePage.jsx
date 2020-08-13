@@ -156,6 +156,7 @@ const HomePage = props => {
         } catch (e) {
             toast.error("Erreur");
         }
+        jquery();
     }
 
 
@@ -654,6 +655,19 @@ const HomePage = props => {
         find();
     }, [reload]);
 
+    const jquery = () => {
+        setTimeout( function(){
+            $(".rbc-event").each(function (index) {
+                let title = $(this).children().attr('title');
+                if (title.includes("Equipe première")) {
+                    $(this).css("background-color", "#db3d44")
+                } else if (title.includes("Equipe réserve")) {
+                    $(this).css("background-color", "#f0ad4e");
+                }
+            })}
+            ,50);
+    }
+
     return (
       <>
           {staff.length > 0 &&
@@ -666,6 +680,7 @@ const HomePage = props => {
                       <div style={{ height: 700 }} className={"pt-3 pb-3 mr-5"}>
                           <Calendar
                               onSelectEvent={event => test(event)}
+                              onNavigate={()=>jquery()}
                               selectable={true}
                               localizer={Localizer}
                               events={calendarInfos}

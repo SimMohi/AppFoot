@@ -110,6 +110,10 @@ const RegisterPage = ({ history }) => {
                             onChange={handleChange}
                         />
                         <div className="form-group">
+                            <div className={"custom-control custom-checkbox mb-3"}>
+                                <input type="checkbox" className="custom-control-input" id={"All"}/>
+                                <label className="custom-control-label" htmlFor={"All"}>En soumettant ce formulaire, j'accepte que les informations saisies soient expoitées</label>
+                            </div>
                             <button type="submit" className="btn btn-danger">
                                 Confirmation
                             </button>

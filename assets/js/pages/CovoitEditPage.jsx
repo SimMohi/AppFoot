@@ -6,26 +6,42 @@ import axios from "axios";
 import {API_URL, CARS_API, PASSENGERS_API} from "../config";
 import DateFunctions from "../services/DateFunctions";
 import {Link} from "react-router-dom";
+import jwtDecode from "jwt-decode";
+import ChatAPI from "../services/ChatAPI";
 
 
 const CovoitPage = props => {
     const {id} = props.match.params;
     const [reload, setReload] = useState(0);
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState('');
 
     const [car, setCar] = useState({});
 
     const [carPass, setCarPass] = useState([])
-
+    const userId = getId();
     const [errors, setErrors] = useState({
         departurePlace: "",
         date: "",
         placeRemaining: "",
     });
 
+    function getId () {
+        const token = window.localStorage.getItem(("authToken"));
+        if (token){
+            const { id } = jwtDecode(token);
+            return id;
+        }
+        return 0;
+    }
+
+    const handleChange = ({currentTarget}) => {
+        setNewMessage(currentTarget.value);
+    }
+
     const fetchCar = async id => {
         try {
             const response = await CovoitAPI.find(id);
-            console.log(response);
             const datetime = DateFunctions.dateFormatYMDHMArr(response["date"]);
             response["date"] = datetime[0];
             response["time"] = datetime[1];
@@ -58,7 +74,6 @@ const CovoitPage = props => {
         }
     }
 
-    console.log(car);
 
     const handleChangePass = ({ currentTarget }) => {
         const { name, value, id } = currentTarget;
@@ -124,7 +139,6 @@ const CovoitPage = props => {
         currentCarPass["user"] = currentCarPass["user"]["@id"];
         currentCarPass["isAccepted"] = true;
         delete currentCar.date;
-        console.log(currentCar);
         try {
             axios.all([
                 axios.put(API_URL + currentCarPass["@id"], currentCarPass),
@@ -161,100 +175,159 @@ const CovoitPage = props => {
         setReload(reload+1);
     };
 
+    const getMessage = async (id) => {
+        const newMessages = await ChatAPI.getChatCovoit(id);
+        const objDiv = document.getElementById("message-list");
+        objDiv.scrollTop = objDiv.scrollHeight;
+        console.log(objDiv);
+        setMessages(newMessages);
+    }
+
+    const handleSubmitMess = async (event) => {
+        event.preventDefault();
+        let post = {
+            message: newMessage,
+            userId: userId,
+            carId : id
+        }
+        try{
+            await ChatAPI.sendMessageCovoit(post);
+        } catch (e) {
+            toast.error("Echec lors de l'envoi du message");
+        }
+        setReload(reload+1);
+        setNewMessage("");
+    }
+
     useEffect(() => {
-        console.log("eff");
         fetchCar(id);
+        getMessage(id);
     }, [id, reload]);
 
-
-
-    console.log(carPass);
 
     return(
         <>
             <Link to={"/covoit"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
-            <form onSubmit={handleSubmit} className={"whiteBorder p-5"}>
-                <h4 className={"mb-5"}>Modification de mon covoiturage</h4>
-                <div className="row">
-                    <div className={"col-6"}>
+            <div className="row">
+                <div className="col-8">
+                    <form onSubmit={handleSubmit} className={"whiteBorder p-5"}>
+                        <h4 className={"mb-5"}>Modification de mon covoiturage</h4>
                         <div className="row">
-                            <div className="col-8">
-                                <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
+                            <div className={"col-6"}>
+                                <div className="row">
+                                    <div className="col-8">
+                                        <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
+                                    </div>
+                                    <div className="col-4">
+                                        <Field name={"placeRemaining"} label={"Places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col">
+                                        <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
+                                    </div>
+                                    <div className="col">
+                                        <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="col-4">
-                                <Field name={"placeRemaining"} label={"Places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
+                            <div className={"col-6"}>
+                                <div className={"custom-control custom-checkbox mb-3"}>
+                                    <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
+                                    <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
+                                </div>
+                                {!car.fromHome &&
+                                <>
+                                    <div className="row">
+                                        <div className="col-9">
+                                            <Field name={"street"} label={"Rue"} type={"text"} value={car.street} onChange={handleChangeCar} error={errors.street}/>
+                                        </div>
+                                        <div className="col-3">
+                                            <Field name={"number"} label={"Numéro"} type={"number"} value={car.number} onChange={handleChangeCar} error={errors.number}/>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-7">
+                                            <Field name={"city"} label={"Ville"} type={"text"} value={car.city} onChange={handleChangeCar}/>
+                                        </div>
+                                        <div className="col-5">
+                                            <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={car.code} onChange={handleChangeCar} />
+                                        </div>
+                                    </div>
+                                </>
+                                }
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col">
-                                <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
-                            </div>
-                            <div className="col">
-                                <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
-                            </div>
-                        </div>
-                    </div>
-                    <div className={"col-6"}>
-                        <div className={"custom-control custom-checkbox mb-3"}>
-                            <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
-                            <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
-                        </div>
-                        {!car.fromHome &&
-                        <>
-                            <div className="row">
-                                <div className="col-9">
-                                    <Field name={"street"} label={"Rue"} type={"text"} value={car.street} onChange={handleChangeCar} error={errors.street}/>
-                                </div>
-                                <div className="col-3">
-                                    <Field name={"number"} label={"Numéro"} type={"number"} value={car.number} onChange={handleChangeCar} error={errors.number}/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-7">
-                                    <Field name={"city"} label={"Ville"} type={"text"} value={car.city} onChange={handleChangeCar}/>
-                                </div>
-                                <div className="col-5">
-                                    <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={car.code} onChange={handleChangeCar} />
-                                </div>
-                            </div>
-                        </>
-                        }
-                    </div>
-                </div>
-                <h3 className={"m-4"}>Demandes</h3>
-                <table className="table table-hover text-center">
-                    <thead>
-                    <tr className={"row"}>
-                        <th className={"col-1"}>Etat</th>
-                        <th className={"col-2"}>Passager</th>
-                        <th className={"col-2"}>Adresse</th>
-                        <th className={"col-2"}>Commentaire</th>
-                        <th className={"col-1"}>Place</th>
-                        <th className={"col-2"}>Réponse</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {carPass.map((pass, index) =>
-                            <tr key={index} className={'row'}>
-                                <td className={"col-1"}>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
-                                <td className={"col-2"}>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
-                                <td className="col-2">{"Rue " + pass.user.address.street + " " + pass.user.address.number + ", " + pass.user.address.code + " " + pass.user.address.city}</td>
-                                <td className={"col-2"}>{pass["comment"]}</td>
-                                <td className={"col-1"}>{pass["numberPassenger"]}</td>
-                                <td className={"col-2"}><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
-                                <td>
-                                    {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-warning mr-3">Accepter</button>}
-                                    <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
-                                </td>
+                        <h3 className={"m-4"}>Demandes</h3>
+                        <table className="table table-hover text-center">
+                            <thead>
+                            <tr className={"row"}>
+                                <th className={"col-1"}>Etat</th>
+                                <th className={"col-2"}>Passager</th>
+                                <th className={"col-2"}>Adresse</th>
+                                <th className={"col-2"}>Commentaire</th>
+                                <th className={"col-1"}>Place</th>
+                                <th className={"col-2"}>Réponse</th>
+                                <th></th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
-                <div className="from-group">
-                    <button type={"submit"} className="btn btn-outline-warning float-right">Enregistrer</button>
+                            </thead>
+                            <tbody>
+                            {carPass.map((pass, index) =>
+                                <tr key={index} className={'row'}>
+                                    <td className={"col-1"}>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
+                                    <td className={"col-2"}>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
+                                    <td className="col-2">{"Rue " + pass.user.address.street + " " + pass.user.address.number + ", " + pass.user.address.code + " " + pass.user.address.city}</td>
+                                    <td className={"col-2"}>{pass["comment"]}</td>
+                                    <td className={"col-1"}>{pass["numberPassenger"]}</td>
+                                    <td className={"col-2"}><input className={"form-control"} value={pass["answer"]} onChange={handleChangePass} id={index} name={"answer"} type={"text"} placeholder={"Ajouter une précision, Ex: heure"} /></td>
+                                    <td>
+                                        {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-warning mr-3">Accepter</button>}
+                                        <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
+                        <div className="from-group">
+                            <button type={"submit"} className="btn btn-outline-warning float-right">Enregistrer</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+                <div className={"col-4"} id="rootCov">
+                    <div className="appCov whiteBorder">
+                        <div className="message-list p-3" id={"message-list"}>
+                            {messages.map((message, index) => {
+                                if (message["senderId"] == userId){
+                                    return(
+                                        <div key={index} className="message d-flex flex-row-reverse">
+                                            <div>
+                                                <div className="message-username text-right mr-3" >{DateFunctions.dateFormatFrDMHM(message.date)}</div>
+                                                <div className="message-text myMessage mr-3">{message.text}</div>
+                                            </div>
+                                        </div>
+                                    )
+                                } else {
+                                    return(
+                                        <div key={index} className="message">
+                                            <div className="message-username" >{message.sender} {DateFunctions.dateFormatFrDMHM(message.date)}</div>
+                                            <div className="message-text">{message.text}</div>
+                                        </div>
+                                    )
+                                }
+                            })}
+                        </div>
+                        <form
+                            onSubmit={handleSubmitMess}
+                            className="send-message-form">
+                            <input
+                                onChange={handleChange}
+                                value={newMessage}
+                                placeholder="Ecrivez votre message"
+                                type="text" />
+                        </form>
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

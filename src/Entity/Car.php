@@ -71,9 +71,15 @@ class Car
      */
     private $title;
 
+    /**
+     * @ORM\OneToMany(targetEntity=CovoitChat::class, mappedBy="car", orphanRemoval=true)
+     */
+    private $covoitChats;
+
     public function __construct()
     {
         $this->carPassengers = new ArrayCollection();
+        $this->covoitChats = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,6 +175,37 @@ class Car
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CovoitChat[]
+     */
+    public function getCovoitChats(): Collection
+    {
+        return $this->covoitChats;
+    }
+
+    public function addCovoitChat(CovoitChat $covoitChat): self
+    {
+        if (!$this->covoitChats->contains($covoitChat)) {
+            $this->covoitChats[] = $covoitChat;
+            $covoitChat->setCar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCovoitChat(CovoitChat $covoitChat): self
+    {
+        if ($this->covoitChats->contains($covoitChat)) {
+            $this->covoitChats->removeElement($covoitChat);
+            // set the owning side to null (unless already changed)
+            if ($covoitChat->getCar() === $this) {
+                $covoitChat->setCar(null);
+            }
+        }
 
         return $this;
     }
