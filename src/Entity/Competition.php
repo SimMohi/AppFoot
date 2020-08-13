@@ -39,7 +39,7 @@ class Competition
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @Groups({"teams_read", "competitions_read"})
      */
     private $season;
@@ -52,7 +52,7 @@ class Competition
     private $teams;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=20)
      * @Groups({"competitions_read", "team_ronvau_read"})
      */
     private $name;
