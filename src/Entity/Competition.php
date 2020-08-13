@@ -25,9 +25,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     normalizationContext={"groups"={"competitions_read"}},
  *     denormalizationContext={"disable_type_enforcement"=true}
  *)
+ * @UniqueEntity(fields={"season", "name"}, message="Ce championnat se déroule déjà dans cette saison ci")
  */
-
-//* @UniqueEntity(fields={"season", "name"}, message="Ce championnat se déroule déjà dans cette saison ci")
 
 class Competition
 {
