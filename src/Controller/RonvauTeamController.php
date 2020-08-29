@@ -850,6 +850,7 @@ class RonvauTeamController extends AbstractController
             $utArr = [];
             $utArr["name"] = $userTeam->getUserId()->getLastName() . " " . $userTeam->getUserId()->getFirstName();
             $utArr["id"] = $userTeam->getUserId()->getId();
+            $utArr["photo"] = $userTeam->getUserId()->getProfilePic();
             $play = 0;
             $goal = 0;
             $yellow = 0;
@@ -1109,6 +1110,7 @@ class RonvauTeamController extends AbstractController
         foreach ($userTeams as $userTeam){
             $userArr = [];
             $userArr["name"] = $userTeam->getUserId()->getLastName(). " " . $userTeam->getUserId()->getFirstName();
+            $userArr["photo"] = $userTeam->getUserId()->getProfilePic();
             $userArr["trainings"] = [];
             foreach ($trainings as $training){
                 if ($training->getStart() < $today && $training->getEnd() > $minus){

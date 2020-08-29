@@ -112,7 +112,8 @@ const RonvauTeamMemberUser = props => {
             <table className="table table-hover text-center whiteBorder col-8">
                 <thead>
                 <tr className={"row ml-3 mr-3"}>
-                    <th className={"col-4"}>Nom</th>
+                    <th className={"col-1"}></th>
+                    <th className={"col-3"}>Nom</th>
                     <th className={"col-4"}>Adresse email</th>
                     <th className={"col-4"}>Telephone</th>
                 </tr>
@@ -120,7 +121,10 @@ const RonvauTeamMemberUser = props => {
                 <tbody>
                 {ronvauTeam.coachs.map((p, index) =>
                     <tr key={index} className={"row ml-3 mr-3"}>
-                        <td className={"col-4"}>
+                        <td className={"col-1"}>
+                            <img className="rounded-circle profilePhotoLittle account-img" src={p.photo}/>
+                        </td>
+                        <td className={"col-3"}>
                             <Link to={"/profil/"+p.id} className={"nav-link"}>{p.name}</Link>
                         </td>
                         <td className={"col-4"}>{p.email}</td>
@@ -133,7 +137,8 @@ const RonvauTeamMemberUser = props => {
             <table className="table table-hover text-center whiteBorder">
                 <thead>
                 <tr className={"row ml-3 mr-3"}>
-                    <th className={"col-4"}>Nom</th>
+                    <th className={'col-1'}></th>
+                    <th className={"col-3"}>Nom</th>
                     <th className={"col-2"}>Matchs joués</th>
                     <th className={"col-1"}><img src="img/Ball.png" alt="goal" className={"imgEncode"}/></th>
                     <th className={"col-1"}><img src="img/Carton_jaune.png" alt="jaune" className={"imgEncode"}/></th>
@@ -144,7 +149,10 @@ const RonvauTeamMemberUser = props => {
                 <tbody>
                 {ronvauTeam.players.map((p, index) =>
                     <tr key={index} className={"row ml-3 mr-3"}>
-                        <td className={"col-4"}>
+                        <td className={"col-1"}>
+                            <img className="rounded-circle profilePhotoLittle account-img" src={p.photo}/>
+                        </td>
+                        <td className={"col-3"}>
                             <Link to={"/profil/"+p.id} className={"nav-link"}>{p.name}</Link>
                         </td>
                         <td className={"col-2"}>{p.play}</td>

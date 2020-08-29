@@ -46,6 +46,10 @@ function deleteCar(id){
     return axios.delete(CARS_API + "/" + id);
 }
 
+function unSub(post){
+    return axios.post(API_URL + "/unSub", post)
+}
+
 export default {
-    findAll, find, create, addPassenger, update, updateCarPass, patch, deleteCar, delPassenger
+    findAll, find, create, addPassenger, update, updateCarPass, patch, deleteCar, delPassenger, unSub
 }

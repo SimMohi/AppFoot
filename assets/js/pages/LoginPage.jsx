@@ -38,12 +38,8 @@ const LoginPage = ({ history}) => {
                 setError("L'utilisateur n'a pas encore été accepté par un administrateur");
                 authAPI.logout();
             } else {
-                if (secondResponse["data"]["hydra:member"][0]["rgpd"] == false){
-                    history.replace("/rgpd/"+secondResponse["data"]["hydra:member"][0]["id"]);
-                } else {
-                    setIsAuthenticated(true);
-                    history.replace("/");
-                }
+                setIsAuthenticated(true);
+                history.replace("/");
                 setError("");
             }
         } catch (e) {
@@ -59,7 +55,7 @@ const LoginPage = ({ history}) => {
                 <form action="" onSubmit={handleSubmit} className={"col-6 whiteBorder p-3"}>
                     <Field label={"Adresse email"} name={"username"} value={credentials.username}
                            placeholder={'Adresse email de Connexion'} onChange={handleChange} type={"email"} error={error}/>
-                    <Field label={"Mot de passe"} name={"password"} value={credentials.password} onChange={handleChange}
+                    <Field label={"Mot de passe"} name={"password"} placeholder={"Votre mot de passe"} value={credentials.password} onChange={handleChange}
                            type={"password"} error={""}/>
                     <div className="form-group">
                         <button type={"submit"} className={"btn btn-danger float-right"}>Se connecter</button>

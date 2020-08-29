@@ -52,6 +52,10 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/rea
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import TrainingResumePage from "./pages/TrainingResumePage";
 import RGPDPage from "./pages/RGPDPage";
+import ConfidentialPage from "./pages/ConfidentialPage";
+import ConditionsPage from "./pages/ConditionsPage";
+import ConditionsDataPage from "./pages/ConditionsDataPage";
+import CovoitAccess from "./pages/CovoitAccess";
 
 require("../css/app.css");
 
@@ -196,8 +200,11 @@ const App = () => {
                             render={ props => <LoginPage onLogin={setIsAuthenticated} {...props}/> }
                         />
                         <Route path={"/register"} component={RegisterPage}/>
+                        <Route path={"/conditions"} component={ConditionsPage}/>
+                        <Route path={"/conditionsDonnées"} component={ConditionsDataPage}/>
                         <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
+                        <PrivateRoute path={"/param"} component={ConfidentialPage}/>
                         {isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchesPages}/>}
                         {!isAdmin && <PrivateRoute path={"/competition/:id/matchs"} component={MatchPagesUser}/>}                        }
                         <PrivateRoute path={"/competition/:id/view"} component={CompetitionViewPage}/>
@@ -209,6 +216,7 @@ const App = () => {
                         {isAdmin && <PrivateRoute path={"/events/:id"} component={EventPage}/>}
                         {isAdmin && <PrivateRoute path={"/events"} component={EventsPage}/>}
                         {!isAdmin && <PrivateRoute path={"/events"} component={EventsUser}/>}
+                        <PrivateRoute path={"/covoitAccess/:id"} component={CovoitAccess}/>
                         <PrivateRoute path={"/covoit/:id"} component={CovoitEditPage}/>
                         <PrivateRoute path={"/covoit"} component={CovoitsPage}/>
                         <PrivateRoute path={"/teams"} component={TeamsPage}/>

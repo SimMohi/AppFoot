@@ -7,12 +7,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 
@@ -26,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @UniqueEntity("email", message="Un utilisateur ayant cette adresse email existe déjà")
  * @ApiFilter(SearchFilter::class , properties={"email": "exact", "isAccepted": "exact"})
+ * @Vich\Uploadable()
  */
 class User implements UserInterface
 {
@@ -55,7 +58,6 @@ class User implements UserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="Le mot de passe est obligatoire")
-     * @Assert\Length(min=5, minMessage="Le mot de passe doit faire entre 5 et 255 caractères", max=255, maxMessage="Le mot de passe doit faire entre 3 et 255 caractères")
      */
     private $password;
 
@@ -63,7 +65,6 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Groups({"users_read", "cars_read", "team_ronvau_read", "matchs_read"})
      * @Assert\NotBlank(message="Le prénom est obligatoire")
-     * @Assert\Length(min=3, minMessage="Le prénom doit faire entre 3 et 255 caractères", max=255, maxMessage="Le prénom doit faire entre 3 et 255 caractères")
      */
     private $firstName;
 
@@ -71,7 +72,6 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Groups({"users_read", "cars_read", "team_ronvau_read", "matchs_read"})
      * @Assert\NotBlank(message="Le nom de famille est obligatoire")
-     * @Assert\Length(min=3, minMessage="Le nom de famille doit faire entre 3 et 255 caractères", max=255, maxMessage="Le nom de famille doit faire entre 3 et 255 caractères")
      */
     private $lastName;
 
@@ -82,8 +82,10 @@ class User implements UserInterface
      */
     private $gsm;
 
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"users_read"})
      */
     private $profilePic;
 
@@ -129,6 +131,13 @@ class User implements UserInterface
      */
     private $tokenMobile;
 
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $rgpdVisibleStaff;
+
     /**
      * @ORM\Column(type="boolean")
      * @Groups({"users_read"})
@@ -139,6 +148,25 @@ class User implements UserInterface
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $rgpdDate;
+
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $rgpdVisibleAll;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastConnection;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"users_read"})
+     */
+    private $rgdpPhotos;
+
 
     /**
      * @ORM\OneToMany(targetEntity=CovoitChat::class, mappedBy="user", orphanRemoval=true)
@@ -156,6 +184,12 @@ class User implements UserInterface
         $this->isAccepted = false;
         $this->notifications = new ArrayCollection();
         $this->covoitChats = new ArrayCollection();
+        $this->profilePic = "profile/logo.png";
+        $this->rgpd = false;
+        $this->rgdpPhotos = false;
+        $this->lastConnection = new \DateTime();
+        $this->rgpdVisibleAll = false;
+        $this->rgpdVisibleStaff = false;
     }
 
     public function getId(): ?int
@@ -529,4 +563,53 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function getRgpdVisibleStaff(): ?bool
+    {
+        return $this->rgpdVisibleStaff;
+    }
+
+    public function setRgpdVisibleStaff(bool $rgpdVisibleStaff): self
+    {
+        $this->rgpdVisibleStaff = $rgpdVisibleStaff;
+
+        return $this;
+    }
+
+    public function getRgpdVisibleAll(): ?bool
+    {
+        return $this->rgpdVisibleAll;
+    }
+
+    public function setRgpdVisibleAll(bool $rgpdVisibleAll): self
+    {
+        $this->rgpdVisibleAll = $rgpdVisibleAll;
+
+        return $this;
+    }
+
+    public function getLastConnection(): ?\DateTimeInterface
+    {
+        return $this->lastConnection;
+    }
+
+    public function setLastConnection(?\DateTimeInterface $lastConnection): self
+    {
+        $this->lastConnection = $lastConnection;
+
+        return $this;
+    }
+
+    public function getRgdpPhotos(): ?bool
+    {
+        return $this->rgdpPhotos;
+    }
+
+    public function setRgdpPhotos(bool $rgdpPhotos): self
+    {
+        $this->rgdpPhotos = $rgdpPhotos;
+
+        return $this;
+    }
+
 }

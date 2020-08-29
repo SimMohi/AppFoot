@@ -60,3 +60,17 @@
 h1, h2, h3, h4, h5, h6 {
     color : #5c5959;
 }
+
+.profilePhoto {
+    height: 150px;
+    width: 150px;
+}
+
+.profilePhotoLittle {
+    height: 50px;
+    width: 50px;
+}
+
+.modif {
+    font-size: 1.5em;
+}

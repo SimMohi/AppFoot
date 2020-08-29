@@ -116,4 +116,22 @@ class CarController extends AbstractController
         $this->getDoctrine()->getManager()->flush();
         return $this->json($data);
     }
+
+    /**
+     * @Route("/unSub")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function unSub(Request $request){
+
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $carPass = $this->getDoctrine()->getRepository(CarPassenger::class)->findOneBy(['user' => $data['user'], 'car' => $data["car"]]);
+        $this->getDoctrine()->getManager()->remove($carPass);
+        $this->getDoctrine()->getManager()->flush();
+
+        return  $this->json("ok");
+    }
+
 }

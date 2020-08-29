@@ -54,6 +54,18 @@ function getNotifications(id){
         .then(response => response.data);
 }
 
+function uploadImage(fd){
+    return axios.post(API_URL + "/uploadImage", fd);
+}
+
+function postParam(post){
+    return axios.post(API_URL + "/postParam", post)
+}
+
+function changePass(post){
+    return axios.post(API_URL+ "/changePass", post)
+}
+
 export default {
-    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications, postProfile, find
+    findAll, create, findUnaccepted, update, profile, deleteUser, getNotifications, postProfile, find, uploadImage, postParam, changePass
 }

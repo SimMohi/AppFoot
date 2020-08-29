@@ -6,17 +6,31 @@ import jwtDecode from "jwt-decode";
 import Field from "../components/forms/Fields";
 import ReactSearchBox from "react-search-box";
 import {USERS_API} from "../config";
+import Modal from "react-bootstrap/Modal";
+import {Link} from "react-router-dom";
+import authAPI from "../services/authAPI";
 
 const ProfilPage = props => {
 
+    const [newPass, setNewPass] = useState({
+        current: "",
+        new: "",
+        confirm: "",
+    })
+    const [show, setShow] = useState(false);
+    const [show2, setShow2] = useState(false);
+    const [reload, setReload] = useState(0);
     const [user, setUser] = useState({
         id: "",
         lastName: "",
         firstName: "",
         email: "",
         gsm: "",
-        address: {}
+        address: {},
+        profilePic: null
     });
+
+    const [imageSelect, setImageSelect] = useState(null);
 
     const [address, setAddress] = useState({
         city: "",
@@ -37,8 +51,17 @@ const ProfilPage = props => {
         street: "",
         box: "",
         number : "",
+        imageSize: "",
+        imageFormat: "",
+        confirm: "",
+        current: "",
     });
     const [allUsers, setAllUSers] = useState([]);
+
+    const changePass = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        setNewPass({ ...newPass, [name]: value });
+    };
 
 
     const getUserConnected =  async () => {
@@ -53,11 +76,11 @@ const ProfilPage = props => {
                 let allUsersArray = [];
                 for (let i = 0; i < usersResponse.length; i++){
                     if (usersResponse[i].email == user){
-                        const { id, lastName, firstName, email, gsm, address} = usersResponse[i];
+                        const { id, lastName, firstName, email, gsm, address, profilePic} = usersResponse[i];
                         if (typeof address !== 'undefined'){
                             setAddress(address);
                         }
-                        setUser({ id, lastName, firstName, email, gsm});
+                        setUser({ id, lastName, firstName, email, gsm, profilePic});
                         const response = await usersAPI.profile(id);
                         setInfo(response["data"]["infos"]);
                     } else {
@@ -115,18 +138,87 @@ const ProfilPage = props => {
         }
     }
 
+    const imageUpload = async () => {
+        if (errors.imageFormat || errors.imageSize) {
+            return ;
+        }
+        const fd = new FormData();
+        fd.append('id', user.id);
+        fd.append('image', imageSelect);
+        fd.append('name', imageSelect.name);
+        const response = await usersAPI.uploadImage(fd);
+        setShow(false);
+        setReload(reload+1);
+    }
+
+    const imageSelected = event => {
+        let image = event.target.files[0];
+        setImageSelect(image);
+        const err = {};
+        if(image.type != "image/png" && image.type != "image/jpg" && image.type != "image/jpeg") {
+            err.imageFormat = true;
+        } else {
+            err.imageFormat = false;
+        }
+        if (image.size > 2000000){
+            err.imageSize = true;
+        } else {
+            err.imageSize = false;
+        }
+        setErrors(err);
+    }
+
 
     const goToProfile = (id) => {
         props.history.replace("/profil/" + id);
     }
 
+    const modifPass = async () => {
+        if (newPass.new != newPass.confirm){
+            let error = {};
+            error["confirm"] = "Les mots de passes ne correspondent pas";
+            setErrors(error);
+            return ;
+        }
+        const post = {
+            id: authAPI.getId(),
+            current: newPass.current,
+            new: newPass.new,
+        }
+        const response = await usersAPI.changePass(post);
+        if (response.data == "erreur"){
+            let error = {};
+            error["current"] = "Votre mot de passe actuel n'est pas correct";
+            setErrors(error);
+        } else {
+            setShow2(false);
+            toast.success("Mot de passe modifié avec succès");
+        }
+    }
+
     useEffect( () => {
         getUserConnected();
-    }, []);
+    }, [reload]);
 
     return(
         <>
-            <h1 className={"text-center"}>Mon Profil</h1>
+            <div className="justify-content-center d-flex">
+                <div className="m-2">
+                    <div className="col">
+                        <div className={"row"}>
+                            <img className="rounded-circle profilePhoto account-img" src={user.profilePic}/>
+                        </div>
+                        <div className={"row"}>
+                            <button className={"btn"} onClick={()=> setShow(true)}>
+                                <i className=" modif far fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div className="m-4 pt-5">
+                    <h1 className={"text-center"}>Mon Profil</h1>
+                </div>
+            </div>
             <div className="container">
                 <div className="row">
                     <div className="col-12">
@@ -171,15 +263,18 @@ const ProfilPage = props => {
                                     <Field name={"code"} label={"Code postal"} type={"text"} value={address.code} onChange={handleChangeAdd} error={errors.code}/>
                                 </div>
                             </div>
-
                             <div className="from-group">
-                                <div className={"custom-control custom-checkbox mb-3"}>
-                                    <input type="checkbox" className="custom-control-input" id={"All"}/>
-                                    <label className="custom-control-label" htmlFor={"All"}>En soumettant ce formulaire, j'accepte que les informations saisies soient expoitées</label>
-                                </div>
                                 <button type={"submit"} className="btn btn-danger ml-auto">Enregistrer</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+                <div className={"d-flex justify-content-end"}>
+                    <Link to={"/param"} className={"btn btn-warning mr-3 mb-5 mt-3"}>Paramètres de mon profil</Link>
+                    <div>
+                        <button onClick={()=>setShow2(true)} className="btn btn-danger mt-3 ml-5">
+                            Modifier mon mot de passe
+                        </button>
                     </div>
                 </div>
             </div>
@@ -208,7 +303,73 @@ const ProfilPage = props => {
                 )}
                 </tbody>
             </table>
-
+            <Modal show={show} onHide={() => setShow(false)}>
+                <Modal.Header closeButton>
+                    Modifier votre photo de profil
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <div>
+                        <input type="file"  onChange={imageSelected}/>
+                        <ul className={"mt-3"}>
+                            {errors.imageFormat &&
+                                <li className={"text-danger"}>La photo doit être sous format JPEG, JPG ou PNG</li>
+                                ||
+                                <li>La photo doit être sous format JPEG, JPG ou PNG</li>
+                            }
+                            {errors.imageSize &&
+                            <li className={"text-danger"}>La photo doit faire moins de 2MO</li>
+                                ||
+                            <li>La photo doit faire moins de 2MO</li>
+                            }
+                        </ul>
+                        <button type="button" className={"btn btn-danger"} onClick={imageUpload}>Enregistrer</button>
+                    </div>
+                </Modal.Body>
+            </Modal>
+            <Modal show={show2} onHide={() => setShow2(false)}>
+                <Modal.Header closeButton>
+                    Modifier mon mot de passe
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <div>
+                        <Field
+                            name="current"
+                            label="Mot de passe actuel"
+                            placeholder="Votre mot de passe actuel"
+                            type="password"
+                            error={errors.current}
+                            value={newPass.current}
+                            onChange={changePass}
+                        />
+                        <Field
+                            name="new"
+                            label="Nouveau mot de passe"
+                            placeholder="Votre nouveau mot de passe"
+                            type="password"
+                            value={newPass.new}
+                            onChange={changePass}
+                        />
+                        <Field
+                            name="confirm"
+                            label="Confirmation du mot de passe"
+                            type="password"
+                            placeholder="Confirmer votre nouveau mot de passe"
+                            value={newPass.confirm}
+                            error={errors.confirm}
+                            onChange={changePass}
+                        />
+                        Le mot de passe doit contenir :
+                        <ul>
+                            <li>Plus de 8 caractères</li>
+                            <li>Une majuscule</li>
+                            <li>Une minuscule</li>
+                            <li>Un nombre</li>
+                            <li>Un caractère spécial</li>
+                        </ul>
+                        <button type="button" className={"btn btn-danger"} onClick={modifPass}>Modifier</button>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     );
 }

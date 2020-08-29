@@ -8,6 +8,7 @@ const UsersPage = () => {
     const [users, setUsers] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
     const [show, setShow] = useState(false);
+    const [show2, setShow2] = useState(false);
     const [reload, setReload] = useState(0);
     const [checkbox, setCheckBox] = useState([false]);
     const [search, setSearch] = useState("");
@@ -15,6 +16,13 @@ const UsersPage = () => {
         id: '',
         name: '',
     })
+
+    const [newUser, setNewUser] = useState({
+        email: "",
+        password: "",
+        lastName: "",
+        firstName: "",
+    });
 
     const findUsers = async () => {
         try {
@@ -101,6 +109,15 @@ const UsersPage = () => {
         setSearch(value);
     }
 
+    const addUser = async () => {
+
+    }
+
+    const handleChange = ({ currentTarget }) => {
+        const { name, value } = currentTarget;
+        setNewUser({ ...newUser, [name]: value });
+    };
+
     useEffect( () => {
         findUsers();
     }, [reload]);
@@ -111,14 +128,19 @@ const UsersPage = () => {
                 <div className="col-6">
                     <h1 className={"mb-3"}>Liste des utilisateurs</h1>
                 </div>
-                <div className="col-2"></div>
-                <div className="col-2">
-                    <Field type={"text"} value={search} onChange={changeSearch} placeholder={"Trier par nom"}/>
+            </div>
+            <div className="row justify-content-end">
+                <div className={"mr-5"}>
+                    <Field type={"text"} value={search} onChange={changeSearch} placeholder={"Chercher par nom"}/>
+                </div>
+                <div className={"mt-4"}>
+                    <button onClick={()=> setShow2(true)} className="btn btn-danger"><i className="fas fa-plus"></i></button>
                 </div>
             </div>
             <table className="table table-hover whiteBorder">
                 <thead className="bg-light">
                 <tr>
+                    <th></th>
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th className="text-center">Email</th>
@@ -130,6 +152,9 @@ const UsersPage = () => {
                 <tbody>
                 {users.map((user, index) =>
                     <tr key={user.id}>
+                        <td>
+                            <img className="rounded-circle profilePhotoLittle account-img" src={user.profilePic}/>
+                        </td>
                         <td>{user.lastName}</td>
                         <td>{user.firstName}</td>
                         <td className="text-center">{user.email}</td>
@@ -167,6 +192,52 @@ const UsersPage = () => {
                     <h6>Etes vous sûr de vouloir supprimer l'utilisateur {selectedUser.name} ? </h6>
                     <h6>Cette action est irréversible.</h6>
                     <button onClick={() => handleDelete(selectedUser.id)} className="btn btn-danger float-right">Supprimer</button>
+                </Modal.Body>
+            </Modal>
+            <Modal show={show2} onHide={() => setShow2(false)}>
+                <Modal.Header>
+                    Création d'un nouvel utilisateur
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <form onSubmit={addUser}>
+                        <Field
+                            name="lastName"
+                            label="Nom"
+                            type="text"
+                            placeholder="Nom"
+                            value={newUser.lastName}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="firstName"
+                            label="Prénom"
+                            type="text"
+                            placeholder="Prénom"
+                            value={newUser.firstName}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="email"
+                            label="Adresse email"
+                            placeholder="Adresse email"
+                            type="email"
+                            value={newUser.email}
+                            onChange={handleChange}
+                        />
+                        <Field
+                            name="password"
+                            label="Mot de passe"
+                            type="text"
+                            placeholder="Mot de passe"
+                            value={newUser.password}
+                            onChange={handleChange}
+                        />
+                        <div className="d-flex justify-content-end">
+                            <button type="submit" className="btn btn-danger ml-auto">
+                                Créer
+                            </button>
+                        </div>
+                    </form>
                 </Modal.Body>
             </Modal>
         </>

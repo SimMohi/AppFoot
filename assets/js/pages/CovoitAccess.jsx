@@ -1,16 +1,15 @@
 import React, {useEffect, useState} from 'react';
+import {Link} from "react-router-dom";
 import Field from "../components/forms/Fields";
+import DateFunctions from "../services/DateFunctions";
+import jwtDecode from "jwt-decode";
 import CovoitAPI from "../services/CovoitAPI";
 import {toast} from "react-toastify";
 import axios from "axios";
-import {API_URL, CARS_API, PASSENGERS_API} from "../config";
-import DateFunctions from "../services/DateFunctions";
-import {Link} from "react-router-dom";
-import jwtDecode from "jwt-decode";
+import {API_URL, CARS_API} from "../config";
 import ChatAPI from "../services/ChatAPI";
 
-
-const CovoitPage = props => {
+const CovoitAccess = props => {
     const {id} = props.match.params;
     const [reload, setReload] = useState(0);
     const [messages, setMessages] = useState([]);
@@ -42,9 +41,7 @@ const CovoitPage = props => {
     const fetchCar = async id => {
         try {
             const response = await CovoitAPI.find(id);
-            const datetime = DateFunctions.dateFormatYMDHMArr(response["date"]);
-            response["date"] = datetime[0];
-            response["time"] = datetime[1];
+            response["date"] = response["date"];
             if (response["userId"].address['@id'] == response["departureAddress"]["@id"]){
                 response["fromHome"] = true
             } else {
@@ -199,97 +196,71 @@ const CovoitPage = props => {
         setNewMessage("");
     }
 
+    const unSub = async () => {
+        const post = {
+            user: userId,
+            car: id
+        }
+        await CovoitAPI.unSub(post);
+        props.history.replace("/covoit");
+
+    }
+
     useEffect(() => {
         fetchCar(id);
         getMessage(id);
     }, [id, reload]);
 
-
     return(
         <>
-            <Link to={"/covoit"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
-            <div className="row">
-                <div className="col-8">
-                    <form onSubmit={handleSubmit} className={"whiteBorder p-5"}>
-                        <h4 className={"mb-5"}>Modification de mon covoiturage</h4>
-                        <div className="row">
-                            <div className={"col-6"}>
-                                <div className="row">
-                                    <div className="col-8">
-                                        <Field name={"title"} label={"Titre"} type={"text"} value={car.title} onChange={handleChangeCar} />
-                                    </div>
-                                    <div className="col-4">
-                                        <Field name={"placeRemaining"} label={"Places disponibles"} type={"number"} min={1} onChange={handleChangeCar} error={errors.placeRemaining} value={car.placeRemaining || ""}/>
-                                    </div>
-                                </div>
-                                <div className="row">
-                                    <div className="col">
-                                        <Field name={"date"} label={"Jour"} type={"date"} value={car.date} onChange={handleChangeCar} />
-                                    </div>
-                                    <div className="col">
-                                        <Field name={"time"} label={"Heure de départ"} type={"time"} value={car.time} onChange={handleChangeCar} />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className={"col-6"}>
-                                <div className={"custom-control custom-checkbox mb-3"}>
-                                    <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={car.fromHome} onChange={handleChangeCar}/>
-                                    <label className="custom-control-label" htmlFor={"home"}>Départ de mon domicile</label>
-                                </div>
-                                {!car.fromHome &&
-                                <>
-                                    <div className="row">
-                                        <div className="col-9">
-                                            <Field name={"street"} label={"Rue"} type={"text"} value={car.street} onChange={handleChangeCar} error={errors.street}/>
-                                        </div>
-                                        <div className="col-3">
-                                            <Field name={"number"} label={"Numéro"} type={"number"} value={car.number} onChange={handleChangeCar} error={errors.number}/>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-7">
-                                            <Field name={"city"} label={"Ville"} type={"text"} value={car.city} onChange={handleChangeCar}/>
-                                        </div>
-                                        <div className="col-5">
-                                            <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={car.code} onChange={handleChangeCar} />
-                                        </div>
-                                    </div>
-                                </>
-                                }
-                            </div>
+            <div className="d-flex justify-content-between">
+                <Link to={"/covoit"} className={"btn btn-danger mr-3 mb-5"}><i className="fas fa-arrow-left"/></Link>
+                <div>
+                    <button className="btn btn-danger btn-lg mr-5" onClick={unSub}>
+                        Se désinscrire
+                    </button>
+                </div>
+
+            </div>
+            <h2 className={"text-center mb-5"}>Covoiturage: {car.title}</h2>
+            <div className="row justify-content-center">
+                <div className="col-6  p-3 mr-5 mb-5">
+                    <div className={"d-flex justify-content-between whiteBorder m-5 p-3"}>
+                        <div className={"mr-3"}>
+                            <h5>Places restantes:</h5>
+                            <h5>Date:</h5>
+                            <h5>Départ:</h5>
                         </div>
-                        <h3 className={"m-4"}>Demandes</h3>
-                        <table className="table table-hover text-center">
+                        <div>
+                            <h5> {car.placeRemaining}</h5>
+                            <h5> {DateFunctions.dateFormatFrDMHM(car.date)}</h5>
+                            <h5> {car.street+ " "+ car.number+ ", " + car.code + " " + car.city}</h5>
+                        </div>
+
+                    </div>
+                    <div className="whiteBorder p-3 m-5">
+                        <h3 className={"text-center mb-5"}>Passagers acceptés</h3>
+                        <table className="table table-hover text-center pl-3 container">
                             <thead>
                             <tr className={"row"}>
-                                <th className={"col-1"}>Etat</th>
-                                <th className={"col-2"}>Passager</th>
-                                <th className={"col-2"}>Adresse</th>
-                                <th className={"col-1"}>Place</th>
+                                <th className={"col-6"}>Passager</th>
+                                <th className={"col-4"}>Places</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             {carPass.map((pass, index) =>
+                                pass.isAccepted &&
                                 <tr key={index} className={'row'}>
-                                    <td className={"col-1"}>{pass.isAccepted == false && <i className="far fa-clock"></i> || <i className="fas fa-check"></i>}</td>
-                                    <td className={"col-2"}>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
-                                    <td className="col-2">{"Rue " + pass.user.address.street + " " + pass.user.address.number + ", " + pass.user.address.code + " " + pass.user.address.city}</td>
-                                    <td className={"col-1"}>{pass["numberPassenger"]}</td>
-                                    <td>
-                                        {pass.isAccepted == false && <button type={"button"} onClick={accept} id={index} className="btn btn-sm btn-warning mr-3">Accepter</button>}
-                                        <button type={"button"} onClick={() => handleDelete(pass["@id"], pass.numberPassenger)} className="btn btn-sm btn-danger">Supprimer</button>
-                                    </td>
+                                    <td className={"col-6"}>{pass["user"]["firstName"] +" "+ pass["user"]["lastName"]}</td>
+                                    <td className={"col-4"}>{pass["numberPassenger"]}</td>
                                 </tr>
                             )}
                             </tbody>
                         </table>
-                        <div className="from-group">
-                            <button type={"submit"} className="btn btn-outline-warning float-right">Enregistrer</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-                <div className={"col-4"} id="rootCov">
+                <div className={"col-4 ml-5"} id="rootCov">
                     <div className="appCov whiteBorder">
                         <div className="message-list p-3" id={"message-list"}>
                             {messages.map((message, index) => {
@@ -328,4 +299,4 @@ const CovoitPage = props => {
     )
 }
 
-export default CovoitPage;
+export default CovoitAccess;

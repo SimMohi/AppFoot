@@ -112,7 +112,9 @@ const CovoitsPage = props => {
                         <i className="far fa-clock mr-5"></i>
                         }
                         <span className={"mr-3"}>{passengers[i]["answer"]}</span>
-                        <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm  btn-danger mr-3">Se désinscrire</button>
+                        <Link to={"/covoitAccess/"+covoit.id} className="btn btn-warning btn-sm mr-3">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accéder&nbsp;&nbsp;&nbsp;&nbsp;
+                        </Link>                        <button onClick={() => unSubscribe(passengers[i]["@id"], covoit)} className="btn btn-sm  btn-danger mr-3">Se désinscrire</button>
                     </>);
             }
         }
@@ -272,31 +274,6 @@ const CovoitsPage = props => {
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={handleSubmit}>
-                        <div className={"custom-control custom-checkbox mb-4"}>
-                            <input type="checkbox" className="custom-control-input" name={"fromHome"} id={"home"} checked={newPassengers.fromHome} onChange={handleChange}/>
-                            <label className="custom-control-label" htmlFor={"home"}>Me chercher à mon domicile</label>
-                        </div>
-                        {!newPassengers.fromHome &&
-                        <>
-                            <div className="row">
-                                <div className="col-9">
-                                    <Field name={"street"} label={"Rue"} type={"text"} value={newPassengers.street} onChange={handleChange} error={errors.street}/>
-                                </div>
-                                <div className="col-3">
-                                    <Field name={"number"} label={"Numéro"} type={"number"} value={newPassengers.number} onChange={handleChange} error={errors.number}/>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-7">
-                                    <Field name={"city"} label={"Ville"} type={"text"} value={newPassengers.city} onChange={handleChange}/>
-                                </div>
-                                <div className="col-5">
-                                    <Field name={"code"} label={"Code postal"} type={"number"} min={1000} max={9999} value={newPassengers.code} onChange={handleChange} />
-                                </div>
-                            </div>
-                        </>
-                        }
-                        <Field type={"text"} placeholder={"Commentaire pour le conducteur"} label={"commentaire"} name={"comment"} value={newPassengers["comment"]} onChange={handleChange}/>
                         <Field type={"number"} placeholder={"Nombre de personnes que vous voulez inscrire"} label={"Nombre de passagers"} name={"numberPassenger"} min={1} max={modalParam.placeRemaining}
                                onChange={handleChange} value={newPassengers["numberPassenger"]}/>
                         <div className="from-group">

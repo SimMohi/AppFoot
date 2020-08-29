@@ -41,6 +41,7 @@ const TrainingResumePage = props => {
             <table className="table table-hover whiteBorder">
                 <thead>
                 <tr className={"text-center "}>
+                    <th></th>
                     <th>Joueur</th>
                     {trainings.map((tr, index) =>
                         <th key={index}>{DateFunctions.dateFormatFrDM(tr.date)}</th>
@@ -50,6 +51,7 @@ const TrainingResumePage = props => {
                 <tbody>
                     {players.map((p, index3) =>
                         <tr key={index3} className={"text-center"}>
+                            <td> <img className="rounded-circle profilePhotoLittle account-img" src={p.photo}/> </td>
                             <td>{p.name}</td>
                             {p["trainings"].map((t, index2) =>
                                 <td key={index2}>

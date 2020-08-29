@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class ProfilController extends AbstractController
@@ -149,4 +149,88 @@ class ProfilController extends AbstractController
 
         return $this->json($user->getTokenMobile());
     }
+
+    /**
+     * @Route("/uploadImage")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function uploadImage(Request $request){
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $_POST["id"]]);
+
+        $file_name = $_FILES["image"]['name'];
+        $file_extention = strrchr($file_name, ".");
+
+        $file_tmp_name = $_FILES["image"]["tmp_name"];
+        $file_dest = "profile/".$user->getFirstName().$user->getLastName().$file_extention;
+        if (move_uploaded_file($file_tmp_name, $file_dest)){
+        } else {
+            return $this->json("erreur");
+        }
+
+        $user->setProfilePic($file_dest);
+        $this->getDoctrine()->getManager()->persist($user);
+        $this->getDoctrine()->getManager()->flush();
+
+
+        return $this->json("ok");
+    }
+
+    /**
+     * @Route("/postParam")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function postParam(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["id"]]);
+
+        $user->setRgdpPhotos($data["photos"]);
+
+        if ($data["select"] == 1){
+            $user->setRgpdVisibleStaff(false);
+            $user->setRgpdVisibleAll(false);
+        } else if ($data["select"] == 2){
+            $user->setRgpdVisibleStaff(true);
+            $user->setRgpdVisibleAll(false);
+        } else if ($data["select"] == 3){
+            $user->setRgpdVisibleStaff(true);
+            $user->setRgpdVisibleAll(true);
+        }
+
+        $this->getDoctrine()->getManager()->persist($user);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+
+    }
+
+    /**
+     * @Route("/changePass")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @return JsonResponse
+     */
+    public function changePass(Request $request, UserPasswordEncoderInterface $encoder){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["id"]]);
+
+        $valid = $encoder->isPasswordValid($user, $data["current"]);
+        if ($valid == false){
+            return $this->json("erreur");
+        }
+
+        $new = $encoder->encodePassword($user, $data["new"]);
+
+        $user->setPassword($new);
+        $this->getDoctrine()->getManager()->persist($user);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+    }
+
 }
