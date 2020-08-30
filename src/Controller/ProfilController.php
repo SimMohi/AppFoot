@@ -158,17 +158,17 @@ class ProfilController extends AbstractController
     public function uploadImage(Request $request){
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $_POST["id"]]);
 
-        $file_name = $_FILES["image"]['name'];
-        $file_extention = strrchr($file_name, ".");
-
-        $file_tmp_name = $_FILES["image"]["tmp_name"];
-        $file_dest = "profile/".$user->getFirstName().$user->getLastName().$file_extention;
-        if (move_uploaded_file($file_tmp_name, $file_dest)){
-        } else {
-            return $this->json("erreur");
-        }
-
-        $user->setProfilePic($file_dest);
+//        $file_name = $_FILES["image"]['name'];
+//        $file_extention = strrchr($file_name, ".");
+//
+//        $file_tmp_name = $_FILES["image"]["tmp_name"];
+//        $file_dest = "profile/".$user->getFirstName().$user->getLastName().$file_extention;
+//        if (move_uploaded_file($file_tmp_name, $file_dest)){
+//        } else {
+//            return $this->json("erreur");
+//        }
+//
+//        $user->setProfilePic($file_dest);
         $this->getDoctrine()->getManager()->persist($user);
         $this->getDoctrine()->getManager()->flush();
 
