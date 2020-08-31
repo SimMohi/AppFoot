@@ -134,4 +134,27 @@ class CarController extends AbstractController
         return  $this->json("ok");
     }
 
+    /**
+     * @Route("/acceptPass")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function acceptPass(Request $request){
+
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $carPass = $this->getDoctrine()->getRepository(CarPassenger::class)->findOneBy(['user' => $data['user'], 'car' => $data["car"]]);
+        $carPass->setIsAccepted(true);
+
+        $car = $carPass->getCar();
+        $car->setPlaceRemaining(($car->getPlaceRemaining())-1);
+
+        $this->getDoctrine()->getManager()->persist($car);
+        $this->getDoctrine()->getManager()->persist($carPass);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("OK");
+    }
+
 }
