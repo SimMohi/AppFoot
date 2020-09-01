@@ -27,7 +27,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * @UniqueEntity("email", message="Un utilisateur ayant cette adresse email existe déjà")
  * @ApiFilter(SearchFilter::class , properties={"email": "exact", "isAccepted": "exact"})
- * @Vich\Uploadable()
  */
 class User implements UserInterface
 {
