@@ -88,14 +88,10 @@ class User implements UserInterface
     private $profilePic;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="userId")
+     * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="userId", orphanRemoval=true)
      */
     private $userTeams;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PlayerOfTheMatch", mappedBy="idUser")
-     */
-    private $playerOfTheMatches;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Car", mappedBy="userId", orphanRemoval=true)
@@ -103,7 +99,7 @@ class User implements UserInterface
     private $cars;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\CarPassenger", mappedBy="user", orphanRemoval=true)
      */
     private $carPassengers;
 
@@ -120,7 +116,7 @@ class User implements UserInterface
     private $address;
 
     /**
-     * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Notification::class, mappedBy="user", orphanRemoval=true)
      */
     private $notifications;
 
@@ -176,7 +172,6 @@ class User implements UserInterface
     {
         $this->rgpd = false;
         $this->userTeams = new ArrayCollection();
-        $this->playerOfTheMatches = new ArrayCollection();
         $this->cars = new ArrayCollection();
         $this->carPassengers = new ArrayCollection();
         $this->isAccepted = false;
@@ -347,36 +342,6 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|PlayerOfTheMatch[]
-     */
-    public function getPlayerOfTheMatches(): Collection
-    {
-        return $this->playerOfTheMatches;
-    }
-
-    public function addPlayerOfTheMatch(PlayerOfTheMatch $playerOfTheMatch): self
-    {
-        if (!$this->playerOfTheMatches->contains($playerOfTheMatch)) {
-            $this->playerOfTheMatches[] = $playerOfTheMatch;
-            $playerOfTheMatch->setIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePlayerOfTheMatch(PlayerOfTheMatch $playerOfTheMatch): self
-    {
-        if ($this->playerOfTheMatches->contains($playerOfTheMatch)) {
-            $this->playerOfTheMatches->removeElement($playerOfTheMatch);
-            // set the owning side to null (unless already changed)
-            if ($playerOfTheMatch->getIdUser() === $this) {
-                $playerOfTheMatch->setIdUser(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|Car[]

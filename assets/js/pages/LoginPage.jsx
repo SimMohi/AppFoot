@@ -4,10 +4,12 @@ import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Fields";
 import axios from 'axios';
 import {API_URL, USERS_API} from "../config";
+import {Modal} from "react-bootstrap";
 
 const LoginPage = ({ history}) => {
     const {setIsAuthenticated} = useContext(AuthContext);
 
+    const [show, setShow] = useState(false);
     const [credentials, setCredentials] = useState({
         username: "",
         password: "",
@@ -58,10 +60,24 @@ const LoginPage = ({ history}) => {
                     <Field label={"Mot de passe"} name={"password"} placeholder={"Votre mot de passe"} value={credentials.password} onChange={handleChange}
                            type={"password"} error={""}/>
                     <div className="form-group">
+                        <button type={"button"} className={"btn btn-link text-warning"} onClick={()=> setShow(true)}>Mot de passe oublié ?</button>
                         <button type={"submit"} className={"btn btn-danger float-right"}>Se connecter</button>
                     </div>
                 </form>
             </div>
+            <Modal show={show} onHide={() => setShow(false)}>
+                <Modal.Header closeButton>
+                    Réinitialisez votre mot de passe
+                </Modal.Header>
+                <Modal.Body className={""}>
+                    <Field type={"email"} placeholder={"Votre Email"}/>
+                    <div className={"form-group justify-content-end d-flex"}>
+                        <button className="btn btn-danger">
+                            Envoyer
+                        </button>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     );
 };

@@ -171,9 +171,9 @@ const Navbar = ({ history }) => {
                     <span className="navbar-toggler-icon"></span>
                 </button>
 
-                <div className="collapse navbar-collapse d-flex justify-content-between" id="navbarColor01">
-                    <div></div>
-                    <ul className="navbar-nav">
+                <div className="collapse navbar-collapse d-flex " id="navbarColor01">
+                    <div className={"col-4"}></div>
+                    <ul className="navbar-nav ml-5">
                         <li className={"ml-5"}>
                             <h3 className={"nameNav caviar mt-2"}>FC Ronvau Chaumont</h3>
                         </li>
@@ -230,7 +230,7 @@ const Navbar = ({ history }) => {
                             </>
                         }
                     </ul>
-                    <ul className="navbar-nav">
+                    <ul className="navbar-nav ml-auto">
                         {!isAuthenticated && <>
                             <li className="nav-item">
                                 <NavLink to={"/register"} className="btn btn-light ml-2 mr-2 ">
@@ -296,7 +296,7 @@ const Navbar = ({ history }) => {
                                     {not.message}
                                 </div>
                                 <div className="col-3">
-                                    <button onClick={() => seenNotif(not.id)} className="btn btn-sm btn-warning">D'accord</button>
+                                    <button onClick={() => seenNotif(not.id)} className="btn btn-sm btn-warning ml-5">X</button>
                                 </div>
                             </div>
                             <hr/>

@@ -10,6 +10,12 @@ import {toast} from "react-toastify";
 const RonvauTeamsPage = () => {
 
     const [reload, setReload] = useState(0);
+    const [modal2, setModal2] = useState(false);
+    const [password, setPassword] = useState("");
+    const [selectTeam, setSelectTeam] = useState({
+        id: "",
+        name: "",
+    })
     const [newTeam, setNewTeam] = useState({
         category: "",
     })
@@ -50,12 +56,26 @@ const RonvauTeamsPage = () => {
         } catch (error) {
             setRonvauTeams(originalRonvauTeam)
         }
+        setModal2(false);
     };
 
     const handleChange = ({ currentTarget }) => {
         const { name, value } = currentTarget;
         setNewTeam({...newTeam, [name]: value});
     };
+
+    const changePass = ({ currentTarget }) => {
+        setPassword(currentTarget.value);
+    };
+
+
+    const openDelete = (team) => {
+        setModal2(true);
+        setSelectTeam({
+            id: team.id,
+            name: team.category,
+        })
+    }
 
     const handleSubmit = async () => {
         try {
@@ -98,7 +118,7 @@ const RonvauTeamsPage = () => {
                     <td>
                         <Link to={"/equipeRonvau/"+ronvauTeam.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Sélectionner</Link>
                         <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-outline-warning mr-3"}>Editer</Link>
-                        <button onClick={() => handleDelete(ronvauTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
+                        <button onClick={() => openDelete(ronvauTeam)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>
             )}
@@ -113,6 +133,14 @@ const RonvauTeamsPage = () => {
                 <div className="from-group mt-3 float-right">
                     <button type={"button"}  onClick={handleSubmit} className="btn btn-warning">Enregistrer</button>
                 </div>
+            </Modal.Body>
+        </Modal>
+        <Modal show={modal2} onHide={() => setModal2(false)}>
+            <Modal.Body className={""}>
+                <h6>Etes vous sûr de vouloir supprimer l'équipe {selectTeam.name} ? </h6>
+                <h6>Cette action est irréversible. Les données seront perdues.</h6>
+                <Field  type={'password'} value={password} onChange={changePass} name={"password"} placeholder={"Votre mot de passe"}/>
+                <button onClick={() => handleDelete(selectTeam.id)} className="btn btn-danger float-right">Supprimer</button>
             </Modal.Body>
         </Modal>
     </>);

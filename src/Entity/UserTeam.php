@@ -63,22 +63,22 @@ class UserTeam
     private $playerMatches;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PlayerTraining", mappedBy="idUserTeam")
+     * @ORM\OneToMany(targetEntity="App\Entity\PlayerTraining", mappedBy="idUserTeam", orphanRemoval=true)
      */
     private $playerTrainings;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="sender")
+     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="sender", orphanRemoval=true)
      */
     private $chats;
 
     /**
-     * @ORM\OneToMany(targetEntity=PlayerUnofficialMatch::class, mappedBy="userTeam")
+     * @ORM\OneToMany(targetEntity=PlayerUnofficialMatch::class, mappedBy="userTeam", orphanRemoval=true)
      */
     private $playerUnofficialMatches;
 
     /**
-     * @ORM\OneToMany(targetEntity=UserTeamEvent::class, mappedBy="userTeam")
+     * @ORM\OneToMany(targetEntity=UserTeamEvent::class, mappedBy="userTeam", orphanRemoval=true)
      */
     private $userTeamEvents;
 

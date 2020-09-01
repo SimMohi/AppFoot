@@ -19,6 +19,7 @@ const CovoitsPage = props => {
         false, false
     ]);
 
+    const [del, setDel] = useState(false);
     const [modalParam, setModalParam] = useState("");
     const [covoits, setCovoits] = useState([]);
     const [userConnected, setUserConnected] = useState({});
@@ -280,6 +281,14 @@ const CovoitsPage = props => {
                             <button type={"submit"} className="btn btn-danger float-right">Enregistrer</button>
                         </div>
                     </form>
+                </Modal.Body>
+            </Modal>
+            <Modal show={del} onHide={() => setDel(false)}>
+                <Modal.Body className={""}>
+                    <h6>Etes vous sûr de vouloir supprimer votre covoiturage </h6>
+                    <h6>Cette action est irréversible.</h6>
+                    <Field type={"password"} placeholder={"Votre mot de passe"}/>
+                    <button onClick={() => handleDelete()} className="btn btn-danger float-right">Supprimer</button>
                 </Modal.Body>
             </Modal>
         </>

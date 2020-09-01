@@ -265,7 +265,7 @@ const HomePage = props => {
                 id: event.id,
                 type: event.type,
                 description: description,
-                title: event.title + " pour " + event.team,
+                title: event.title,
                 day: event.start,
                 end: event.end,
                 button: buttons,

@@ -41,7 +41,7 @@ class TeamRonvau
     private $team;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="teamRonvauId")
+     * @ORM\OneToMany(targetEntity="App\Entity\UserTeam", mappedBy="teamRonvauId", orphanRemoval=true)
      * @Groups({"team_ronvau_read", "matchs_read"})
      */
     private $userTeams;
@@ -52,18 +52,18 @@ class TeamRonvau
     private $trainings;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\EventsTeam", mappedBy="idTeamRonvau")
+     * @ORM\OneToMany(targetEntity="App\Entity\EventsTeam", mappedBy="idTeamRonvau", orphanRemoval=true)
      */
     private $eventsTeams;
 
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="channel")
-     */
-    private $chats;
+//    /**
+//     * @ORM\OneToMany(targetEntity="App\Entity\Chat", mappedBy="channel", orphanRemoval=true)
+//     */
+//    private $chats;
 
     /**
-     * @ORM\OneToMany(targetEntity=UnOfficialMatch::class, mappedBy="teamRonvau")
+     * @ORM\OneToMany(targetEntity=UnOfficialMatch::class, mappedBy="teamRonvau", orphanRemoval=true)
      */
     private $unOfficialMatches;
 
@@ -74,13 +74,14 @@ class TeamRonvau
     private $visible;
 
 
+
     public function __construct()
     {
         $this->userTeams = new ArrayCollection();
         $this->trainings = new ArrayCollection();
         $this->eventsTeams = new ArrayCollection();
         $this->trainingDays = new ArrayCollection();
-        $this->chats = new ArrayCollection();
+//        $this->chats = new ArrayCollection();
         $this->unOfficialMatches = new ArrayCollection();
         $this->visible = true;
     }
@@ -208,37 +209,37 @@ class TeamRonvau
         return $this;
     }
 
-
-    /**
-     * @return Collection|Chat[]
-     */
-    public function getChats(): Collection
-    {
-        return $this->chats;
-    }
-
-    public function addChat(Chat $chat): self
-    {
-        if (!$this->chats->contains($chat)) {
-            $this->chats[] = $chat;
-            $chat->setChannel($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChat(Chat $chat): self
-    {
-        if ($this->chats->contains($chat)) {
-            $this->chats->removeElement($chat);
-            // set the owning side to null (unless already changed)
-            if ($chat->getChannel() === $this) {
-                $chat->setChannel(null);
-            }
-        }
-
-        return $this;
-    }
+//
+//    /**
+//     * @return Collection|Chat[]
+//     */
+//    public function getChats(): Collection
+//    {
+//        return $this->chats;
+//    }
+//
+//    public function addChat(Chat $chat): self
+//    {
+//        if (!$this->chats->contains($chat)) {
+//            $this->chats[] = $chat;
+//            $chat->setChannel($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeChat(Chat $chat): self
+//    {
+//        if ($this->chats->contains($chat)) {
+//            $this->chats->removeElement($chat);
+//            // set the owning side to null (unless already changed)
+//            if ($chat->getChannel() === $this) {
+//                $chat->setChannel(null);
+//            }
+//        }
+//
+//        return $this;
+//    }
 
     /**
      * @return Collection|UnOfficialMatch[]

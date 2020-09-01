@@ -57,6 +57,21 @@ function getIsAdmin(){
     return false
 }
 
+
+function getIsSuperAdmin(){
+    const token = window.localStorage.getItem(("authToken"));
+
+    if (token) {
+        const {roles} = jwtDecode(token);
+        if (roles.includes("ROLE_SUPERADMIN")){
+            return true
+        } else {
+            return false
+        }
+    }
+    return false
+}
+
 function getId(){
     const token = window.localStorage.getItem(("authToken"));
 
@@ -81,5 +96,5 @@ function isAuthenticated(){
 }
 
 export default {
-    authenticate, getUserInfo, logout, setup, isAuthenticated, setAxiosToken, getIsAdmin, getId
+    authenticate, getUserInfo, logout, setup, isAuthenticated, setAxiosToken, getIsAdmin, getId, getIsSuperAdmin
 };

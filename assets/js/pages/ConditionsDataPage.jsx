@@ -59,7 +59,7 @@ const ConditionsDataPage = props => {
                 <h3>7. Contact</h3>
                 <p>Pour toutes questions ou réclamations relatives à la présente politique de confidentialité,
                 l'utilisateur peut contacter le responsable du traitement via l'adresse suivante :
-                    info@plateforme-ronvau.be.</p>
+                    info.plateformeronvau@gmail.com.</p>
             </div>
         </>
     )

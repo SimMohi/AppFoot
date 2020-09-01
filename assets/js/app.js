@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "../css/app.css";
 import NavBar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import {HashRouter, Switch, Route, withRouter, Redirect, NavLink} from "react-router-dom";
+import {HashRouter, Switch, Route, withRouter, Redirect, NavLink, Link} from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import authAPI from "./services/authAPI";
 import AuthContext from "./contexts/AuthContext";
@@ -56,6 +56,9 @@ import ConfidentialPage from "./pages/ConfidentialPage";
 import ConditionsPage from "./pages/ConditionsPage";
 import ConditionsDataPage from "./pages/ConditionsDataPage";
 import CovoitAccess from "./pages/CovoitAccess";
+import PhotosPage from "./pages/PhotosPage";
+import FolderPage from "./pages/folderPage";
+import PhotosAuth from "./pages/PhotosAuth";
 
 require("../css/app.css");
 
@@ -142,6 +145,18 @@ const App = () => {
                                 </NavLink>
                             </NavText>
                         </NavItem>
+                        <NavItem eventKey="photo">
+                            <NavIcon>
+                                <NavLink className="nav-link" to={"/photos"}>
+                                    <i className="fas fa-camera" style={{fontSize: '1.75em'}}></i>
+                                </NavLink>
+                            </NavIcon>
+                            <NavText>
+                                <NavLink className="nav-link" to={"/covoit"}>
+                                    Covoiturage
+                                </NavLink>
+                            </NavText>
+                        </NavItem>
                         <NavItem eventKey="chat">
                             <NavIcon>
                                 <NavLink className="nav-link" to={"/chat"}>
@@ -202,6 +217,9 @@ const App = () => {
                         <Route path={"/register"} component={RegisterPage}/>
                         <Route path={"/conditions"} component={ConditionsPage}/>
                         <Route path={"/conditionsDonnées"} component={ConditionsDataPage}/>
+                        <PrivateRoute path={"/photos/:id"} component={FolderPage}/>
+                        <PrivateRoute path={"/photosAut"} component={PhotosAuth}/>
+                        <PrivateRoute path={"/photos"} component={PhotosPage}/>
                         <PrivateRoute path={"/profil/:id"} component={ProfilUserPage}/>
                         <PrivateRoute path={"/profil"} component={ProfilPage}/>
                         <PrivateRoute path={"/param"} component={ConfidentialPage}/>
@@ -242,6 +260,14 @@ const App = () => {
                         <PrivateRoute path="/" component={HomePage} />
                     </Switch>
                 </main>
+                <div className="d-flex justify-content-center">
+                    <div className={"row justify-content-around w-75 mb-5 mt-5"}>
+                        <Link to={"/conditions"}>Conditions d'utilisation</Link>
+                        <Link to={"/conditionsDonnées"}>Politique d'utilisation des données</Link>
+                        Contact: info.plateformeronvau@gmail.com
+                    </div>
+                </div>
+
             </HashRouter>
             <ToastContainer/>
         </AuthContext.Provider>

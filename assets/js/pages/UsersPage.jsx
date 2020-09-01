@@ -3,8 +3,10 @@ import usersAPI from "../services/usersAPI";
 import {toast} from "react-toastify";
 import Modal from "react-bootstrap/Modal";
 import Field from "../components/forms/Fields";
+import authAPI from "../services/authAPI";
 
 const UsersPage = () => {
+    const superAdmin = authAPI.getIsSuperAdmin();
     const [users, setUsers] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
     const [show, setShow] = useState(false);
@@ -145,7 +147,9 @@ const UsersPage = () => {
                     <th>Prénom</th>
                     <th className="text-center">Email</th>
                     <th className="text-center">Est accepté ?</th>
-                    <th className="text-center">Est admin</th>
+                    {superAdmin &&
+                        <th className="text-center">Est admin</th>
+                    }
                     <th className="text-center"></th>
                 </tr>
                 </thead>
@@ -160,11 +164,17 @@ const UsersPage = () => {
                         <td className="text-center">{user.email}</td>
                         <td className="text-center">{user.isAccepted && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
                         {user.isAccepted &&
-                        <td className="custom-control custom-checkbox text-center">
-                            <input type="checkbox" className="custom-control-input" checked={checkbox[index]}
-                                   onChange={() => changeRole(index)} id={"adminCheck" + index}/>
-                            <label className="custom-control-label" htmlFor={"adminCheck" + index}></label>
-                        </td>
+                          <>
+                              {superAdmin &&
+                                <td className="custom-control custom-checkbox text-center">
+                                    <input type="checkbox" className="custom-control-input" checked={checkbox[index]}
+                                           onChange={() => changeRole(index)} id={"adminCheck" + index}/>
+                                    <label className="custom-control-label" htmlFor={"adminCheck" + index}></label>
+                                </td>
+                                  ||
+                                  <td></td>
+                              }
+                        </>
                         ||
                         <td></td>
                         }

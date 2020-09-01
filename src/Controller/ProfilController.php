@@ -26,9 +26,10 @@ class ProfilController extends AbstractController
     /**
      * @Route("/profile/{id}")
      * @param int $id
+     * @param \Swift_Mailer $mailer
      * @return JsonResponse
      */
-    public function getInfoUser(int $id){
+    public function getInfoUser(int $id, \Swift_Mailer $mailer){
 
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
         $address = $user->getAddress();
@@ -65,6 +66,7 @@ class ProfilController extends AbstractController
             $response['training'] = $trainingN;
             $return["infos"][] = $response;
         }
+
 
         return $this->json($return);
     }

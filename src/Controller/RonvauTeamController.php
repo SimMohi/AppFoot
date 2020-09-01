@@ -463,7 +463,7 @@ class RonvauTeamController extends AbstractController
                 $event = $eventsTeam->getIdEvents();
                 $eventRes["id"] = $event->getId();
                 $eventRes["type"] = "event";
-                $eventRes["title"] = $event->getName();
+                $eventRes["title"] = $event->getName(). " de " .$teamR->getCategory();
                 $eventRes["start"] = $event->getDate();
                 $eventRes["end"] = $event->getEndDate();
                 $eventRes["description"] = $event->getDescription();

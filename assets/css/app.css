@@ -1,5 +1,6 @@
 @import url(https://fr.allfont.net/allfont.css?fonts=caviar-dreams);
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 #app{
     background-color: #f6f6f6;
     width: 100%;
@@ -8,6 +9,13 @@
 
 }
 
+html, body {
+    height: 100%;
+}
+
+main{
+    min-height: 800px;
+}
 
 .imgEncode{
     height: 20px;
@@ -73,4 +81,37 @@ h1, h2, h3, h4, h5, h6 {
 
 .modif {
     font-size: 1.5em;
+}
+
+.folder {
+    width: 150px;
+    height: 150px;
+}
+
+.littleImage {
+    width: 150px;
+    height: 150px;
+}
+
+.littleImageB {
+    width: 100px;
+    height: 100px;
+}
+
+.littleImage:hover{
+    width:600px;height:600px;z-index:20;
+}
+
+.footer{
+    background-color: #616161;
+    position: relative;
+    margin-top: -150px; /* negative value of footer height */
+    height: 150px;
+    clear:both;
+    padding-top:20px;
+
+}
+
+.wid{
+    width: 100%;
 }

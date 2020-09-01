@@ -62,8 +62,7 @@ const ConfidentialPage = props => {
                     <div className="form-group">
                         <span className={"mr-3"}>J'accepte que mon profil soit visible par </span>
                         <select className="custom-select w-50" value={select} onChange={changeSelect}>
-                            <option value="1">Moi seulement</option>
-                            <option value="2">Les membres du staff</option>
+                            <option value="2">Les membres du staff seulement</option>
                             <option value="3">Les membres de l'application</option>
                         </select>
                     </div>
@@ -79,10 +78,10 @@ const ConfidentialPage = props => {
                         Exporter mes informations personnelles (JSON)
                     </button>
                     <hr/>
-
-                    <button className="btn btn-danger" onClick={()=> setShow(true)}>
-                        Supprimer mon profil
-                    </button>
+                    <p>En cas de soucis ou questions sur la gestion de votre profil. Contactez nous par mail à l'adresse <a href={"mailto:info.plateformeronvau@gmail.com"}>info.plateformeronvau@gmail.com</a> </p>
+                    {/*<button className="btn btn-danger" onClick={()=> setShow(true)}>*/}
+                    {/*    Supprimer mon profil*/}
+                    {/*</button>*/}
                 </div>
                 <div className="float-right">
                     <button className="btn btn-warning" onClick={submit}>

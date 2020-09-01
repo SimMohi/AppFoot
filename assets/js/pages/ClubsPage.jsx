@@ -111,6 +111,7 @@ const ClubsPage = props => {
             <Modal.Body className={""}>
                 <h6>Etes vous sûr de vouloir supprimer le club {selectedClub.name} ? </h6>
                 <h6>Cette action est irréversible.</h6>
+                <Field type={"password"} placeholder={"Votre mot de passe"}/>
                 <button onClick={() => handleDelete()} className="btn btn-danger float-right">Supprimer</button>
             </Modal.Body>
         </Modal>

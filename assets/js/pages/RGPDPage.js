@@ -78,7 +78,7 @@ const RGPDPage = (props)=> {
                     dans le cadre de la commercialisation de produits ou de la fourniture de services.</p>
                 <h3>5. Droits des Utilisateurs</h3>
                 <p>A tout moment, l'Utilisateur peut exercer ses droits en envoyant un message par courrier
-                    électronique à l'adresse suivante : info@fcronvauchaumont.be</p>
+                    électronique à l'adresse suivante : info.fcronvauchaumont.be</p>
             </div>
             <div className="mt-5 float-right">
                 <button className={"btn btn-lg btn-warning mr-5"} onClick={accept}>Accepter</button>
