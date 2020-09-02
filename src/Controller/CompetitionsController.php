@@ -207,15 +207,24 @@ class CompetitionsController extends AbstractController
     }
 
     /**
-     * Get the matches for the ronvauTeam
      * @Route("/getTeamCompet/{id}")
-     * @param int $idRTeam
+     * @param int $id
+     * @return JsonResponse
      */
     public function getTeamCompet(int $id)
     {
         $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $id]);
 
-        return $this->json($competition->getTeams());
+        $teams = $competition->getTeams();
+
+        $response=[];
+        foreach ($teams as $team){
+            $arr["id"] = $team->getClub()->getId();
+            $arr["name"] = $team->getClub()->getName();
+            $response[] = $arr;
+        }
+
+        return $this->json($response);
     }
 
     /**

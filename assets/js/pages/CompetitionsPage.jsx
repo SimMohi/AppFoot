@@ -6,7 +6,7 @@ import Field from "../components/forms/Fields";
 import authAPI from "../services/authAPI";
 
 const CompetitionsPage = props => {
-    const superAdmin = authAPI.getIsSuperAdmin();
+    const admin = authAPI.getIsAdmin();
     const [competitions, setCompetitions] = useState([]);
     const [reload, setReload] = useState(0);
     const [show, setShow] = useState(false);
@@ -79,7 +79,7 @@ const CompetitionsPage = props => {
                     <td>
                         <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-outline-warning mr-3"}>Sélectionner</Link>
                         <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-warning mr-3"}>Editer</Link>
-                        {competition.visible && superAdmin &&
+                        {competition.visible && admin &&
                         <button onClick={() => visible(competition.id, false)}
                                 className="btn btn-sm btn-outline-danger mr-3">Rendre invisible</button>
                         ||

@@ -195,7 +195,7 @@ const UsersPage = () => {
                         <td className="text-center">{user.isAccepted && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
                         {user.isAccepted &&
                           <>
-                              {superAdmin &&
+                              {superAdmin && user.id != 1 &&
                                 <td className="custom-control custom-checkbox text-center">
                                     <input type="checkbox" className="custom-control-input" checked={checkbox[index]}
                                            onChange={() => changeRole(index)} id={"adminCheck" + index}/>
@@ -219,7 +219,7 @@ const UsersPage = () => {
                             <>
                                 <button onClick={() => Accept(user.id)}
                                         className="btn btn-sm btn-warning  mr-3" disabled={true}>Accepter</button>
-                                {superAdmin &&
+                                {superAdmin && user.id !=1 &&
                                 <button onClick={() => openModal(user)}
                                         className="btn btn-sm btn-danger">Supprimer</button>
                                 }

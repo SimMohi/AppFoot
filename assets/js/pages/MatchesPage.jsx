@@ -78,6 +78,7 @@ const MatchPages = props => {
                     axios.get(API_URL + "/getTeamCompet/"+id),
                     axios.get(COMPETITIONS_API + "/" + id)
             ]).then(axios.spread(async (...responses) => {
+
                 const compet = responses[2].data;
                 let numberDay = 2 * (compet.teams.length -1);
                 setMatchDayNumber(numberDay);
@@ -104,8 +105,8 @@ const MatchPages = props => {
                 let clubsArr= [];
                 for (let i = 0; i < data.length; i++){
                     let club =  {
-                        "key": data[i]["club"].id,
-                        "value":  data[i]["club"].name,
+                        "key": data[i].id,
+                        "value":  data[i].name,
                     }
                     clubsArr.push(club);
                 }
