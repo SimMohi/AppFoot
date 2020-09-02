@@ -281,6 +281,11 @@ class RonvauTeamController extends AbstractController
             foreach ($trainings as $training){
                 $trainingArr = [];
                 if ($training->getStart() > $today && $training->getStart() < $week ){
+                    if (strpos($teamR->getCategory(), "remi")){
+                        $trainingArr["color"] = "#eb4034";
+                    } else {
+                        $trainingArr["color"] = "#ffd257";
+                    }
                     $trainingArr["type"] = "Training";
                     $trainingArr["id"] = $training->getId();
                     $trainingArr["title"] = "Entraînement ".$teamR->getCategory();
@@ -299,6 +304,11 @@ class RonvauTeamController extends AbstractController
                 $eventRes = [];
                 $event = $eventsTeam->getIdEvents();
                 if ($event->getDate() > $today && $event->getDate() < $week ){
+                    if (strpos($teamR->getCategory(), "remi")){
+                        $eventRes["color"] = "#eb4034";
+                    } else {
+                        $eventRes["color"] = "#ffd257";
+                    }
                     $eventRes["type"] = "Event";
                     $eventRes["id"] = $eventsTeam->getId();
                     $eventRes["title"] = $event->getName(). " pour ".$teamR->getCategory();
@@ -321,6 +331,11 @@ class RonvauTeamController extends AbstractController
                 if ($home->getDate() > $today && $home->getDate() < $week ){
                     $matchRes = [];
                     $matchRes["compet"] = $home->getHomeTeam()->getCompetition()->getName();
+                    if (strpos($teamR->getCategory(), "remi")){
+                        $matchRes["color"] = "#eb4034";
+                    } else {
+                        $matchRes["color"] = "#ffd257";
+                    }
                     $matchRes["type"] = "Match";
                     $matchRes["id"] = $home->getId();
                     $matchRes["title"] = $home->getHomeTeam()->getClub()->getName() . "-" . $home->getVisitorTeam()->getClub()->getName();
@@ -336,7 +351,12 @@ class RonvauTeamController extends AbstractController
             foreach ($matchesTeamV as $visitor) {
                 if ($visitor->getDate() > $today && $visitor->getDate() < $week ) {
                     $matchRes = [];
-                    $matchRes["compet"] = $visitor->getHomeTeam()->getCompetition()->getName();
+                    $matchRes["compet"] = $home->getHomeTeam()->getCompetition()->getName();
+                    if (strpos($teamR->getCategory(), "remi")){
+                        $matchRes["color"] = "#eb4034";
+                    } else {
+                        $matchRes["color"] = "#ffd257";
+                    }
                     $matchRes["type"] = "Match";
                     $matchRes["id"] = $visitor->getId();
                     $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName() . "-" . $visitor->getVisitorTeam()->getClub()->getName();
@@ -358,6 +378,11 @@ class RonvauTeamController extends AbstractController
                     $matchRes = [];
                     $matchRes["type"] = "Amical";
                     $matchRes["id"] = $unofficialMatch->getId();
+                    if (strpos($teamR->getCategory(), "remi")){
+                        $matchRes["color"] = "#eb4034";
+                    } else {
+                        $matchRes["color"] = "#ffd257";
+                    }
                     if ($unofficialMatch->getIsHome()) {
                         $matchRes["title"] = "Fc Ronvau Chaumont" . "-" . $unofficialMatch->getOpponent()->getName();
                     } else {
@@ -1129,5 +1154,86 @@ class RonvauTeamController extends AbstractController
 
 
         return $this->json($response);
+    }
+
+    /**
+     * @Route("/api/follow")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function follow(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["userId"]]);
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $data["teamId"]]);
+
+        $newUT = new UserTeam();
+        $newUT->setIsPlayer(false);
+        $newUT->setIsStaff(false);
+        $newUT->setTeamRonvauId($teamR);
+        $newUT->setUserId($user);
+
+        $this->getDoctrine()->getManager()->persist($newUT);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+
+    }
+
+    /**
+     * @Route("/api/unFollow")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function unFollow(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $data["userId"]]);
+        $teamR = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $data["teamId"]]);
+
+        $ut = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
+
+        $this->getDoctrine()->getManager()->remove($ut);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+
+    }
+
+    /**
+     * @Route("/api/isFollow/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function isFollow(int $id){
+
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $teamRs = $this->getDoctrine()->getRepository(TeamRonvau::class)->findAll();
+
+        $return = [];
+
+        foreach ($teamRs as $teamR){
+            $arr["canFollow"] = false;
+            $arr["canUnFollow"] = false;
+            $arr["id"] = $teamR->getId();
+            $arr["visible"] = $teamR->getVisible();
+           $arr["category"] = $teamR->getCategory();
+           $ut = $this->getDoctrine()->getRepository(UserTeam::class)->findOneBy(['userId' => $user, 'teamRonvauId' => $teamR]);
+           if ($ut !== null){
+               $arr["staff"] = $ut->getIsStaff();
+               $arr["player"] = $ut->getIsPlayer();
+               if ($ut->getIsStaff() == false && $ut->getIsPlayer() == false){
+                   $arr["canUnFollow"] = true;
+               }
+           } else {
+               $arr["canFollow"] = true;
+           }
+
+            $return[] = $arr;
+        }
+        return $this->json($return);
+
     }
 }

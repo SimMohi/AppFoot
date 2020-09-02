@@ -59,10 +59,17 @@ class Club
      */
     private $unOfficialMatches;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"clubs_read"})
+     */
+    private $visible = true;
+
     public function __construct()
     {
         $this->teams = new ArrayCollection();
         $this->unOfficialMatches = new ArrayCollection();
+        $this->visible = true;
     }
 
     public function getId(): ?int
@@ -165,6 +172,18 @@ class Club
                 $unOfficialMatch->setOpponent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): self
+    {
+        $this->visible = $visible;
 
         return $this;
     }

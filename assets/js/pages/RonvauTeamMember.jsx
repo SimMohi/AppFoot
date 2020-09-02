@@ -112,6 +112,7 @@ const RonvauTeamMember = props => {
                         </thead>
                         <tbody>
                         {ronvauTeam["userTeams"].map(userTeam =>
+                            (userTeam["isPlayer"] || userTeam["isCoach"]) &&
                             <tr key={userTeam.id}>
                                 <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
                                 <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
@@ -142,7 +143,6 @@ const RonvauTeamMember = props => {
                         </div>
                         <select className="form-control mt-3" name={"role"} value={selectUser["role"]}
                                 onChange={handleChangeSelect}>
-                            <option value={3}>Supporter</option>
                             <option value={0}>Joueur</option>
                             <option value={1}>Coach</option>
                             <option value={2}>Coach - Joueur</option>

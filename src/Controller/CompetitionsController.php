@@ -217,4 +217,42 @@ class CompetitionsController extends AbstractController
 
         return $this->json($competition->getTeams());
     }
+
+    /**
+     * @Route("/setClubInvisible")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setClubInvisible(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $club = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['id' => $data["id"]]);
+
+        $club->setVisible($data["visible"]);
+
+        $this->getDoctrine()->getManager()->persist($club);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+    }
+
+    /**
+     * @Route("/setTeamInvisible")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setTeamInvisible(Request $request){
+        $data = $request->getContent();
+        $data = json_decode($data, true);
+
+        $tr = $this->getDoctrine()->getRepository(TeamRonvau::class)->findOneBy(['id' => $data["id"]]);
+
+        $tr->setVisible($data["visible"]);
+
+        $this->getDoctrine()->getManager()->persist($tr);
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json("ok");
+    }
 }

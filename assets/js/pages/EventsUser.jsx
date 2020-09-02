@@ -18,6 +18,8 @@ const EventsUser = props => {
         }
     }
 
+
+
     useEffect( () => {
         FindEvents();
     }, [reload]);
@@ -79,7 +81,6 @@ const EventsUser = props => {
                             </tbody>
                         )}
                     </table>
-
                 </div>
             )}
         </>

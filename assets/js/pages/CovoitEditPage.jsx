@@ -35,6 +35,9 @@ const CovoitPage = props => {
         return 0;
     }
 
+    console.log(car.date);
+
+
     const handleChange = ({currentTarget}) => {
         setNewMessage(currentTarget.value);
     }
@@ -88,7 +91,7 @@ const CovoitPage = props => {
         for (let i = 0; i < car["carPassengers"].length; i++){
             copyCar["carPassengers"][i] =  car["carPassengers"][i]["@id"];
         }
-        copyCar["date"] = new Date(car.date + " " + car.time);
+        copyCar["date"] = DateFunctions.convertUTCDateToLocalDate(new Date(car.date + " " + car.time));
         delete  copyCar.userId;
         delete copyCar.departureAddress;
         delete copyCar.carPassengers;

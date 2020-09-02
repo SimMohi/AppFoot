@@ -5,10 +5,14 @@ import Modal from "react-bootstrap/Modal";
 import CovoitPage from "./CovoitPage";
 import Field from "../components/forms/Fields";
 import {toast} from "react-toastify";
+import authAPI from "../services/authAPI";
+import ClubsAPI from "../services/ClubsAPI";
 
 
 const RonvauTeamsPage = () => {
 
+    const isAdmin = authAPI.getIsAdmin();
+    const isSuperAdmin = authAPI.getIsSuperAdmin();
     const [reload, setReload] = useState(0);
     const [modal2, setModal2] = useState(false);
     const [password, setPassword] = useState("");
@@ -39,17 +43,39 @@ const RonvauTeamsPage = () => {
     }
     const [ronvauTeams, setRonvauTeams] = useState([]);
 
+
     const FindRonvauTeam = async () => {
         try {
-            const data = await RonvauTeamAPI.findAll();
+            const id = authAPI.getId();
+            const data = await RonvauTeamAPI.isFollow(id);
             setRonvauTeams(data);
         } catch (error) {
             console.log(error.response);
         }
     }
 
+    const follow = async  (id) => {
+        await RonvauTeamAPI.follow({
+            userId: authAPI.getId(),
+            teamId: id
+        })
+        setReload(reload+1);
+    }
+
+    const unFollow = async  (id) => {
+        await RonvauTeamAPI.unFollow({
+            userId: authAPI.getId(),
+            teamId: id
+        })
+        setReload(reload+1);
+    }
+
     const handleDelete = id => {
         const originalRonvauTeam = [...ronvauTeams];
+        if (password != "password"){
+            toast.warn("mauvais mot de passe");
+            return;
+        }
         setRonvauTeams(ronvauTeams.filter(ronvauTeams => ronvauTeams.id !== id));
         try {
             RonvauTeamAPI.deleteTeamRonvau(id);
@@ -96,29 +122,58 @@ const RonvauTeamsPage = () => {
         setReload(reload+1);
     }
 
+    const setVisible = async (visible, id) => {
+        await ClubsAPI.setTeamInvisible({
+            visible: visible,
+            id: id
+        })
+        setReload(reload+1);
+    }
+
     useEffect( () => {
         FindRonvauTeam();
     }, [reload]);
 
-    return ( <>
-        <h1 className={"mb-5"}>Liste des équipes</h1>
-        <button onClick={() => handleShow(0)} className="btn btn-outline-danger float-right mb-3">Nouvelle équipe</button>
+    return ( <div className={"container"}>
+        <h1 className={"mb-5 text-center"}>Liste des équipes</h1>
+        {isAdmin &&
+        <button onClick={() => handleShow(0)} className="btn btn-outline-danger float-right mb-3">Nouvelle
+            équipe</button>
+        }
         <table className="table table-hover text-center whiteBorder">
             <thead>
             <tr>
                 <th>Catégorie</th>
-                <th>Nombre de joueurs</th>
             </tr>
             </thead>
             <tbody>
             {ronvauTeams.map(ronvauTeam =>
                 <tr key={ronvauTeam.id}>
-                    <td>{ronvauTeam.category}</td>
-                    <td>{ronvauTeam["userTeams"].length}</td>
-                    <td>
+                    <td><h6>{ronvauTeam.category}</h6></td>
+                    <td className={"row justify-content-end mr-5"}>
+                        {ronvauTeam["canFollow"] &&
+                        <button onClick={() => follow(ronvauTeam.id)}
+                                className="btn btn-sm mr-3 btn-outline-danger">Suivre</button>
+                        }
+                        {ronvauTeam["canUnFollow"] &&
+                        <button onClick={() => unFollow(ronvauTeam.id)}
+                                className="btn btn-sm mr-3 btn-outline-danger">Se désinscrire</button>
+                        }
                         <Link to={"/equipeRonvau/"+ronvauTeam.id+"/select"} className={"btn btn-sm btn-warning mr-3"}>Sélectionner</Link>
-                        <Link to={"/equipeRonvau/"+ronvauTeam.id} className={"btn btn-sm btn-outline-warning mr-3"}>Editer</Link>
-                        <button onClick={() => openDelete(ronvauTeam)} className="btn btn-sm btn-danger">Supprimer</button>
+                        {ronvauTeam["isStaff"] || isAdmin &&
+                        <Link to={"/equipeRonvau/" + ronvauTeam.id}
+                              className={"btn btn-sm btn-outline-warning mr-3"}>Editer</Link>
+                        }
+                        {isAdmin &&
+                        (ronvauTeam.visible &&
+                            <button onClick={() => setVisible(false, ronvauTeam.id)}
+                                    className="btn btn-sm btn-danger">invisible</button>
+
+                            ||
+                            <button onClick={() => setVisible(true, ronvauTeam.id)}
+                                    className="btn btn-sm btn-outline-danger">visbile</button>
+                        )
+                        }
                     </td>
                 </tr>
             )}
@@ -143,7 +198,7 @@ const RonvauTeamsPage = () => {
                 <button onClick={() => handleDelete(selectTeam.id)} className="btn btn-danger float-right">Supprimer</button>
             </Modal.Body>
         </Modal>
-    </>);
+    </div>);
 }
 
 export default RonvauTeamsPage;

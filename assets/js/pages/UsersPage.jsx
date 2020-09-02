@@ -18,7 +18,23 @@ const UsersPage = () => {
         id: '',
         name: '',
     })
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsMax = 10;
+    const start = currentPage * itemsMax - itemsMax;
+    const paginatedU = users.slice(start, start+ itemsMax);
+    const pageC = Math.ceil(users.length/itemsMax);
+    const pages = [];
 
+    for (let i=1; i <= pageC; i++){
+        pages.push(i)
+    }
+
+    const handleChangePage = (page) => {
+        setCurrentPage(page);
+    }
+
+    const [errorFormat, setErrorFormat] = useState(false);
+    const [file, setFile] = useState(null);
     const [newUser, setNewUser] = useState({
         email: "",
         password: "",
@@ -88,6 +104,18 @@ const UsersPage = () => {
             console.error(e);
         }
     }
+    const fileSelec = event => {
+        let newFile = event.target.files[0];
+        console.log(newFile);
+        setFile(newFile);
+        const err = {};
+        if(newFile.type != "text/csv") {
+            setErrorFormat(true);
+        } else {
+            setErrorFormat(false);
+        }
+
+    }
 
     const openModal = (user) => {
         setSelectedUser({
@@ -96,6 +124,7 @@ const UsersPage = () => {
         })
         setShow(true);
     }
+
 
     const changeSearch = ({ currentTarget }) => {
         const value = currentTarget.value;
@@ -123,6 +152,7 @@ const UsersPage = () => {
     useEffect( () => {
         findUsers();
     }, [reload]);
+
 
     return(
         <>
@@ -154,7 +184,7 @@ const UsersPage = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {users.map((user, index) =>
+                {paginatedU.map((user, index) =>
                     <tr key={user.id}>
                         <td>
                             <img className="rounded-circle profilePhotoLittle account-img" src={user.profilePic}/>
@@ -189,7 +219,10 @@ const UsersPage = () => {
                             <>
                                 <button onClick={() => Accept(user.id)}
                                         className="btn btn-sm btn-warning  mr-3" disabled={true}>Accepter</button>
-                                <button onClick={() => openModal(user)} className="btn btn-sm btn-danger">Supprimer</button>
+                                {superAdmin &&
+                                <button onClick={() => openModal(user)}
+                                        className="btn btn-sm btn-danger">Supprimer</button>
+                                }
                             </>
                             }
                         </td>
@@ -197,6 +230,21 @@ const UsersPage = () => {
                 )}
                 </tbody>
             </table>
+            <div>
+                <ul className="pagination ">
+                    <li className={"page-item" + (currentPage == 1 && " disabled")}>
+                        <button className="page-link " onClick={()=> handleChangePage(currentPage-1)}>&laquo;</button>
+                    </li>
+                    {pages.map((p, index) => (
+                        <li key={index} className={"page-item" +  (currentPage === p &&" active")}>
+                            <button className="page-link bg-danger text-white" onClick={() => handleChangePage(p)}>{p}</button>
+                        </li>
+                    ))}
+                    <li className={"page-item" + (currentPage == pageC && " disabled")}>
+                        <button className="page-link " onClick={()=> handleChangePage(currentPage+1)}>&raquo;</button>
+                    </li>
+                </ul>
+            </div>
             <Modal show={show} onHide={() => setShow(false)}>
                 <Modal.Body className={""}>
                     <h6>Etes vous sûr de vouloir supprimer l'utilisateur {selectedUser.name} ? </h6>
@@ -234,16 +282,16 @@ const UsersPage = () => {
                             value={newUser.email}
                             onChange={handleChange}
                         />
-                        <Field
-                            name="password"
-                            label="Mot de passe"
-                            type="text"
-                            placeholder="Mot de passe"
-                            value={newUser.password}
-                            onChange={handleChange}
-                        />
+                        <hr/>
+                        <h6>OU</h6>
+                        <input type={"file"} onChange={fileSelec}/>
+                        {errorFormat &&
+                        <p className={"text-danger"}>Le fichier doit être sous format .csv avec les colonnes nom, prénom et email</p>
+                        ||
+                        <p>Le fichier doit être sous format .csv avec les colonnes nom, prénom et email</p>
+                        }
                         <div className="d-flex justify-content-end">
-                            <button type="submit" className="btn btn-danger ml-auto">
+                            <button type="submit" className="btn btn-danger ml-auto" disabled={errorFormat}>
                                 Créer
                             </button>
                         </div>

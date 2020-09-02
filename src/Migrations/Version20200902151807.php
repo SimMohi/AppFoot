@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200901094827 extends AbstractMigration
+final class Version20200902151807 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,8 +22,7 @@ final class Version20200901094827 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE team_photos (id INT AUTO_INCREMENT NOT NULL, team_id INT NOT NULL, path VARCHAR(255) NOT NULL, INDEX IDX_7E6DA700296CD8AE (team_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE team_photos ADD CONSTRAINT FK_7E6DA700296CD8AE FOREIGN KEY (team_id) REFERENCES team_ronvau (id)');
+        $this->addSql('ALTER TABLE club ADD visible TINYINT(1) NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -31,6 +30,6 @@ final class Version20200901094827 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE team_photos');
+        $this->addSql('ALTER TABLE club DROP visible');
     }
 }

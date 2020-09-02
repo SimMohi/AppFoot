@@ -360,10 +360,10 @@ const ProfilPage = props => {
                         />
                         Le mot de passe doit contenir :
                         <ul>
-                            <li>Plus de 8 caractères</li>
+                            <li>Entre 8 et 30 caractères</li>
                             <li>Une majuscule</li>
                             <li>Une minuscule</li>
-                            <li>Un nombre</li>
+                            <li>Un chiffre</li>
                             <li>Un caractère spécial</li>
                         </ul>
                         <button type="button" className={"btn btn-danger"} onClick={modifPass}>Modifier</button>

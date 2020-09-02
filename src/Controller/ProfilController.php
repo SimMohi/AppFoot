@@ -12,7 +12,6 @@ use App\Entity\Team;
 use App\Entity\TeamRonvau;
 use App\Entity\User;
 use App\Entity\UserTeam;
-use phpDocumentor\Reflection\Types\Object_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,10 +25,9 @@ class ProfilController extends AbstractController
     /**
      * @Route("/profile/{id}")
      * @param int $id
-     * @param \Swift_Mailer $mailer
      * @return JsonResponse
      */
-    public function getInfoUser(int $id, \Swift_Mailer $mailer){
+    public function getInfoUser(int $id){
 
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
         $address = $user->getAddress();
@@ -69,6 +67,32 @@ class ProfilController extends AbstractController
 
 
         return $this->json($return);
+    }
+
+    /**
+     * @Route("/getJson/{id}")
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getJson(int $id){
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id' => $id]);
+        $addr = $user->getAddress();
+        $address["city"] = $addr->getCity();
+        $address["code"] = $addr->getCode();
+        $address["number"] = $addr->getNumber();
+        $address["street"] = $addr->getStreet();
+        $address["box"] = $addr->getBox();
+
+        $covoits = $user->getCars();
+
+        $ut = $user->getUserTeams();
+
+        $arrUT = [];
+        foreach ($ut as $u){
+            $arrUT["cat"] = $u->getTeamRonvauId()->getCategory();
+        }
+        return $this->json([$user, $address, $covoits]);
+
     }
 
     /**

@@ -80,20 +80,11 @@ const CompetitionsPage = props => {
                         <Link to={"/competition/"+competition.id+"/view"} className={"btn btn-sm btn-outline-warning mr-3"}>Sélectionner</Link>
                         <Link to={"/competition/"+competition.id} className={"btn btn-sm btn-warning mr-3"}>Editer</Link>
                         {competition.visible && superAdmin &&
-                            <>
                         <button onClick={() => visible(competition.id, false)}
                                 className="btn btn-sm btn-outline-danger mr-3">Rendre invisible</button>
-                        <button onClick={() => openModal(competition)}
-                            className="btn btn-sm btn-danger">Supprimer</button>
-                        </>
                         ||
-                            <>
                         <button onClick={() => visible(competition.id, true)}
                                 className="btn btn-sm btn-outline-warning mr-3">Rendre visible</button>
-
-                        <button onClick={() => openModal(competition)}
-                                className="btn btn-sm btn-danger">Supprimer</button>
-                            </>
                         }
                     </td>
                 </tr>

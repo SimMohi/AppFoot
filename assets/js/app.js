@@ -116,11 +116,7 @@ const App = () => {
                         <NavItem eventKey="team">
                             <NavIcon>
                                 <NavLink className="nav-link" to={"/equipeRonvau"}>
-                                    {isAdmin &&
-                                    <i className="fas fa-user-tie" style={{fontSize: '1.75em'}}></i>
-                                    ||
                                     <i className="fas fa-tshirt" style={{fontSize: '1.75em'}}></i>
-                                    }
                                 </NavLink>
                             </NavIcon>
                             <NavText>
@@ -253,8 +249,7 @@ const App = () => {
                         <PrivateRoute path={"/equipeRonvau/:id/matchCalendar"} component={RonvauTeamCalendarMatch}/>
                         <PrivateRoute path={"/equipeRonvau/:id/unOffMatchCalendar"} component={RonvauTeamCalendarUnOffPage}/>
                         <PrivateRoute path={"/equipeRonvau/:id"} component={RonvauTeamPage}/>
-                        {isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>}
-                        {!isAdmin && <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPageUser}/>}
+                        <PrivateRoute path={"/equipeRonvau"} component={RonvauTeamsPage}/>
                         {isAdmin && <PrivateRoute path={"/userAccess"} component={UsersPage}/>}
                         <Route path="/rgpd/:id" component={RGPDPage}/>
                         <PrivateRoute path="/" component={HomePage} />

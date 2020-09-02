@@ -5,6 +5,9 @@ import {Link} from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 
 const EventsPage = props => {
+
+    const [pastE, setPastE] = useState([]);
+    const [futurE, setFuturE] = useState([]);
     const [events, setEvents] = useState([]);
     const [show, setShow] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState({
@@ -12,11 +15,26 @@ const EventsPage = props => {
         name:"",
     });
 
+    const [futur, setFutur] = useState(true);
+
 
     const FindEvents = async () => {
         try {
             const data = await EventsAPI.findAll();
-            setEvents(data);
+            let futur = [];
+            let past = [];
+            for (let i = 0; i < data.length; i++){
+                console.log(data[i]);
+                if (new Date(data[i]["endDate"]) > new Date()){
+                    futur.push(data[i]);
+                } else {
+                    past.push(data[i]);
+                }
+            }
+            futur.sort(DateFunctions.orderByDateEnd);
+            setPastE(past);
+            setFuturE(futur);
+            setEvents(futur);
         } catch (error) {
             console.log(error.response);
         }
@@ -51,20 +69,25 @@ const EventsPage = props => {
     return ( <>
         <Link to={"/events/new"} className={"btn btn-warning float-right"}>Créer un événement</Link>
         <h3 className={"mb-5"}>Liste des différents événements</h3>
+        <button className="btn btn-warning mb-5" onClick={() => setFutur(!futur)}>
+            {
+                futur && "Voir évenements passés"
+                || "Voir événements futurs"
+            }
+        </button>
         <table className="table table-hover whiteBorder p-5">
             <thead>
             <tr>
                 <th>Nom</th>
-                <th>Description</th>
                 <th>Date</th>
                 <th></th>
             </tr>
             </thead>
             <tbody>
-            {events.map(event =>
+            {futur &&
+            futurE.map(event =>
                 <tr key={event.id}>
                     <td>{event.name}</td>
-                    <td>{event.description}</td>
                     <td>{DateFunctions.dateFormatFr(event.date)}{typeof event.endDate != 'undefined' && " au " + DateFunctions.dateFormatFr(event.endDate)}</td>
                     <td>
                         <Link to={"/events/"+event.id+"/inscrit"} className={"btn btn-sm btn-outline-danger mr-3"}>Liste des inscrits</Link>
@@ -72,7 +95,21 @@ const EventsPage = props => {
                         <button onClick={() => openModal(event)} className="btn btn-sm btn-danger">Supprimer</button>
                     </td>
                 </tr>
-            )}
+            )
+            ||
+            pastE.map(event =>
+            <tr key={event.id}>
+                <td>{event.name}</td>
+                <td>{event.description}</td>
+                <td>{DateFunctions.dateFormatFr(event.date)}{typeof event.endDate != 'undefined' && " au " + DateFunctions.dateFormatFr(event.endDate)}</td>
+                <td>
+                    <Link to={"/events/"+event.id+"/inscrit"} className={"btn btn-sm btn-outline-danger mr-3"}>Liste des inscrits</Link>
+                    <Link to={"/events/"+event.id} className={"btn btn-sm btn-warning mr-3"}>Modifier l'événement</Link>
+                    <button onClick={() => openModal(event)} className="btn btn-sm btn-danger">Supprimer</button>
+                </td>
+            </tr>
+            )
+            }
             </tbody>
         </table>
         <Modal show={show} onHide={() => setShow(false)}>

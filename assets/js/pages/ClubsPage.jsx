@@ -17,6 +17,9 @@ const ClubsPage = props => {
         name:""
     })
 
+    const [reload, setReload] = useState(0);
+
+
     const FindClub = async () => {
         try {
             const data = await ClubsAPI.findAll();
@@ -30,7 +33,16 @@ const ClubsPage = props => {
 
     useEffect( () => {
         FindClub();
-    }, []);
+    }, [reload]);
+
+    const setVisible = async (visible, id) => {
+        await ClubsAPI.setClubInvisible({
+            visible: visible,
+            id: id
+        })
+        setReload(reload+1);
+    }
+
 
     const handleDelete = () => {
         const originalClubs = [...clubs];
@@ -98,8 +110,14 @@ const ClubsPage = props => {
                     <td>
                         {isAdmin &&
                             <>
-                                <Link to={"/club/"+club.id} className={"btn btn-sm btn-outline-warning mr-3"}>Modifier</Link>
-                                <button onClick={() => openModal(club)} className="btn btn-sm btn-danger">Supprimer</button>
+                                <Link to={"/club/"+club.id} className={"btn btn-sm btn-warning mr-3"}>Modifier</Link>
+                                {club.visible &&
+                                <button onClick={() => setVisible(false, club.id)}
+                                        className="btn btn-sm btn-outline-danger">invisible</button>
+                                ||
+                                <button onClick={() => setVisible(true, club.id)}
+                                          className="btn btn-sm btn-outline-warning">visible</button>
+                                }
                             </>
                         }
                     </td>

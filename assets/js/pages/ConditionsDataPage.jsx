@@ -14,7 +14,7 @@ const ConditionsDataPage = props => {
                 <p>La présente politique décrit les informations que nous traitons pour le fonctionnement de la plateforme et d’autres fonctionnalités.<br/></p>
                 <p>L'utilisateur consent, lors de la visite et lors de l'utilisation du site, que le site recueille et traite,
                     selon les modalités et principes décrits dans la présente politique de confidentialité, les
-                    données à caractère personnel suivantes : <b>Le nom, le prénom, l'adresse email, l'adresse postale, le numéro de gsm, les statistiques, les photos </b>.</p>
+                    données à caractère personnel suivantes : <b>Le nom, le prénom, l'adresse email, l'adresse postale, le numéro de gsm, les statistiques, les photos, l'indentifiant de son smartphone </b>.</p>
                 <h3>3. Finalité du traitement des données personnelles</h3>
                 <p>
                     Conformément à l'article 13 du règlement, les finalités du traitement des données personnelles sont communiquées à l'utilisateur et sont les suivantes :<br/>
@@ -26,6 +26,8 @@ const ConditionsDataPage = props => {
                             Permettre aux utilisateurs de se contacter.
                         </li>
                     </ol>
+                    <p>                            Elles ne seront jamais cédées à un tiers ni utilisées à d’autres fins que celles détaillées ci-dessus.
+                    </p>
                 </p>
                 <h3>4. Consentement</h3>
                 <p>En acceptant ces conditions, l'utilisateur déclare avoir pris connaissance et marque son accord de
@@ -52,14 +54,15 @@ const ConditionsDataPage = props => {
                     Les données sont conservées 36 mois pour un utilisateur inactif, ensuite elles sont supprimées.</p>
                 <h3>6. Droits des utilisateurs</h3>
                 <p>
-                    Sur son profil, l'utilisateur peut à tout moment modifier ses données personnelles, faire valoir son droit à l'oubli en supprimant son compte,
+                    Sur son profil, l'utilisateur peut à tout moment modifier ses données personnelle, modifier la visibilité de son profil
                     exporter ses informations sous format json.<br/>
-                    L'utilisateur peut à n'importe quel moment accéder aux présentes conditions.
+                    L'utilisateur peut à n'importe quel moment accéder aux présentes conditions. <br/>
+                    Il peut aussi contacter l'adresse email ci-dessous s'il souhaite supprimer son compte et ainsi faire valoir son droit à l'oubli
                 </p>
                 <h3>7. Contact</h3>
                 <p>Pour toutes questions ou réclamations relatives à la présente politique de confidentialité,
                 l'utilisateur peut contacter le responsable du traitement via l'adresse suivante :
-                    info.plateformeronvau@gmail.com.</p>
+                    info.plateformeronvau@gmail.com. </p>
             </div>
         </>
     )

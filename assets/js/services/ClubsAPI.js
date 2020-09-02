@@ -29,6 +29,16 @@ function postClubAddress(address) {
     return axios.post(API_URL +"/postClubAddress", address)
 }
 
+function setClubInvisible(post) {
+    return axios.post(API_URL +"/setClubInvisible", post)
+
+}
+
+function setTeamInvisible(post) {
+    return axios.post(API_URL +"/setTeamInvisible", post)
+
+}
+
 export default {
-    findAll, find, create, update, deleteClub, postClubAddress
+    findAll, find, create, update, deleteClub, postClubAddress, setClubInvisible, setTeamInvisible
 }

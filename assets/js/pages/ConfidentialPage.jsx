@@ -74,9 +74,9 @@ const ConfidentialPage = props => {
                         </label>
                     </div>
                     <hr/>
-                    <button className="btn btn-warning" >
+                    <a href={"/file/SimonMohimontData.txt"} className="btn btn-warning" download >
                         Exporter mes informations personnelles (JSON)
-                    </button>
+                    </a>
                     <hr/>
                     <p>En cas de soucis ou questions sur la gestion de votre profil. Contactez nous par mail à l'adresse <a href={"mailto:info.plateformeronvau@gmail.com"}>info.plateformeronvau@gmail.com</a> </p>
                     {/*<button className="btn btn-danger" onClick={()=> setShow(true)}>*/}

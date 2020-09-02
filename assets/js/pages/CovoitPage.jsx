@@ -62,7 +62,7 @@ const CovoitPage = props => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         let copy = JSON.parse(JSON.stringify(car));
-        copy["date"] = new Date(car.date + " " + car.time);
+        copy["date"] = DateFunctions.convertUTCDateToLocalDate(new Date(car.date + " " + car.time));
         delete copy.time;
         try {
             if(editing){

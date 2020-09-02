@@ -13,6 +13,21 @@ function find(id){
         .then(response => response.data);
 }
 
+function follow(post){
+    return axios.post(API_URL + "/api/follow",  post);
+}
+
+function unFollow(post){
+    return axios.post(API_URL + "/api/unFollow",  post);
+}
+
+function isFollow(id){
+    return axios
+        .get(API_URL + "/api/isFollow/"+id)
+        .then(response => response.data);
+}
+
+
 function findCompetRonvau(){
     return axios
         .get(API_URL + "/getCompetitionsRonvau/1")
@@ -51,5 +66,5 @@ function addAction(data){
 }
 
 export default {
-    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo, getTeamMember, addAction
+    findAll, find, create, update, findCompetRonvau, deleteTeamRonvau, getCalendarInfo, getPersonnalCalendarInfo, getTeamMember, addAction, follow, unFollow, isFollow
 }
