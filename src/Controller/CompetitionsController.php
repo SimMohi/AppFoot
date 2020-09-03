@@ -25,11 +25,11 @@ class CompetitionsController extends AbstractController
      */
     public function getCompetitionsRonvau(int $id)
     {
-        $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['name' => "F.C. Ronvau Chaumont"]);
-        $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['club' => $ronvau->getId()]);
+        $ronvau = $this->getDoctrine()->getRepository(Club::class)->findOneBy(['id' => 5]);
+        $teams = $this->getDoctrine()->getRepository(Team::class)->findBy(['club' => $ronvau]);
         $response = array();
         foreach ($teams as $team) {
-            $competition = $this->getDoctrine()->getRepository(Competition::class)->findOneBy(['id' => $team->getCompetition()->getId()]);
+            $competition = $team->getCompetition();
             $add = array();
             $add["id"] = $competition->getId();
             $add["name"] = $competition->getName();
