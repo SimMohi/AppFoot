@@ -159,6 +159,12 @@ const HomePage = props => {
         jquery();
     }
 
+    const [showAmical, setShowAmical] = useState(false);
+    const [amicalDel, setAmicalDel] = useState("");
+    const amicalModal = (id) => {
+        setShowAmical(true);
+        setAmicalDel(id);
+    }
 
     const handleChange = ({ currentTarget }) => {
         const { value } = currentTarget;
@@ -282,7 +288,7 @@ const HomePage = props => {
                 if (!event.isOver){
                     buttons.push(<Link to={"/unOffMatch/"+event.id+"/select"} className={"btn btn-warning mr-3"}>Convocations</Link>);
                     buttons.push(<button onClick={() => editMatchDate(event)} className="btn btn-danger">Date du match</button>);
-                    buttons.push(<button onClick={() => deleteUnOffMatch(event.id)} className="btn btn-danger">Supprimer match</button>);
+                    buttons.push(<button onClick={() => amicalModal(event.id)} className="btn btn-danger">Supprimer match</button>);
                 }
                 buttons.push(<Link to={"/unOffMatch/"+event.id+"/encode"} className={"btn btn-warning mr-3"}>Encoder statistiques</Link>);
             } else {
@@ -335,10 +341,11 @@ const HomePage = props => {
         setSelectedEvent(obj);
     }
 
-    const deleteUnOffMatch = async (id)=> {
+    const deleteUnOffMatch = async ()=> {
         try{
-            await UnOfficialMatchAPI.deleteUnOff({id :id});
+            await UnOfficialMatchAPI.deleteUnOff({id : amicalDel});
             setReload(reload+1);
+            setShowAmical(false);
             resetselectedEvent();
         } catch (e) {
             toast.error("Erreur lors de la suppression du match");
@@ -901,6 +908,12 @@ const HomePage = props => {
                       )}
                   </select>
                   <button onClick={() => addNew()} className="btn btn-danger float-right mt-3">Valider</button>
+              </Modal.Body>
+          </Modal>
+          <Modal show={showAmical} onHide={() => setShowAmical(false)}>
+              <Modal.Body className={""}>
+                  <h6>Etes vous sûr de vouloir supprimer ce match ? </h6>
+                  <button onClick={() => deleteUnOffMatch()} className="btn btn-danger float-right">Supprimer</button>
               </Modal.Body>
           </Modal>
       </>

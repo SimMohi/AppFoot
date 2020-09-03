@@ -107,7 +107,6 @@ const RonvauTeamMember = props => {
                             <th>Nom</th>
                             <th>joueur</th>
                             <th>Staff</th>
-                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -117,9 +116,6 @@ const RonvauTeamMember = props => {
                                 <td>{userTeam.userId.lastName+" "+userTeam.userId.firstName}</td>
                                 <td>{userTeam.isPlayer && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
                                 <td>{userTeam.isStaff && <i className="fas fa-check"></i> || <i className="fas fa-times"></i>}</td>
-                                <td>
-                                    <button type={"button"} onClick={() => handleDelete(userTeam.id)} className="btn btn-sm btn-danger">Supprimer</button>
-                                </td>
                             </tr>
                         )}
                         </tbody>

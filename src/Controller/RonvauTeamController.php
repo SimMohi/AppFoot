@@ -338,7 +338,7 @@ class RonvauTeamController extends AbstractController
                     }
                     $matchRes["type"] = "Match";
                     $matchRes["id"] = $home->getId();
-                    $matchRes["title"] = $home->getHomeTeam()->getClub()->getName() . "-" . $home->getVisitorTeam()->getClub()->getName();
+                    $matchRes["title"] = $teamR->getCategory()." " .$home->getHomeTeam()->getClub()->getName() . "-" . $home->getVisitorTeam()->getClub()->getName();
                     $matchRes["start"] = $home->getDate();
                     $address = $home->getHomeTeam()->getClub()->getAddress();
                     if ($address !== null){
@@ -359,7 +359,7 @@ class RonvauTeamController extends AbstractController
                     }
                     $matchRes["type"] = "Match";
                     $matchRes["id"] = $visitor->getId();
-                    $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName() . "-" . $visitor->getVisitorTeam()->getClub()->getName();
+                    $matchRes["title"] = $teamR->getCategory()." " .$visitor->getHomeTeam()->getClub()->getName() . "-" . $visitor->getVisitorTeam()->getClub()->getName();
                     $matchRes["start"] = $visitor->getDate();
                     $address = $visitor->getHomeTeam()->getClub()->getAddress();
                     if ($address !== null){
@@ -384,9 +384,9 @@ class RonvauTeamController extends AbstractController
                         $matchRes["color"] = "#ffd257";
                     }
                     if ($unofficialMatch->getIsHome()) {
-                        $matchRes["title"] = "Fc Ronvau Chaumont" . "-" . $unofficialMatch->getOpponent()->getName();
+                        $matchRes["title"] = $teamR->getCategory()."-" . $unofficialMatch->getOpponent()->getName();
                     } else {
-                        $matchRes["title"] = $unofficialMatch->getOpponent()->getName() . "-" . "Fc Ronvau Chaumont";
+                        $matchRes["title"] = $unofficialMatch->getOpponent()->getName() . "-" . $teamR->getCategory();
                     }
                     if ($unofficialMatch->getIsHome()) {
                         $address = $unofficialMatch->getTeamRonvau()->getTeam()->getClub()->getAddress();
@@ -510,7 +510,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["compet"] = $home->getHomeTeam()->getCompetition()->getName();
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $home->getId();
-                $matchRes["title"] = $home->getHomeTeam()->getClub()->getName()."-".$home->getVisitorTeam()->getClub()->getName();
+                $matchRes["title"] = $teamR->getCategory()." ". $home->getHomeTeam()->getClub()->getName()."-".$home->getVisitorTeam()->getClub()->getName();
                 $matchRes["start"] = $home->getDate();
                 $matchRes["end"] = $home->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
@@ -564,7 +564,7 @@ class RonvauTeamController extends AbstractController
                 $matchRes["type"] = "Match";
                 $matchRes["id"] = $visitor->getId();
                 $matchRes["appointment"] = $visitor->getAppointmentHour();
-                $matchRes["title"] = $visitor->getHomeTeam()->getClub()->getName()."-".$visitor->getVisitorTeam()->getClub()->getName();
+                $matchRes["title"] = $teamR->getCategory()." " . $visitor->getHomeTeam()->getClub()->getName()."-".$visitor->getVisitorTeam()->getClub()->getName();
                 $matchRes["start"] = $visitor->getDate();
                 $matchRes["end"] = $visitor->getDate();
                 $matchRes["staff"] = $userTeam->getIsStaff();
@@ -612,9 +612,9 @@ class RonvauTeamController extends AbstractController
                 $matchRes["type"] = "Amical";
                 $matchRes["id"] = $unofficialMatch->getId();
                 if ($unofficialMatch->getIsHome()){
-                    $matchRes["title"] = "Fc Ronvau Chaumont" ."-".$unofficialMatch->getOpponent()->getName();
+                    $matchRes["title"] = $teamR->getCategory()." - ".$unofficialMatch->getOpponent()->getName();
                 } else{
-                    $matchRes["title"] = $unofficialMatch->getOpponent()->getName()."-"."Fc Ronvau Chaumont" ;
+                    $matchRes["title"] = $unofficialMatch->getOpponent()->getName()."-".$teamR->getCategory() ;
                 }
                 if ($unofficialMatch->getIsHome()){
                     $address = $unofficialMatch->getTeamRonvau()->getTeam()->getClub()->getAddress();

@@ -19,6 +19,7 @@ const CovoitsPage = props => {
         false, false
     ]);
 
+    const [delId, setDelId] = useState("");
     const [del, setDel] = useState(false);
     const [modalParam, setModalParam] = useState("");
     const [covoits, setCovoits] = useState([]);
@@ -92,6 +93,7 @@ const CovoitsPage = props => {
         try {
             await CovoitAPI.deleteCar(id);
             toast.success("Le covoiturage a bien été supprimé");
+            setDel(false);
         } catch (error) {
             setCovoits(originalsCovoit);
             toast.error("La suppression a échoué");
@@ -125,7 +127,7 @@ const CovoitsPage = props => {
                 <Link to={"/covoit/"+covoit.id} className="btn btn-warning btn-sm mr-3">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifier&nbsp;&nbsp;&nbsp;&nbsp;
                 </Link>
-                <button onClick={() => handleDelete(covoit.id)} className={"btn btn-danger btn-sm"}>Supprimer</button>
+                <button onClick={() => openDel(covoit.id)} className={"btn btn-danger btn-sm"}>Supprimer</button>
             </>)
         }
         if (placeRemaining == 0){
@@ -141,6 +143,11 @@ const CovoitsPage = props => {
         } catch (error) {
             console.log(error.response);
         }
+    }
+
+    const openDel = (idDel) => {
+        setDel(true);
+        setDelId(idDel);
     }
 
     const handleSubmit = async (event) => {
@@ -287,8 +294,7 @@ const CovoitsPage = props => {
                 <Modal.Body className={""}>
                     <h6>Etes vous sûr de vouloir supprimer votre covoiturage </h6>
                     <h6>Cette action est irréversible.</h6>
-                    <Field type={"password"} placeholder={"Votre mot de passe"}/>
-                    <button onClick={() => handleDelete()} className="btn btn-danger float-right">Supprimer</button>
+                    <button onClick={() => handleDelete(delId)} className="btn btn-danger float-right">Supprimer</button>
                 </Modal.Body>
             </Modal>
         </>
