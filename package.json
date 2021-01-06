@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "@trendmicro/react-sidenav": "^0.5.0",
-        "axios": "^0.18.1",
+        "axios": "^0.21.1",
         "babel-install": "^2.1.0",
         "bootstrap": "^4.4.1",
         "dotenv": "^8.2.0",
